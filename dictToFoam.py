@@ -95,9 +95,11 @@ class Foam:
             key = key.replace(' ', '')  # div(phi, U) -> div(phi,U)
             # TODO: rewritten as match statement when updated to 3.10
             if isinstance(value, bool):  # bool < int
-                yield f'{key} {str(value).lower()}'
-            if isinstance(value, (str, int, float)):
+                yield f'{key} {str(value).lower()};'
+            elif isinstance(value, (str, int, float)):
                 yield f'{key} {value};'
+            elif isinstance(value, list):
+                yield f'{key} {" ".join(map(str, value))};'
             elif isinstance(value, dict):
                 string = ' '.join(self._convert_dict_recursively(value))
                 yield f'{key} {{{string}}}'
