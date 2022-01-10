@@ -103,3 +103,15 @@ class Foam:
                 yield f'{key} {{{string}}}'
             else:
                 raise Exception(f'Unknown type "{type(value).__name__}"')
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description=Foam.__doc__)
+    parser.add_argument('inputs', nargs='*', help='YAML format files')
+    parser.add_argument('-o', '--output', nargs='?', default='.', help='Destination directory')
+    args = parser.parse_args()
+    directory = p.Path(args.output)
+    for path in map(p.Path, args.inputs):
+        Foam.from_(path, dest=directory/path.stem).save()
