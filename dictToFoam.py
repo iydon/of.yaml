@@ -102,25 +102,22 @@ class Foam:
             elif isinstance(value, (str, int, float)):
                 yield f'{key} {value};'
             elif isinstance(value, list):
-                if value:
-                    if isinstance(value[0], (str, int, float)):
-                        yield f'{key} ({" ".join(map(str, value))});'
-                    elif isinstance(value[0], dict):
-                        strings = []
-                        for element in value:
-                            head = tuple(k for k, v in element.items() if v is None)
-                            if head:
-                                element.pop(head[0])
-                                string = ' '.join(self._convert_dict_recursively(element))
-                                strings.append(f'{head[0]} {{{string}}}')
-                            else:
-                                string = ' '.join(self._convert_dict_recursively(element))
-                                strings.append(f'{{{string}}}')
-                        yield f'{key} ({" ".join(strings)});'
-                    else:
-                        raise Exception(f'Unknown list "{value}"')
+                if not value or isinstance(value[0], (str, int, float)):
+                    yield f'{key} ({" ".join(map(str, value))});'
+                elif isinstance(value[0], dict):
+                    strings = []
+                    for element in value:
+                        head = tuple(k for k, v in element.items() if v is None)
+                        if head:
+                            element.pop(head[0])
+                            string = ' '.join(self._convert_dict_recursively(element))
+                            strings.append(f'{head[0]} {{{string}}}')
+                        else:
+                            string = ' '.join(self._convert_dict_recursively(element))
+                            strings.append(f'{{{string}}}')
+                    yield f'{key} ({" ".join(strings)});'
                 else:
-                    raise Exception('Empty list')
+                    raise Exception(f'Unknown list "{value}"')
             elif isinstance(value, dict):
                 string = ' '.join(self._convert_dict_recursively(value))
                 yield f'{key} {{{string}}}'
