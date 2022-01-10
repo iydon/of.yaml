@@ -1,0 +1,245 @@
+meta:
+    default:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+    static:
+        -
+            name: Allrun
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial run functions
+                . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+                m4 system/blockMeshDict.m4 > system/blockMeshDict
+                runApplication blockMesh
+                runApplication setFields
+                runApplication $(getApplication)
+        -
+            name: gen6DoF
+            type: 7z
+            data: static/sloshingTank3D6DoF-gen6DoF.7z
+        -
+            name: constant/6DoF.dat
+            type: 7z
+            data: static/sloshingTank3D6DoF-6DoF.7z
+        -
+            name: system/blockMeshDict.m4
+            type: 7z
+            data: static/sloshingTank3D6DoF-blockMeshDict.7z
+data:
+    "0":
+        alpha.water:
+            FoamFile:
+                class: volScalarField
+                object: alpha.water
+                <<: *FoamFile
+            dimensions: "[0 0 0 0 0 0 0]"
+            internalField: uniform 0
+            boundaryField:
+                walls:
+                    type: zeroGradient
+        p_rgh:
+            FoamFile:
+                class: volScalarField
+                object: p_rgh
+                <<: *FoamFile
+            dimensions: "[1 -1 -2 0 0 0 0]"
+            internalField: uniform 0
+            boundaryField:
+                walls:
+                    type: fixedFluxPressure
+        U:
+            FoamFile:
+                class: volVectorField
+                object: U
+                <<: *FoamFile
+            dimensions: "[0 1 -1 0 0 0 0]"
+            internalField: uniform (0 0 0)
+            boundaryField:
+                walls:
+                    type: movingWallVelocity
+                    value: uniform (0 0 0)
+    constant:
+        dynamicMeshDict:
+            FoamFile:
+                class: dictionary
+                object: dynamicMeshDict
+                <<: *FoamFile
+            dynamicFvMesh: dynamicMotionSolverFvMesh
+            motionSolver: solidBody
+            solidBodyMotionFunction: tabulated6DoFMotion
+            CofG: (0 0 0)
+            timeDataFileName: >
+                "$FOAM_CASE/constant/6DoF.dat"
+        g:
+            FoamFile:
+                class: uniformDimensionedVectorField
+                object: g
+                <<: *FoamFile
+            dimensions: "[0 1 -2 0 0 0 0]"
+            value: (0 0 -9.81)
+        transportProperties:
+            FoamFile:
+                class: dictionary
+                object: transportProperties
+                <<: *FoamFile
+            phases: (water air)
+            water:
+                transportModel: Newtonian
+                nu: 1e-06
+                rho: 998.2
+            air:
+                transportModel: Newtonian
+                nu: 1.48e-05
+                rho: 1
+            sigma: 0
+        turbulenceProperties:
+            FoamFile:
+                class: dictionary
+                object: turbulenceProperties
+                <<: *FoamFile
+            simulationType: laminar
+    system:
+        controlDict:
+            FoamFile:
+                class: dictionary
+                object: controlDict
+                <<: *FoamFile
+            application: interFoam
+            startFrom: startTime
+            startTime: 0
+            stopAt: endTime
+            endTime: 40
+            deltaT: 0.01
+            writeControl: adjustableRunTime
+            writeInterval: 0.05
+            purgeWrite: 0
+            writeFormat: binary
+            writePrecision: 6
+            writeCompression: off
+            timeFormat: general
+            timePrecision: 6
+            runTimeModifiable: yes
+            adjustTimeStep: yes
+            maxCo: 0.5
+            maxAlphaCo: 0.5
+            maxDeltaT: 1
+            functions:
+                probes:
+                    type: probes
+                    libs: ("libsampling.so")
+                    writeControl: timeStep
+                    writeInterval: 1
+                    probeLocations:
+                        - (0 9.95 19.77)
+                        - (0 -9.95 19.77)
+                    fixedLocations: false
+                    fields:
+                        - p
+        decomposeParDict:
+            FoamFile:
+                class: dictionary
+                object: decomposeParDict
+                <<: *FoamFile
+            numberOfSubdomains: 16
+            method: hierarchical
+            simpleCoeffs:
+                n: (2 2 1)
+                delta: 0.001
+            hierarchicalCoeffs:
+                n: (4 2 2)
+                delta: 0.001
+                prder: xyz
+            manualCoeffs:
+                dataFile: ""
+            distributed: no
+            roots: []
+        fvSchemes:
+            FoamFile:
+                class: dictionary
+                object: fvSchemes
+                <<: *FoamFile
+            ddtSchemes:
+                default: Euler
+            gradSchemes:
+                default: Gauss linear
+            divSchemes:
+                div(rhoPhi, U): Gauss vanLeerV
+                div(phi, alpha): Gauss vanLeer
+                div(phirb, alpha): Gauss linear
+                div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+            laplacianSchemes:
+                default: Gauss linear corrected
+            interpolationSchemes:
+                default: linear
+            snGradSchemes:
+                default: corrected
+        fvSolution:
+            FoamFile:
+                class: dictionary
+                object: fvSolution
+                <<: *FoamFile
+            solvers:
+                alpha.water:
+                    nAlphaCorr: 1
+                    nAlphaSubCycles: 3
+                    cAlpha: 1.5
+                pcorr.*:
+                    solver: PCG
+                    preconditioner:
+                        preconditioner: GAMG
+                        tolerance: 1e-05
+                        relTol: 0
+                        smoother: DICGaussSeidel
+                        cacheAgglomeration: no
+                    tolerance: 1e-05
+                    relTol: 0
+                    maxIter: 100
+                p_rgh:
+                    solver: GAMG
+                    tolerance: 1e-08
+                    relTol: 0.01
+                    smoother: DIC
+                p_rghFinal:
+                    solver: PCG
+                    preconditioner:
+                        preconditioner: GAMG
+                        tolerance: 2e-09
+                        relTol: 0
+                        nVcycles: 2
+                        smoother: DICGaussSeidel
+                        nPreSweeps: 2
+                    tolerance: 2e-09
+                    relTol: 0
+                    maxIter: 20
+                U:
+                    solver: smoothSolver
+                    smoother: GaussSeidel
+                    tolerance: 1e-06
+                    relTol: 0
+                    nSweeps: 1
+            PIMPLE:
+                momentumPredictor: no
+                nCorrectors: 2
+                nNonOrthogonalCorrectors: 0
+                correctPhi: no
+                pRefPoint: (0 0 0.15)
+                pRefValue: 1e5
+            relaxationFactors:
+                equations:
+                    .*: 1
+        setFieldsDict:
+            FoamFile:
+                class: dictionary
+                object: setFieldsDict
+                <<: *FoamFile
+            defaultFieldValues:
+                - volScalarFieldValue alpha.water 0
+            regions:
+                - boxToCell:
+                  box: (-100 -100 -100) (100 100 0)
+                  fieldValues: (volScalarFieldValue alpha.water 1)
