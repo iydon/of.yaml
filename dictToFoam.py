@@ -92,7 +92,10 @@ class Foam:
 
     def _convert_dict_recursively(self, data: Dict) -> t.Iterator[str]:
         for key, value in data.items():
+            # pre-process
             key = key.replace(' ', '')  # div(phi, U) -> div(phi,U)
+            if '(' in key or ')' in key:  # (U|k|epsilon) -> "(U|k|epsilon)"
+                key = f'"{key}"'
             # TODO: rewritten as match statement when updated to 3.10
             if isinstance(value, bool):  # bool < int
                 yield f'{key} {str(value).lower()};'

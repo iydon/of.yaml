@@ -1,0 +1,440 @@
+meta:
+    default:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+    static:
+        -
+            name: Allrun
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial run functions
+                . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+                # Get application directory
+                application=$(getApplication)
+
+                runApplication blockMesh
+                runApplication topoSet
+                runApplication refineHexMesh c0 -overwrite
+
+                runApplication decomposePar -cellDist
+                runParallel $application
+
+                runApplication reconstructPar
+        -
+            name: Allclean
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial clean functions
+                . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+                rm -f 0/cellDist
+
+                cleanCase
+        -
+            name: constant/polyMesh
+            type: 7z
+            data: static/airFoil2D-polyMesh.7z
+data:
+    "0":
+        epsilon:
+            FoamFile:
+                class: volScalarField
+                object: epsilon
+                <<: *FoamFile
+            dimensions: "[0 2 -3 0 0 0 0]"
+            internalField: [uniform, 1]
+            boundaryField:
+                inlet:
+                    type: turbulentMixingLengthDissipationRateInlet
+                    mixingLength: 0.5
+                    value: [uniform, 1]
+                outlet:
+                    type: inletOutlet
+                    inletValue: [uniform, 1]
+                    value: [uniform, 1]
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, 1]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, 1]
+                walls:
+                    type: epsilonWallFunction
+                    value: [uniform, 1]
+        k:
+            FoamFile:
+                class: volScalarField
+                object: k
+                <<: *FoamFile
+            dimensions: "[0 2 -2 0 0 0 0]"
+            internalField: [uniform, 1]
+            boundaryField:
+                inlet:
+                    type: turbulentIntensityKineticEnergyInlet
+                    intensity: 0.05
+                    value: [uniform, 1]
+                outlet:
+                    type: inletOutlet
+                    inletValue: [uniform, 1]
+                    value: [uniform, 1]
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, 1]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, 1]
+                walls:
+                    type: kqRWallFunction
+                    value: [uniform, 0]
+        nut:
+            FoamFile:
+                class: volScalarField
+                object: nut
+                <<: *FoamFile
+            dimensions: "[0 2 -1 0 0 0 0]"
+            internalField: [uniform, 0]
+            boundaryField:
+                inlet:
+                    type: calculated
+                    intensity: 0
+                    value: [uniform, 1]
+                outlet:
+                    type: calculated
+                    inletValue: [uniform, 0]
+                    value: [uniform, 1]
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                walls:
+                    type: nutkWallFunction
+                    value: [uniform, 0]
+        nuTilda:
+            FoamFile:
+                class: volScalarField
+                object: nuTilda
+                <<: *FoamFile
+            dimensions: "[0 2 -1 0 0 0 0]"
+            internalField: [uniform, 0]
+            boundaryField:
+                inlet:
+                    type: zeroGradient
+                outlet:
+                    type: zeroGradient
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                walls:
+                    type: zeroGradient
+        p:
+            FoamFile:
+                class: volScalarField
+                object: p
+                <<: *FoamFile
+            dimensions: "[0 2 -2 0 0 0 0]"
+            internalField: [uniform, 0]
+            boundaryField:
+                inlet:
+                    type: zeroGradient
+                outlet:
+                    type: fixedValue
+                    value: [uniform, 0]
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, 0]
+                walls:
+                    type: zeroGradient
+        U:
+            FoamFile:
+                class: volVectorField
+                object: U
+                <<: *FoamFile
+            dimensions: "[0 1 -1 0 0 0 0]"
+            internalField: [uniform, (1 0 0)]
+            boundaryField:
+                inlet:
+                    type: codedFixedValue
+                    value: [uniform, (1 0 0)]
+                    name: swirl
+                    code: |
+                        #{
+                            const vector axis(1, 0, 0);
+
+                            vectorField v(2.0*this->patch().Cf() ^ axis);
+                            v.replace(vector::X, 1.0);
+                            operator==(v);
+                        #};
+                outlet:
+                    type: inletOutlet
+                    inletValue: [uniform, (1 0 0)]
+                    value: [uniform, (1 0 0)]
+                side1:
+                    type: cyclicAMI
+                    value: [uniform, (1 0 0)]
+                side2:
+                    type: cyclicAMI
+                    value: [uniform, (1 0 0)]
+                walls:
+                    type: noSlip
+    constant:
+        transportProperties:
+            FoamFile:
+                class: dictionary
+                object: transportProperties
+                <<: *FoamFile
+            transportModel: Newtonian
+            nu: ["[0 2 -1 0 0 0 0]", 1e-06]
+        turbulenceProperties:
+            FoamFile:
+                class: dictionary
+                object: turbulenceProperties
+                <<: *FoamFile
+            simulationType: RAS
+            RAS:
+                RASModel: realizableKE
+                turbulence: on
+                printCoeffs: on
+    system:
+        blockMeshDict:
+            FoamFile:
+                class: dictionary
+                object: blockMeshDict
+                <<: *FoamFile
+            convertToMeters: 1
+            halfAngle: 45.0
+            radius: 0.5
+            radHalfAngle: >
+                #calc "degToRad($halfAngle)"
+            y: >
+                #calc "$radius*sin($radHalfAngle)"
+            minY: >
+                #calc "-1.0*$y"
+            z: >
+                #calc "$radius*cos($radHalfAngle)"
+            minZ: >
+                #calc "-1.0*$z"
+            vertices: |
+                (
+                    (0.0    0.0 0)      //0
+                    (10     0.0 0)
+                    (10     0.0 0)      //2
+                    (0.0    0.0 0)
+
+                    (0.0    $minY $z)   //4
+                    (10     $minY $z)
+                    (10     $y $z)      //6
+                    (0.0    $y $z)
+                )
+            blocks: |
+                (
+                    // inlet block
+                    hex (0 1 2 3  4 5 6 7) (50 5 5) simpleGrading (1 1 1)
+                )
+            edges: |
+                (
+                    arc 4 7 (0 0 $radius)
+                    arc 5 6 (10 0 $radius)
+                )
+            boundary: |
+                (
+                    inlet {
+                        type patch;
+                        faces ( (0 4 7 3) );
+                    }
+
+                    outlet {
+                        type patch;
+                        faces ( (1 2 6 5) );
+                    }
+
+                    side1 {
+                        type cyclicAMI;
+                        neighbourPatch side2;
+                        faces ( (0 1 5 4) );
+
+                        transform rotational;
+                        rotationAxis (1 0 0);
+                        rotationCentre (0 0 0);
+                    }
+
+                    side2 {
+                        type cyclicAMI;
+                        neighbourPatch side1;
+                        faces ( (7 6 2 3) );
+
+                        transform rotational;
+                        rotationAxis (1 0 0);
+                        rotationCentre (0 0 0);
+                    }
+
+                    walls {
+                        type wall;
+                        faces (
+                            (4 5 6 7)
+                            (3 2 1 0)
+                        );
+                    }
+                )
+        controlDict:
+            FoamFile:
+                class: dictionary
+                object: controlDict
+                <<: *FoamFile
+            application: simpleFoam
+            startFrom: startTime
+            startTime: 0
+            stopAt: endTime
+            endTime: 1000
+            deltaT: 1
+            writeControl: timeStep
+            writeInterval: 100
+            purgeWrite: 0
+            writeFormat: ascii
+            writePrecision: 6
+            writeCompression: off
+            timeFormat: general
+            timePrecision: 6
+            runTimeModifiable: true
+        decomposeParDict:
+            FoamFile:
+                class: dictionary
+                object: decomposeParDict
+                <<: *FoamFile
+            numberOfSubdomains: 5
+            method: scotch
+        fvSchemes:
+            FoamFile:
+                class: dictionary
+                object: fvSchemes
+                <<: *FoamFile
+            ddtSchemes:
+                default: steadyState
+            gradSchemes:
+                default: [Gauss, linear]
+            divSchemes:
+                default: none
+                div(phi, U): [bounded, Gauss, limitedLinearV, 1]
+                div(phi, k): [bounded, Gauss, limitedLinear, 1]
+                div(phi, epsilon): [bounded, Gauss, limitedLinear, 1]
+                div(phi, R): [bounded, Gauss, limitedLinear, 1]
+                div(R): [Gauss, linear]
+                div(phi, nuTilda): [bounded, Gauss, limitedLinear, 1]
+                div((nuEff*dev2(T(grad(U))))): [Gauss, linear]
+            laplacianSchemes:
+                default: [Gauss, linear, corrected]
+            interpolationSchemes:
+                default: linear
+            snGradSchemes:
+                default: corrected
+        fvSolution:
+            FoamFile:
+                class: dictionary
+                object: fvSolution
+                <<: *FoamFile
+            solvers:
+                p: &p
+                    solver: GAMG
+                    smoother: GaussSeidel
+                    tolerance: 1e-06
+                    relTol: 0.05
+                pFinal:
+                    tolerance: 1e-06
+                    relTol: 0
+                    <<: *p
+                (U|k|epsilon): &U
+                    solver: smoothSolver
+                    smoother: symGaussSeidel
+                    tolerance: 1e-05
+                    relTol: 0.1
+                (U|k|epsilon)Final:
+                    tolerance: 1e-05
+                    relTol: 0
+                    <<: *U
+            PIMPLE:
+                nOuterCorrectors: 4
+                nCorrectors: 1
+                nNonOrthogonalCorrectors: 0
+                pRefCell: 0
+                pRefValue: 0
+            SIMPLE:
+                nNonOrthogonalCorrectors: 0
+                residualControl:
+                    p: 1e-2
+                    U: 1e-3
+                    (k|epsilon): 1e-3
+            relaxationFactors:
+                fields:
+                    p: 0.3
+                equations:
+                    U: 0.7
+                    k: 0.7
+                    epsilon: 0.7
+            cache:
+                grad(U): ""
+        topoSetDict:
+            FoamFile:
+                class: dictionary
+                object: topoSetDict
+                <<: *FoamFile
+            actions: |
+                (
+                    {
+                        name    f0;
+                        type    faceSet;
+                        action  new;
+                        source  patchToFace;
+                        sourceInfo {
+                            name "side1";
+                        }
+                    } {
+                        name    f0;
+                        type    faceSet;
+                        action  subset;
+                        source  boxToFace;
+                        sourceInfo {
+                            box (0 -100 -100)(100 -0.2 100);
+                        }
+                    } {
+                        name    c0;
+                        type    cellSet;
+                        action  new;
+                        source  faceToCell;
+                        sourceInfo {
+                            set     f0;
+                            option  any;
+                        }
+                    } {
+                        name    walls;
+                        type    faceSet;
+                        action  new;
+                        source  patchToFace;
+                        sourceInfo {
+                            name "walls";
+                        }
+                    } {
+                        name    c0;
+                        type    cellSet;
+                        action  delete;
+                        source  faceToCell;
+                        sourceInfo {
+                            set     walls;
+                            option  any;
+                        }
+                    }
+                )
