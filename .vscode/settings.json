@@ -1,0 +1,18 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.associations": {
+        "All*": "makefile",
+        "LICENSE": "plaintext",
+        "*.json": "jsonc",
+        "*.lock": "toml",
+        "*.md": "markdown",
+        "*.py": "python",
+        "*.toml": "toml",
+        "*.yaml": "yaml",
+        "*": "OpenFOAM"
+    },
+    "[yaml]": {
+        "editor.tabSize": 4
+    }
+}
