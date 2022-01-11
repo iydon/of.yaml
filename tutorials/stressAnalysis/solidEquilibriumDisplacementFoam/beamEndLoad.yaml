@@ -1,0 +1,205 @@
+meta:
+    default:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+    static:
+        -
+            name: Allrun
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial run functions
+                . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+                application=$(getApplication)
+
+                runApplication blockMesh
+                runApplication $application
+                # runApplication -s sigma        postProcess -func "components(sigma)"
+                # runApplication -s singleGraph  postProcess -func singleGraph
+        -
+            name: Allclean
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial clean functions
+                . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+                cleanCase
+data:
+    "0":
+        D:
+            FoamFile:
+                class: volVectorField
+                object: D
+                <<: *FoamFile
+            dimensions: "[0 1 0 0 0 0 0]"
+            internalField: uniform (0 0 0)
+            boundaryField:
+                topSurface:
+                    type: tractionDisplacement
+                    traction: uniform (0 0 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                bottomSurface:
+                    type: tractionDisplacement
+                    traction: uniform (0 0 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                fixedEnd:
+                    type: fixedValue
+                    value: uniform (0 0 0)
+                tractionEnd:
+                    type: tractionDisplacement
+                    traction: uniform (0 10000 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                defaultFaces:
+                    type: empty
+        p:
+            FoamFile:
+                class: volScalarField
+                object: p
+                <<: *FoamFile
+            dimensions: "[1 -1 -2 0 0 0 0]"
+            internalField: uniform 0
+            boundaryField:
+                topSurface:
+                    type: calculated
+                    value: uniform 0
+                bottomSurface:
+                    type: calculated
+                    value: uniform 0
+                fixedEnd:
+                    type: calculated
+                    value: uniform 0
+                tractionEnd:
+                    type: calculated
+                    value: uniform 0
+                defaultFaces:
+                    type: empty
+    constant:
+        mechanicalProperties:
+            FoamFile:
+                class: dictionary
+                object: mechanicalProperties
+                <<: *FoamFile
+            rho:
+                type: uniform
+                value: 7854
+            nu:
+                type: uniform
+                value: 0.0
+            E:
+                type: uniform
+                value: 2e+11
+            planeStress: yes
+        thermalProperties:
+            FoamFile:
+                class: dictionary
+                object: thermalProperties
+                <<: *FoamFile
+            C:
+                type: uniform
+                value: 434
+            k:
+                type: uniform
+                value: 60.5
+            alpha:
+                type: uniform
+                value: 1.1e-05
+            thermalStress: no
+    system:
+        blockMeshDict:
+            FoamFile:
+                class: dictionary
+                object: blockMeshDict
+                <<: *FoamFile
+            convertToMeters: 1
+            vertices:
+                - (0 0 0)
+                - (30 0 0)
+                - (30 1 0)
+                - (0 1 0)
+                - (0 0 1)
+                - (30 0 1)
+                - (30 1 1)
+                - (0 1 1)
+            blocks:
+                - hex (0 1 2 3 4 5 6 7) (6 2 1) simpleGrading (1.0 1.0 1.0)
+            edges: []
+            boundary:
+                - topSurface:
+                  type: patch
+                  faces:
+                    - (3 7 6 2)
+                - bottomSurface:
+                  type: patch
+                  faces:
+                    - (4 0 1 5)
+                - fixedEnd:
+                  type: patch
+                  faces:
+                    - (0 4 7 3)
+                - tractionEnd:
+                  type: patch
+                  faces:
+                    - (1 2 6 5)
+            mergePatchPairs: []
+        controlDict:
+            FoamFile:
+                class: dictionary
+                object: controlDict.org
+                <<: *FoamFile
+            application: solidEquilibriumDisplacementFoam
+            startFrom: latestTime
+            startTime: 0
+            stopAt: endTime
+            endTime: 10
+            deltaT: 2e-05
+            writeControl: runTime
+            writeInterval: 0.025
+            purgeWrite: 0
+            writeFormat: ascii
+            writeCompression: off
+            timeFormat: general
+            timePrecision: 6
+            runTimeModifiable: true
+        fvSchemes:
+            FoamFile:
+                class: dictionary
+                object: fvSchemes
+                <<: *FoamFile
+            d2dt2Schemes:
+                default: steadyState
+            gradSchemes:
+                default: Gauss cubic
+            divSchemes:
+                default: Gauss cubic
+            laplacianSchemes:
+                default: Gauss linear uncorrected
+            interpolationSchemes:
+                default: cubic
+            snGradSchemes:
+                default: uncorrected
+        fvSolution:
+            FoamFile:
+                class: dictionary
+                object: fvSolution
+                <<: *FoamFile
+            solvers:
+                (D|Dcorr):
+                    solver: GAMG
+                    tolerance: 1e-06
+                    relTol: 0.99
+                    smoother: GaussSeidel
+                    nCellsInCoarsestLevel: 6
+            stressAnalysis:
+                nCorrectors: 1
+                D: 1e-10
+                accelerationFactor: 2  # lower for other Poisson ratio (e.g. 0.1 for 0.3)
