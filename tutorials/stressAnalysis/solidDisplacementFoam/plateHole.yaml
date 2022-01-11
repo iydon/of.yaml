@@ -1,0 +1,279 @@
+meta:
+    default:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+    static:
+        -
+            name: Allrun
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial run functions
+                . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+                application=$(getApplication)
+
+                runApplication blockMesh
+                runApplication $application
+                runApplication -s sigma        postProcess -func "components(sigma)"
+                runApplication -s singleGraph  postProcess -func singleGraph
+        -
+            name: Allclean
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial clean functions
+                . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+                cleanCase
+        -
+            name: system/singleGraph
+            type: text
+            data: |
+                singleGraph {
+                    start   (0 0.5 0.25);
+                    end     (0   2 0.25);
+                    fields  (sigmaxx);
+
+                    #includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
+
+                    setConfig {
+                        axis    y;
+                    }
+
+                    // Must be last entry
+                    #includeEtc "caseDicts/postProcessing/graphs/graph.cfg"
+                }
+data:
+    "0":
+        D:
+            FoamFile:
+                class: volVectorField
+                object: D
+                <<: *FoamFile
+            dimensions: "[0 1 0 0 0 0 0]"
+            internalField: uniform (0 0 0)
+            boundaryField:
+                left:
+                    type: symmetryPlane
+                right:
+                    type: tractionDisplacement
+                    traction: uniform (10000 0 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                down:
+                    type: symmetryPlane
+                up:
+                    type: tractionDisplacement
+                    traction: uniform (0 0 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                hole:
+                    type: tractionDisplacement
+                    traction: uniform (0 0 0)
+                    pressure: uniform 0
+                    value: uniform (0 0 0)
+                frontAndBack:
+                    type: empty
+        T:
+            FoamFile:
+                class: volScalarField
+                object: T
+                <<: *FoamFile
+            dimensions: "[0 0 0 1 0 0 0]"
+            internalField: uniform 300
+            boundaryField:
+                left:
+                    type: symmetryPlane
+                right:
+                    type: zeroGradient
+                down:
+                    type: symmetryPlane
+                up:
+                    type: zeroGradient
+                hole:
+                    type: zeroGradient
+                frontAndBack:
+                    type: empty
+    constant:
+        mechanicalProperties:
+            FoamFile:
+                class: dictionary
+                object: mechanicalProperties
+                <<: *FoamFile
+            rho:
+                type: uniform
+                value: 7854
+            nu:
+                type: uniform
+                value: 0.3
+            E:
+                type: uniform
+                value: 2e+11
+            planeStress: yes
+        thermalProperties:
+            FoamFile:
+                class: dictionary
+                object: thermalProperties
+                <<: *FoamFile
+            C:
+                type: uniform
+                value: 434
+            k:
+                type: uniform
+                value: 60.5
+            alpha:
+                type: uniform
+                value: 1.1e-05
+            thermalStress: no
+    system:
+        blockMeshDict:
+            FoamFile:
+                class: dictionary
+                object: blockMeshDict
+                <<: *FoamFile
+            convertToMeters: 1
+            vertices:
+                - (0.5 0 0)
+                - (1 0 0)
+                - (2 0 0)
+                - (2 0.707107 0)
+                - (0.707107 0.707107 0)
+                - (0.353553 0.353553 0)
+                - (2 2 0)
+                - (0.707107 2 0)
+                - (0 2 0)
+                - (0 1 0)
+                - (0 0.5 0)
+                - (0.5 0 0.5)
+                - (1 0 0.5)
+                - (2 0 0.5)
+                - (2 0.707107 0.5)
+                - (0.707107 0.707107 0.5)
+                - (0.353553 0.353553 0.5)
+                - (2 2 0.5)
+                - (0.707107 2 0.5)
+                - (0 2 0.5)
+                - (0 1 0.5)
+                - (0 0.5 0.5)
+            blocks:
+                - hex (5 4 9 10 16 15 20 21) (10 10 1) simpleGrading (1 1 1)
+                - hex (0 1 4 5 11 12 15 16) (10 10 1) simpleGrading (1 1 1)
+                - hex (1 2 3 4 12 13 14 15) (20 10 1) simpleGrading (1 1 1)
+                - hex (4 3 6 7 15 14 17 18) (20 20 1) simpleGrading (1 1 1)
+                - hex (9 4 7 8 20 15 18 19) (10 20 1) simpleGrading (1 1 1)
+            edges:
+                - arc 0 5 (0.469846 0.17101 0)
+                - arc 5 10 (0.17101 0.469846 0)
+                - arc 1 4 (0.939693 0.34202 0)
+                - arc 4 9 (0.34202 0.939693 0)
+                - arc 11 16 (0.469846 0.17101 0.5)
+                - arc 16 21 (0.17101 0.469846 0.5)
+                - arc 12 15 (0.939693 0.34202 0.5)
+                - arc 15 20 (0.34202 0.939693 0.5)
+            boundary:
+                - left:
+                  type: symmetryPlane
+                  faces:
+                    - (8 9 20 19)
+                    - (9 10 21 20)
+                - right:
+                  type: patch
+                  faces:
+                    - (2 3 14 13)
+                    - (3 6 17 14)
+                - down:
+                  type: symmetryPlane
+                  faces:
+                    - (0 1 12 11)
+                    - (1 2 13 12)
+                - up:
+                  type: patch
+                  faces:
+                    - (7 8 19 18)
+                    - (6 7 18 17)
+                - hole:
+                  type: patch
+                  faces:
+                    - (10 5 16 21)
+                    - (5 0 11 16)
+                - frontAndBack:
+                  type: empty
+                  faces:
+                    - (10 9 4 5)
+                    - (5 4 1 0)
+                    - (1 4 3 2)
+                    - (4 7 6 3)
+                    - (4 9 8 7)
+                    - (21 16 15 20)
+                    - (16 11 12 15)
+                    - (12 13 14 15)
+                    - (15 14 17 18)
+                    - (15 18 19 20)
+            mergePatchPairs: []
+        controlDict:
+            FoamFile:
+                class: dictionary
+                object: controlDict
+                <<: *FoamFile
+            application: solidDisplacementFoam
+            startFrom: startTime
+            startTime: 0
+            stopAt: endTime
+            endTime: 100
+            deltaT: 1
+            writeControl: timeStep
+            writeInterval: 20
+            purgeWrite: 0
+            writeFormat: ascii
+            writePrecision: 6
+            writeCompression: off
+            timeFormat: general
+            timePrecision: 6
+            graphFormat: raw
+            runTimeModifiable: true
+        fvSchemes:
+            FoamFile:
+                class: dictionary
+                object: fvSchemes
+                <<: *FoamFile
+            d2dt2Schemes:
+                default: steadyState
+            ddtSchemes:
+                default: Euler
+            gradSchemes:
+                default: leastSquares
+                grad(D): leastSquares
+                grad(T): leastSquares
+            divSchemes:
+                default: none
+                div(sigmaD): Gauss linear
+            laplacianSchemes:
+                default: none
+                laplacian(DD, D): Gauss linear corrected
+                laplacian(DT, T): Gauss linear corrected
+            interpolationSchemes:
+                default: linear
+            snGradSchemes:
+                default: none
+        fvSolution:
+            FoamFile:
+                class: dictionary
+                object: fvSolution
+                <<: *FoamFile
+            solvers:
+                (D|T):
+                    solver: GAMG
+                    tolerance: 1e-06
+                    relTol: 0.9
+                    smoother: GaussSeidel
+                    nCellsInCoarsestLevel: 20
+            stressAnalysis:
+                compactNormalStress: yes
+                nCorrectors: 1
+                D: 1e-06
