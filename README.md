@@ -1,4 +1,4 @@
-# OpenFOAM-7 Tutorials in YAML Format
+# OpenFOAM Tutorials in YAML Format
 
 | YAML | OpenFOAM | Version |
 | --- | --- | --- |
