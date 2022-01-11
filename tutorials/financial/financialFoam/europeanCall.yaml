@@ -1,0 +1,131 @@
+meta:
+    default:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+    static:
+        -
+            name: Allrun
+            type: text
+            data: |
+                #!/bin/sh
+                cd ${0%/*} || exit 1    # Run from this directory
+
+                # Source tutorial run functions
+                . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+                application=$(getApplication)
+
+                runApplication blockMesh
+                runApplication $application
+data:
+    "0":
+        V:
+            FoamFile:
+                class: volScalarField
+                object: V
+                <<: *FoamFile
+            dimensions: "[0 1 0 0 0 0 0]"
+            internalField: uniform 0
+            boundaryField:
+                lowValue:
+                    type: fixedGradient
+                    gradient: uniform 60
+                highValue:
+                    type: fixedGradient
+                    gradient: uniform 60
+                defaultFaces:
+                    type: empty
+    constant:
+        financialProperties:
+            FoamFile:
+                class: dictionary
+                object: financialProperties
+                <<: *FoamFile
+            strike: "[0 1 0 0 0 0 0] 40"
+            r: "[0 0 -1 0 0 0 0] 0.1"
+            sigma: "[0 0 -0.5 0 0 0 0] 0.2"
+            s: "[0 0 -1 0 0 0 0] 0"
+            xi: "[0 0 -0.5 0 0 0 0] 0.1"
+            eta: "[0 0 0 0 0 0 0] 0"
+    system:
+        blockMeshDict:
+            FoamFile:
+                class: dictionary
+                object: blockMeshDict
+                <<: *FoamFile
+            convertToMeters: 200
+            vertices:
+                - (0 -0.1 0)
+                - (1 -0.1 0)
+                - (1 0.1 0)
+                - (0 0.1 0)
+                - (0 -0.1 0.1)
+                - (1 -0.1 0.1)
+                - (1 0.1 0.1)
+                - (0 0.1 0.1)
+            blocks:
+                - hex (0 1 2 3 4 5 6 7) (500 1 1) simpleGrading (1 1 1)
+            edges: []
+            boundary:
+                - lowValue:
+                  type: patch
+                  faces:
+                    - (0 4 7 3)
+                - highValue:
+                  type: patch
+                  faces:
+                    - (2 6 5 1)
+            mergePatchPairs: []
+        controlDict:
+            FoamFile:
+                class: dictionary
+                object: controlDict
+                <<: *FoamFile
+            application: financialFoam
+            startFrom: startTime
+            startTime: 0
+            stopAt: endTime
+            endTime: 0.5
+            deltaT: 0.002
+            writeControl: timeStep
+            writeInterval: 50
+            purgeWrite: 0
+            writeFormat: ascii
+            writePrecision: 6
+            writeCompression: off
+            timeFormat: general
+            timePrecision: 6
+            runTimeModifiable: true
+            graphFormat: raw
+        fvSchemes:
+            FoamFile:
+                class: dictionary
+                object: fvSchemes
+                <<: *FoamFile
+            ddtSchemes:
+                default: Euler
+            gradSchemes:
+                default: Gauss linear
+                grad(V): Gauss linear
+            divSchemes:
+                default: none
+                div(phi, V): Gauss linear
+            laplacianSchemes:
+                default: none
+                laplacian(DV, V): Gauss linear corrected
+            interpolationSchemes:
+                default: linear
+            snGradSchemes:
+                default: corrected
+        fvSolution:
+            FoamFile:
+                class: dictionary
+                object: fvSolution
+                <<: *FoamFile
+            solvers:
+                V:
+                    solver: PBiCGStab
+                    preconditioner: DILU
+                    tolerance: 1e-05
+                    relTol: 0
