@@ -1,3 +1,4 @@
+#!/usr/bin/env poetry run python
 import json
 import pathlib as p
 import shutil
