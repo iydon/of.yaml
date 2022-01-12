@@ -294,8 +294,7 @@ data:
                             b: 1.5
                             mu: 0.1
                             cohesionEnergyDensity: 0
-            cloudFunctions:
-                "": ""
+            cloudFunctions: {}
         transportProperties:
             FoamFile:
                 class: dictionary
@@ -385,7 +384,8 @@ data:
                 delta: 0.001
                 order: xyz
             manualCoeffs:
-                dataFile: ""
+                dataFile: >
+                    ""
             distributed: no
             roots: []
         fvSchemes:
@@ -408,5 +408,4 @@ data:
                 class: dictionary
                 object: fvSolution
                 <<: *FoamFile
-            solvers:
-                "": ""
+            solvers: {}

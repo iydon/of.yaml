@@ -269,7 +269,8 @@ data:
                 delta: 0.001
                 prder: xyz
             manualCoeffs:
-                dataFile: ""
+                dataFile: >
+                    ""
             distributed: no
             roots: []
         fvSchemes:
