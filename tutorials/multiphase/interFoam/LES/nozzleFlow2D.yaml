@@ -1,0 +1,458 @@
+---
+openfoam: 7
+version: 0.3
+order:
+    - meta
+    - foam
+    - static
+---
+"0":
+    alpha.fuel:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: alpha.fuel
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: fixedValue
+                value: uniform 1
+            walls:
+                type: zeroGradient
+            atmosphere:
+                type: inletOutlet
+                inletValue: uniform 0
+                value: uniform 0
+            front:
+                type: wedge
+            back:
+                type: wedge
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 1e-11
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: fixedValue
+                value: uniform 1e-05
+            walls:
+                type: fixedValue
+                value: uniform 1e-11
+            atmosphere:
+                type: inletOutlet
+                inletValue: uniform 0.001
+                value: uniform 1e-11
+            front:
+                type: wedge
+            back:
+                type: wedge
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 1e-11
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: zeroGradient
+            walls:
+                type: zeroGradient
+            atmosphere:
+                type: zeroGradient
+            front:
+                type: wedge
+            back:
+                type: wedge
+    nuTilda:
+        FoamFile:
+            class: volScalarField
+            object: nuTilda
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: fixedValue
+                value: uniform 0
+            walls:
+                type: fixedValue
+                value: uniform 0
+            atmosphere:
+                type: inletOutlet
+                inletValue: uniform 0
+                value: uniform 0
+            front:
+                type: wedge
+            back:
+                type: wedge
+    p_rgh:
+        FoamFile:
+            class: volScalarField
+            object: p_rgh
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: zeroGradient
+            walls:
+                type: zeroGradient
+            atmosphere:
+                type: totalPressure
+                p0: uniform 0
+            front:
+                type: wedge
+            back:
+                type: wedge
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            axis:
+                type: empty
+            inlet:
+                type: fixedValue
+                value: uniform (460 0 0)
+            walls:
+                type: noSlip
+            atmosphere:
+                type: pressureInletOutletVelocity
+                value: uniform (0 0 0)
+            front:
+                type: wedge
+            back:
+                type: wedge
+constant:
+    g:
+        FoamFile:
+            class: uniformDimensionedVectorField
+            object: g
+            <<: *FoamFile
+        dimensions: "[0 1 -2 0 0 0 0]"
+        value: (0 0 0)
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        phases: (fuel air)
+        fuel:
+            transportModel: Newtonian
+            nu: 5.952e-06
+            rho: 840
+        air:
+            transportModel: Newtonian
+            nu: 8.5e-07
+            rho: 20
+        sigma: 0.0261
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: LES
+        LES:
+            LESModel: kEqn
+            turbulence: on
+            printCoeffs: on
+            delta: smooth
+            cubeRootVolCoeffs:
+                deltaCoeff: 1
+            PrandtlCoeffs:
+                delta: cubeRootVol
+                cubeRootVolCoeffs:
+                    deltaCoeff: 1
+                smoothCoeffs:
+                    delta: cubeRootVol
+                    cubeRootVolCoeffs:
+                        deltaCoeff: 1
+                    maxDeltaRatio: 1.1
+                Cdelta: 0.158
+            vanDriestCoeffs:
+                delta: cubeRootVol
+                cubeRootVolCoeffs:
+                    deltaCoeff: 1
+                smoothCoeffs:
+                    delta: cubeRootVol
+                    cubeRootVolCoeffs:
+                        deltaCoeff: 1
+                    maxDeltaRatio: 1.1
+                Aplus: 26
+                Cdelta: 0.158
+            smoothCoeffs:
+                delta: cubeRootVol
+                cubeRootVolCoeffs:
+                    deltaCoeff: 1
+                maxDeltaRatio: 1.1
+system:
+    blockMeshDict:
+        FoamFile:
+            class: dictionary
+            object: blockMeshDict
+            <<: *FoamFile
+        convertToMeters: 1e-06
+        vertices:
+            - (0 0 0)
+            - (3000 0 0)
+            - (0 100 -4.36609429085)
+            - (3000 300 -13.0982828726)
+            - (0 400 -17.4643771634)
+            - (3000 700 -30.562660036)
+            - (0 800 -34.9287543268)
+            - (3000 1000 -43.6609429085)
+            - (0 1600 -69.8575086536)
+            - (3000 1600 -69.8575086536)
+
+            - (0 100 4.36609429085)
+            - (3000 300 13.0982828726)
+            - (0 400 17.4643771634)
+            - (3000 700 30.562660036)
+            - (0 800 34.9287543268)
+            - (3000 1000 43.6609429085)
+            - (0 1600 69.8575086536)
+            - (3000 1600 69.8575086536)
+        blocks:
+            - hex (0 1 3 2 0 1 11 10) (75 30 1) edgeGrading (1 1 1 1 0.1666667 1 1 0.1666667 1 1 1 1)
+            - hex (2 3 5 4 10 11 13 12) (75 40 1) edgeGrading (1 1 1 1 20 1 1 20 1 1 1 1)
+            - hex (4 5 7 6 12 13 15 14) (75 15 1) simpleGrading (1.0 1.0 1.0)
+            - hex (6 7 9 8 14 15 17 16) (75 15 1) simpleGrading (1.0 1.0 1.0)
+        edges: []
+        boundary:
+            - axis:
+              type: empty
+              faces:
+                - (0 1 1 0)
+            - inlet:
+              type: patch
+              faces:
+                - (0 0 10 2)
+            - walls:
+              type: wall
+              faces:
+                - (2 10 12 4)
+                - (4 12 14 6)
+                - (6 14 16 8)
+            - atmosphere:
+              type: patch
+              faces:
+                - (8 16 17 9)
+                - (7 9 17 15)
+                - (5 7 15 13)
+                - (3 5 13 11)
+                - (1 3 11 1)
+            - front:
+              type: wedge
+              faces:
+                - (0 1 11 10)
+                - (10 11 13 12)
+                - (12 13 15 14)
+                - (14 15 17 16)
+            - back:
+              type: wedge
+              faces:
+                - (0 2 3 1)
+                - (2 4 5 3)
+                - (4 6 7 5)
+                - (6 8 9 7)
+        mergePatchPairs: []
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: interFoam
+        startFrom: latestTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 4e-05
+        deltaT: 1e-08
+        writeControl: adjustableRunTime
+        writeInterval: 1e-06
+        purgeWrite: 0
+        writeFormat: binary
+        writePrecision: 8
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 0.5
+        maxAlphaCo: 0.5
+        maxDeltaT: 1e-08
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            div(rhoPhi, U): Gauss linear
+            div(phi, alpha): Gauss vanLeer
+            div(phirb, alpha): Gauss linear
+            div(phi, k): Gauss limitedLinear 1
+            div(phi, B): Gauss limitedLinear 1
+            div(B): Gauss linear
+            div(phi, nuTilda): Gauss limitedLinear 1
+            div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            alpha.fuel:
+                nAlphaCorr: 1
+                nAlphaSubCycles: 4
+                cAlpha: 1
+            pcorr.*:
+                solver: PCG
+                preconditioner:
+                    preconditioner: GAMG
+                    tolerance: 1e-05
+                    relTol: 0
+                    smoother: DICGaussSeidel
+                tolerance: 1e-05
+                relTol: 0
+                maxIter: 100
+            p_rgh:
+                solver: GAMG
+                tolerance: 1e-07
+                relTol: 0.01
+                smoother: DIC
+            p_rghFinal:
+                solver: PCG
+                preconditioner:
+                    preconditioner: GAMG
+                    tolerance: 1e-07
+                    relTol: 0
+                    nVcycles: 2
+                    smoother: DICGaussSeidel
+                    nPreSweeps: 2
+                tolerance: 1e-07
+                relTol: 0
+                maxIter: 20
+            (U|k):
+                solver: smoothSolver
+                smoother: GaussSeidel
+                tolerance: 1e-06
+                relTol: 0.1
+                nSweeps: 1
+            (U|k)Final:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-08
+                relTol: 0
+        PIMPLE:
+            momentumPredictor: no
+            nCorrectors: 2
+            nNonOrthogonalCorrectors: 1
+    refineMeshDict:
+        FoamFile:
+            class: dictionary
+            object: refineMeshDict
+            <<: *FoamFile
+        set: c0
+        coordinateSystem: global
+        globalCoeffs:
+            tan1: (1 0 0)
+            tan2: (0 1 0)
+        patchLocalCoeffs:
+            patch: outside
+            tan1: (1 0 0)
+        directions: ( tan1 )
+        useHexTopology: no
+        geometricCut: yes
+        writeMesh: no
+    topoSetDict.1:
+        FoamFile:
+            class: dictionary
+            object: topoSetDict
+            <<: *FoamFile
+        actions:
+            -
+                name: c0
+                type: cellSet
+                action: new
+                source: boxToCell
+                sourceInfo:
+                    box: (0 0 -2e-05) (0.0036 0.0008 4e-05)
+    topoSetDict.2:
+        FoamFile:
+            class: dictionary
+            object: topoSetDict
+            <<: *FoamFile
+        actions:
+            -
+                name: c0
+                type: cellSet
+                action: new
+                source: boxToCell
+                sourceInfo:
+                    box: (0 0 -2e-05) (0.0036 0.0003 2e-05)
+---
+-
+    name: Allrun
+    type: [embed, text]
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        # Get application name
+        application=$(getApplication)
+
+        runApplication blockMesh
+
+        for i in 1 2
+        do
+            runApplication -s $i \
+                topoSet -dict system/topoSetDict.${i}
+
+            runApplication -s $i \
+                refineMesh -dict system/refineMeshDict -overwrite
+        done
+
+        runApplication $application
+-
+    name: Allclean
+    type: [embed, text]
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial clean functions
+        . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+        cleanCase
+        rm system/topoSetDict > /dev/null 2>&1
