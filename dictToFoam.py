@@ -147,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('inputs', nargs='*', help='YAML format files')
     parser.add_argument('-o', '--output', nargs='?', default='.', help='Destination directory')
     args = parser.parse_args()
+
     directory = p.Path(args.output)
     for path in map(p.Path, args.inputs):
         Foam.from_(path, dest=directory/path.stem).save()

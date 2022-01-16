@@ -15,6 +15,7 @@ class test:
 
     @classmethod
     def dict2foam(cls):
+        assert Foam is not None
         for directory in cls.tutorials.glob('**/*'):
             if directory.is_dir():
                 for path in directory.iterdir():
@@ -28,10 +29,11 @@ class test:
     def alltest(cls):
         directories = []
         for directory in cls.test.iterdir():
-            ret = os.system(f'cd {directory} && ./Allrun')
-            if ret != 0:
-                directories.append(directory)
-                print('Error:', directory.name)
+            if directory.is_dir():
+                ret = os.system(f'cd {directory} && ./Allrun')
+                if ret != 0:
+                    directories.append(directory)
+                    print('Error:', directory.name)
         print('Errors:', directories)
 
 
