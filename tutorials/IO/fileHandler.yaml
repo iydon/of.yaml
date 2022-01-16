@@ -326,7 +326,7 @@ system:
         runParallel -s uncollated $application -fileHandler uncollated
 
         #- Test uncollated+distributed running: copy to different roots
-        rm -rf machineA/fileHandler
+        # rm -rf machineA/fileHandler
         mkdir -p machineA/fileHandler
         (   cd machineA/fileHandler && \
             cp -r ../../processor[0-1] . && \
@@ -335,7 +335,7 @@ system:
         )
 
         #- Note: slave node does not need constant&system since these are global
-        rm -rf machineB/fileHandler
+        # rm -rf machineB/fileHandler
         mkdir -p machineB/fileHandler
         (   cd machineB/fileHandler && \
             cp -r ../../processor[2-3] .
@@ -380,7 +380,7 @@ system:
         runApplication -s collated decomposePar \
             -fileHandler collated -force -copyUniform
 
-        rm -rf machineA/fileHandler
+        # rm -rf machineA/fileHandler
         mkdir -p machineA/fileHandler
         (   cd machineA/fileHandler && \
             cp -r ../../processor* . && \
@@ -388,7 +388,7 @@ system:
             mkdir -p constant && cp ../../constant/* constant
         )
         #- Note: slave node does not need constant&system since these are global
-        rm -rf machineB/fileHandler
+        # rm -rf machineB/fileHandler
         mkdir -p machineB/fileHandler
 
         #- Run with different roots
