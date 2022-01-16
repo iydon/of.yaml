@@ -9,6 +9,7 @@
         "*.lock": "toml",
         "*.md": "markdown",
         "*.py": "python",
+        "*.rs": "rust",
         "*.toml": "toml",
         "*.yaml": "yaml",
         "*": "OpenFOAM"
