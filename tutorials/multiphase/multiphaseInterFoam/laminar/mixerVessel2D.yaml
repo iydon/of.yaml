@@ -1,0 +1,378 @@
+---
+openfoam: 7
+version: 0.3
+order:
+    - meta
+    - foam
+    - static
+---
+"0":
+    alpha.air.orig:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: alpha.air
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+    alpha.mercury.orig:
+        FoamFile:
+            class: volScalarField
+            object: alpha.mercury
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+    alpha.oil.orig:
+        FoamFile:
+            class: volScalarField
+            object: alpha.oil
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+    alpha.water.orig:
+        FoamFile:
+            class: volScalarField
+            object: alpha.water
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+    p_rgh:
+        FoamFile:
+            class: volScalarField
+            object: p_rgh
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            rotor:
+                type: noSlip
+            stator:
+                type: noSlip
+            front:
+                type: empty
+            back:
+                type: empty
+constant:
+    g:
+        FoamFile:
+            class: uniformDimensionedVectorField
+            object: g
+            <<: *FoamFile
+        dimensions: "[0 1 -2 0 0 0 0]"
+        value: (0 0 0)
+    MRFProperties:
+        FoamFile:
+            class: MRFProperties
+            object: g
+            <<: *FoamFile
+        MRF1:
+            cellZone: rotor
+            active: yes
+            # Fixed patches (by default they 'move' with the MRF zone)
+            nonRotatingPatches: ()
+            origin: (0 0 0)
+            axis: (0 0 1)
+            omega: constant 6.2831853
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        phases:
+            - water:
+              transportModel: Newtonian
+              nu: "[0 2 -1 0 0 0 0] 1e-06"
+              rho: "[1 -3 0 0 0 0 0] 1000"
+            - oil:
+              transportModel: Newtonian
+              nu: "[0 2 -1 0 0 0 0] 1e-06"
+              rho: "[1 -3 0 0 0 0 0] 500"
+            - mercury:
+              transportModel: Newtonian
+              nu: "[0 2 -1 0 0 0 0] 1.125e-07"
+              rho: "[1 -3 0 0 0 0 0] 13529"
+            - air:
+              transportModel: Newtonian
+              nu: "[0 2 -1 0 0 0 0] 1.48e-05"
+              rho: "[1 -3 0 0 0 0 0] 1"
+        sigmas:
+            - (air water) 0.07
+            - (air oil) 0.07
+            - (air mercury) 0.07
+            - (water oil) 0.07
+            - (water mercury) 0.07
+            - (oil mercury) 0.07
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: laminar
+system:
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: multiphaseInterFoam
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 4
+        deltaT: 1e-3
+        writeControl: adjustableRunTime
+        writeInterval: 0.125
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 0.5
+        maxAlphaCo: 0.5
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            div(rhoPhi, U): Gauss limitedLinearV 1
+            div(phi, alpha): Gauss vanLeer
+            div(phirb, alpha): Gauss linear
+            div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            alpha.*:
+                nAlphaCorr: 4
+                nAlphaSubCycles: 4
+                cAlpha: 1
+            pcorr.*:
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-10
+                relTol: 0
+            p_rgh:
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-07
+                relTol: 0.05
+            p_rghFinal:
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-07
+                relTol: 0
+            U:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-06
+                relTol: 0
+        PIMPLE:
+            momentumPredictor: no
+            nCorrectors: 4
+            nNonOrthogonalCorrectors: 0
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            equations:
+                .*: 1
+    setFieldsDict:
+        FoamFile:
+            class: dictionary
+            object: setFieldsDict
+            <<: *FoamFile
+        defaultFieldValues:
+            - volScalarFieldValue alpha.air 1
+            - volScalarFieldValue alpha.water 0
+            - volScalarFieldValue alpha.oil 0
+            - volScalarFieldValue alpha.mercury 0
+        regions:
+            - boxToCell:
+              box: (0 0 -1) (1 1 1)
+              fieldValues:
+                - volScalarFieldValue alpha.water 1
+                - volScalarFieldValue alpha.oil 0
+                - volScalarFieldValue alpha.mercury 0
+                - volScalarFieldValue alpha.air 0
+            - boxToCell:
+              box: (0 -1 -1) (1 0 1)
+              fieldValues:
+                - volScalarFieldValue alpha.water 0
+                - volScalarFieldValue alpha.oil 1
+                - volScalarFieldValue alpha.mercury 0
+                - volScalarFieldValue alpha.air 0
+            - boxToCell:
+              box: (-1 -1 -1) (0 0 1)
+              fieldValues:
+                - volScalarFieldValue alpha.water 0
+                - volScalarFieldValue alpha.oil 0
+                - volScalarFieldValue alpha.mercury 1
+                - volScalarFieldValue alpha.air 0
+    topoSetDict:
+        FoamFile:
+            class: dictionary
+            object: topoSetDict
+            <<: *FoamFile
+        actions:
+            -
+                name: rotor
+                type: cellSet
+                action: new
+                source: zoneToCell
+                sourceInfo:
+                    name: rotor
+---
+-
+    name: Allrun
+    type: [embed, text]
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        application=$(getApplication)
+
+        runApplication ./makeMesh
+        runApplication setFields
+        runApplication $application
+-
+    name: Allclean
+    type: [embed, text]
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial clean functions
+        . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+        cleanVoFCase
+-
+    name: makeMesh
+    type: [embed, text]
+    data: |
+        #!/bin/sh
+
+        m4 < system/blockMeshDict.m4 > system/blockMeshDict
+        blockMesh
+        topoSet
+        setsToZones -noFlipMap
+-
+    name: system/blockMeshDict.m4
+    type: [embed, 7z]
+    data: !!binary |
+        N3q8ryccAARPIknBrgkAAAAAAABqAAAAAAAAAOUx1VbgTScJpl0AF4qCFKj5AG+U3trgcUxDtybp
+        KRu1DJLsDevm/7GVRmJE5X1tnO+gAdQZCyFFgWioGXYAFzEi7k2gCuj8LTLIWtxTTYCH+Q13mk68
+        HeN+Fv2i7B6IoBLVEjAnk/ZIEDsqJLLNgnrjNr/kSwAKQ7MGEknRYR2/wKjEdynLMihGI1G6MTw6
+        mVo6ss2qgeqStHSJk++KwP1ZcDbo5vg+mDq2rKJSTcYFo1XVu6jpdhiZGFWYK8R+LXME73SaRemP
+        zrlrPZOx5Mv1mRk2OoMyWJf273u/S1EJSzpMvoS/mSxQhVedX8D/UHaJM1M+O6aQTH22y9ZlM+Sv
+        t1cwIXuPGmIv+fhX31JJNONT4FpIqT85CfC30gZPEModMVszoEJKYe/GURHid2W3G1Y+rJjJI5Sm
+        llKqEZIugGIsky+Wxr8Hg6wjdRyLIh2KdGFbFcTFj+fy0v3eT8aikhYwxxWENd+XNMNIzFp/LK0y
+        WzMqKhilZFvXKjIg752HIj9EhLpF+l5XnT5QcFhgJHA2JwWT4HLbZWkdcbBP1lTOnEmvr7dvy1xJ
+        hYm1SYka6akbB4bdwX/CGu4LkitHQUaW1m88hIUORrWwbG14plwHQGQtOE6LwKjhtjtZzO3LMEm5
+        HmXA0PzK4TaM5kbcWfOPg8sxf9hMzntQXoxakmmqf7NHRhpo1JZQCmKmwGFsrYg0c0lSWh/zZGR1
+        BN8/uDNrkK9+tCJ6l4KDUMMqtkR3Js5Ossqh/0YnoTBQ8z+v08W1HPxvaHrlSFxT8A9tzxq+l6Cc
+        2UHF/FBoTmw/8Xzi+Gp106GLaaQ6EyHPUYjg1UMgmP6rimgyX+38/NAhfSpZ3MxNuioiPIug9QWQ
+        Ec1qzsgbGqghMwOPnnaHhIfCoxj3IRjmUKoNY0yLrTQI1ufPhQLY8ixpNuzFiJJez2/KbvO9qNxv
+        N1wwKYZj/4QcT9b9GBHtA91LAPqmiUrRge3Cz/3B7WhIkWCUlwq6q5FvSAjnXzXFOStqlL0y7JiV
+        5ZJq7Rw3DIqhZsaId3auzooP0vi6U1nqCkzxZTqwsWh7P3Mib1ZQ3VWd66Q4ttwLEdl0yX/2uo0P
+        ewRZxCQUW1YXucSB2YeJtLcyUFQN7+wIJSycNbAj+GXiNICY+y216fa0sIuT7uma0gX47XMDJmgM
+        +g/xfJcdH99G0Tq3rHFtlr2XsBJWwfg3aeJM3ReW/5JTm2GBijfGsQviVta2fl7w3emRupvfc+0i
+        aRsGlsu3vSceSbDhq3Ptnrf/TXETCAWYXOko77MHXJshzDYVd+QDR1GTWizGw5d6TeD0/VV0M2yW
+        gR4QgrzTHHPnWcML8E4h5bBTweyYPw1BxlV61JHlgUch69EvhvzshY1XON1moG4UyZBdzLc7q99z
+        RZ7w2C3FL6bqpclxryIAHwSiBJuXaPl2RWRH4sNz66VhVCBAK8+kgafLoc9UvES5rYT2bhSdAcRA
+        MQjUpEwFle6xTGEai9g0jf8WOFfKP+TUAsiRU+kB5i3AAwTKSmwxqeRZ6kbfwFG7TsOv0yEdV60Y
+        YFRkpgxD9Px+82gCqq8ifx6+T2Fo6mOVlBMsb8C98QRGc52m4N48yM246q2AJd3JCHhGWGzKpfLA
+        CWyeY01YP9cFIjtxfMCZop85zNioZWH4hrQozwKwbIoJElhRG1qI9qcm3c3BAlqXG+Al5OwIevnu
+        39OnfjmGsE6ZFdmj4LOT2GKyi/ulvH/Ibt557MRznlxkgEGJH5ymvfbCGm8w7KRxnBt86OQi4l09
+        ktER/AlusfFQyzjNFokV22N01PRYzttYlKAyGKUzI8b3MuhQw9yJNAs0gPbBodBAJy4kASOtLqv2
+        0n2wR3QacSXxQOPzST1u80lXDsE95QBeUQEAM8899/OwFI1a9bjGYbZ+ivsreGl0nKeD2ET/NimK
+        E1teOqDmpmOaku7gtIyzk7IyeS/d5NO610RAaltCIPjTyuIk7GYJEAdwnWjXrisEGdfT/4scTHVV
+        vS3mte5RUcu5F57BYXMXwDpQYU4mLMcrMupta3zVGTLQOAGo7M0Pfs9JCtDKdn/zwKqkUgEYhJu0
+        3z2XVAlaSarJaB88syF2tn5tsEpp0laibhus9KMCdr7uZfYw0JxVtrK6HdinCfZulzAlyGZ0l+ud
+        hC4m0F9/mC/d/N5NMZmBNglxGKy+I30XsYho6isoe92zH+luJyPAQhXDdCEwB8LBgFmqSnNEG9JW
+        ir9QvvCOtlOXwenQL7petqmqFYpuZJhPBsMLgeFDA9VGbWp5lAKkpM3HYw0TRvO0kMRz6y8oJLRP
+        GPx1t0BdWooQpuYzvxDAhe/W5HiGvb2C9QPXZsiOEqmJ3PTICTAOlMgV1n65COaZHRRaTo5Pj+UF
+        aunZ1IYRz9F4dFdvgHUdPFpLmk7tldxfK8t1af5xw07mMWz7sFu/1tV19jBOAxZtNAeDXUouBGER
+        7y1xlKODvVDiphjwlMBcZ4MCXp6MK5jP473o+txrItwuDFto7i+NeLnM0iMPq51pPIyd3R+ucoKj
+        B0U/RVAb82FMKXrY6NC0n2W9yE3yu4pMlLzGVs4t+vjY/y/h8ln/75HJT/4143HWxk+a0uW3kCV8
+        8r768pXc1cGC23hEuAFtD7QJJJT7bFYKrKVfe6tTPOeJ/OWVcwhmQydNLeXvonSdea1xY1aFLN7D
+        PQKc2g6ThCPQjtzq90Je1WIrDQWRF15kX4t6GB0zvyvEdaqYqwBq2YfFUELE49gELz+Y+REdIGnr
+        AWUhWZuHNDkSijgthCXFHnN74rd+h0X4EqtVqDfTdPNXVGG8VzVOLofD1DYB6QvDgHGrcqHzW0VB
+        u0DONT2GXZTgibM89zV2v8HFLdcfXsT0lbx+rI7vZ6gvda24v1m+U4NCWMrP+jmLPDrbLBSrRT+k
+        eE1VSHRXP6GJomMD6sSIDsyJQnahJUCMJDSg5nDycIMtv1Fu8opavD/M4Fjg7eeszDQkUy5J0KyR
+        0fuR5ANMYNmA1KQVyqb24Mob6KXyojF7kPqN9HyqJkyyJXGQpoCZ8WoVwnDOI1P9Yt8HEY3zXzbc
+        0VjuhMFMeRXQ1gEFzu0E451ZMIJaIPCrxnmc5MOeHlMLeS7JwHkRC/rz8STKpUQkcDMKR3rlxm4g
+        yxw6ZyBwM2bW9QnA4K2gg3mdo0tRCro11JDfalZpvfm8Kd4ecoGGcFbTEKU/xgtj2ZKghGpzoBZF
+        taSnsvI2Pg/8qbvJJs256r4+Toe1yfr5S5BTIWus/BJw2fPRY1D37I0SrzonvfqfPaAZBOLeun1i
+        iwABBAYAAQmJrgAHCwEAASEhAQUMwChNAAgKAcws+NwAAAUBGQkAAAAAAAAAAAARIwBiAGwAbwBj
+        AGsATQBlAHMAaABEAGkAYwB0AC4AbQA0AAAAGQAUCgEAnBOwwNMK2AEVBgEAIAAAAAAA
