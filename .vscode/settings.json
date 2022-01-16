@@ -2,8 +2,9 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "files.associations": {
-        "All*": "makefile",
+        ".gitignore": "ignore",
         "LICENSE": "plaintext",
+        "All*": "makefile",
         "*.json": "jsonc",
         "*.lock": "toml",
         "*.md": "markdown",
