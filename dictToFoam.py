@@ -1,4 +1,5 @@
 #!/usr/bin/env poetry run python
+import io
 import json
 import pathlib as p
 import shutil
@@ -9,25 +10,28 @@ import yaml
 
 
 Dict = t.Dict[str, t.Any]
+List = t.List[Dict]
 
 
 class Foam:
-    '''Convert dictionary type data to OpenFOAM test case'''
-    def __init__(self, data: Dict, root: p.Path, dest: p.Path) -> None:
-        self._dict = data
+    '''Convert multiple dictionary type data to OpenFOAM test case'''
+    def __init__(self, data: List, root: p.Path, dest: p.Path) -> None:
+        self._list = data
         self._root = root
         self._dest = dest
+
+    def __getitem__(self, key: str) -> t.Optional[Dict]:
+        try:
+            return self._list[self.meta['order'].index(key)]
+        except ValueError:
+            return None
 
     def __repr__(self) -> str:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @property
-    def data(self) -> Dict:
-        return self._dict['data']
-
-    @property
     def meta(self) -> Dict:
-        return self._dict['meta']
+        return self._list[0]
 
     @classmethod
     def from_(
@@ -37,7 +41,7 @@ class Foam:
         '''Supported format: json, yaml'''
         for suffixes, method in [
             ({'.json'}, lambda text: json.lodas(text)),
-            ({'.yaml', '.yml'}, lambda text: yaml.load(text, Loader=yaml.SafeLoader))
+            ({'.yaml', '.yml'}, lambda text: list(yaml.load_all(text, Loader=yaml.SafeLoader)))
         ]:
             if path.suffix in suffixes:
                 data = method(path.read_text('utf-8'))
@@ -46,37 +50,47 @@ class Foam:
 
     def save(self) -> None:
         self._dest.mkdir(parents=True, exist_ok=True)
+        self._save_foam()
         self._save_static()
-        self._save_data()
 
     def _write(self, path: p.Path, string: str) -> None:
         with open(path, 'w', encoding='utf-8', newline='\n') as f:  # CRLF -> LF
             f.write(string)
 
     def _save_static(self) -> None:
-        for static in self.meta.get('static', []):
+        for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
-            in_ = self._root / static['data']
             out = self._dest / static['name']
             out.parent.mkdir(parents=True, exist_ok=True)
-            if static['type'] == 'text':
-                self._write(out, static['data'])
-            elif static['type'] == 'path':
-                if in_.is_dir():
-                    shutil.copytree(in_, out, dirs_exist_ok=True)
-                elif in_.is_file():
-                    shutil.copyfile(in_, out)
-                else:
-                    raise Exception('Target is neither a file nor a directory')
-            elif static['type'] == '7z':
-                with py7zr.SevenZipFile(in_, mode='r') as z:
-                    z.extractall(path=out.parent)
-            else:
-                raise Exception(f'Unknown type "{static["type"]}"')
+            if static['type'][0] == 'embed':
+                if static['type'][1] == 'text':
+                    self._write(out, static['data'])
+                    continue
+                elif static['type'][1] == 'binary':
+                    out.write_bytes(static['data'])
+                    continue
+                elif static['type'][1] == '7z':
+                    with py7zr.SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
+                        z.extractall(path=out.parent)
+                    continue
+            elif static['type'][0] == 'path':
+                in_ = self._root / static['data']
+                if static['type'][1] == 'raw':
+                    if in_.is_dir():
+                        shutil.copytree(in_, out, dirs_exist_ok=True)
+                    elif in_.is_file():
+                        shutil.copyfile(in_, out)
+                    else:
+                        raise Exception('Target is neither a file nor a directory')
+                    continue
+                elif static['type'][1] == '7z':
+                    with py7zr.SevenZipFile(in_, mode='r') as z:
+                        z.extractall(path=out.parent)
+                    continue
+            raise Exception(f'Unknown types "{static["type"]}"')
 
-    def _save_data(self) -> None:
-        global data
-        for keys, data in self._extract_file_recursively(self.data):
+    def _save_foam(self) -> None:
+        for keys, data in self._extract_file_recursively(self['foam'] or {}):
             path = self._dest / p.Path(*map(str, keys))
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self._convert_dict_recursively(data)))
