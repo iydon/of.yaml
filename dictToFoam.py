@@ -15,10 +15,9 @@ List = t.List[Dict]
 
 class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case'''
-    def __init__(self, data: List, root: p.Path, dest: p.Path) -> None:
+    def __init__(self, data: List, root: p.Path) -> None:
         self._list = data
         self._root = root
-        self._dest = dest
 
     def __getitem__(self, key: str) -> t.Optional[Dict]:
         try:
@@ -34,33 +33,29 @@ class Foam:
         return self._list[0]
 
     @classmethod
-    def from_(
-        cls,
-        path: p.Path, dest: t.Optional[p.Path] = None,
-    ) -> 'Foam':
+    def from_(cls, path: p.Path) -> 'Foam':
         '''Supported format: json, yaml'''
         for suffixes, method in [
             ({'.json'}, lambda text: json.lodas(text)),
             ({'.yaml', '.yml'}, lambda text: list(yaml.load_all(text, Loader=yaml.SafeLoader)))
         ]:
             if path.suffix in suffixes:
-                data = method(path.read_text('utf-8'))
-                return cls(data, path.parent, dest or path.parent/path.stem)
+                return cls(method(path.read_text('utf-8')), path.parent)
         raise Exception(f'Suffix "{path.suffix}" not supported')
 
-    def save(self) -> None:
-        self._dest.mkdir(parents=True, exist_ok=True)
-        self._save_foam()
-        self._save_static()
+    def save(self, dest: p.Path) -> None:
+        dest.mkdir(parents=True, exist_ok=True)
+        self._save_foam(dest)
+        self._save_static(dest)
 
     def _write(self, path: p.Path, string: str) -> None:
         with open(path, 'w', encoding='utf-8', newline='\n') as f:  # CRLF -> LF
             f.write(string)
 
-    def _save_static(self) -> None:
+    def _save_static(self, dest: p.Path) -> None:
         for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
-            out = self._dest / static['name']
+            out = dest / static['name']
             out.parent.mkdir(parents=True, exist_ok=True)
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
@@ -89,9 +84,9 @@ class Foam:
                     continue
             raise Exception(f'Unknown types "{static["type"]}"')
 
-    def _save_foam(self) -> None:
+    def _save_foam(self, dest: p.Path) -> None:
         for keys, data in self._extract_file_recursively(self['foam'] or {}):
-            path = self._dest / p.Path(*map(str, keys))
+            path = dest / p.Path(*map(str, keys))
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self._convert_dict_recursively(data)))
 
@@ -150,4 +145,4 @@ if __name__ == '__main__':
 
     directory = p.Path(args.output)
     for path in map(p.Path, args.inputs):
-        Foam.from_(path, dest=directory/path.stem).save()
+        Foam.from_(path).save(directory/path.stem)
