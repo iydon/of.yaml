@@ -23,7 +23,7 @@ class test:
                         name = '_'.join(path.relative_to(cls.tutorials).parts)
                         dest = cls.test / name
                         if not dest.exists():
-                            Foam.from_(path).save(cls.test/name)
+                            Foam.from_file(path).save(cls.test/name)
 
     @classmethod
     def alltest(cls):

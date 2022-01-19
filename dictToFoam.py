@@ -33,15 +33,25 @@ class Foam:
         return self._list[0]
 
     @classmethod
-    def from_(cls, path: p.Path) -> 'Foam':
+    def from_file(cls, path: p.Path) -> 'Foam':
         '''Supported format: json, yaml'''
         for suffixes, method in [
-            ({'.json'}, lambda text: json.lodas(text)),
-            ({'.yaml', '.yml'}, lambda text: list(yaml.load_all(text, Loader=yaml.SafeLoader)))
+            ({'.json'}, cls.from_json),
+            ({'.yaml', '.yml'}, cls.from_yaml),
         ]:
             if path.suffix in suffixes:
-                return cls(method(path.read_text('utf-8')), path.parent)
+                return method(path.read_text('utf-8'), path.parent)
         raise Exception(f'Suffix "{path.suffix}" not supported')
+
+    @classmethod
+    def from_json(cls, text: str, root: p.Path) -> 'Foam':
+        data = json.loads(text)
+        return cls(data, root)
+
+    @classmethod
+    def from_yaml(cls, text: str, root: p.Path) -> 'Foam':
+        data = list(yaml.load_all(text, Loader=yaml.SafeLoader))
+        return cls(data, root)
 
     def save(self, dest: p.Path) -> None:
         dest.mkdir(parents=True, exist_ok=True)
@@ -145,4 +155,4 @@ if __name__ == '__main__':
 
     directory = p.Path(args.output)
     for path in map(p.Path, args.inputs):
-        Foam.from_(path).save(directory/path.stem)
+        Foam.from_file(path).save(directory/path.stem)
