@@ -7,12 +7,10 @@ import pathlib as p
 import shutil
 import typing as t
 
-import py7zr
-import yaml
-
 
 Dict = t.Dict[str, t.Any]
 List = t.List[Dict]
+Path = t.Union[str, p.Path]
 
 
 class Foam:
@@ -20,9 +18,9 @@ class Foam:
 
     __version__ = '0.3.0'
 
-    def __init__(self, data: List, root: p.Path) -> None:
+    def __init__(self, data: List, root: Path) -> None:
         self._list = data
-        self._root = root
+        self._root = p.Path(root)
 
     def __getitem__(self, key: str) -> t.Optional[Dict]:
         try:
@@ -38,8 +36,9 @@ class Foam:
         return self._list[0]
 
     @classmethod
-    def from_file(cls, path: p.Path) -> 'Foam':
+    def from_file(cls, path: Path) -> 'Foam':
         '''Supported format: json, yaml'''
+        path = p.Path(path)
         for suffixes, method in [
             ({'.json'}, cls.from_json),
             ({'.yaml', '.yml'}, cls.from_yaml),
@@ -49,16 +48,19 @@ class Foam:
         raise Exception(f'Suffix "{path.suffix}" not supported')
 
     @classmethod
-    def from_json(cls, text: str, root: p.Path) -> 'Foam':
+    def from_json(cls, text: str, root: Path) -> 'Foam':
         data = json.loads(text)
         return cls(data, root)
 
     @classmethod
-    def from_yaml(cls, text: str, root: p.Path) -> 'Foam':
+    def from_yaml(cls, text: str, root: Path) -> 'Foam':
+        import yaml
+
         data = list(yaml.load_all(text, Loader=yaml.SafeLoader))
         return cls(data, root)
 
-    def save(self, dest: p.Path) -> None:
+    def save(self, dest: Path) -> None:
+        dest = p.Path(dest)
         dest.mkdir(parents=True, exist_ok=True)
         self._save_foam(dest)
         self._save_static(dest)
@@ -68,6 +70,8 @@ class Foam:
             f.write(string)
 
     def _save_static(self, dest: p.Path) -> None:
+        import py7zr
+
         for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
             out = dest / static['name']

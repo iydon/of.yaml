@@ -1,15 +1,64 @@
-import argparse
+import os
 import pathlib as p
+import typing as t
+
+import click
 
 from foam import Foam
 
 
-parser = argparse.ArgumentParser(description=Foam.__doc__)
-parser.add_argument('inputs', nargs='+', help='YAML format files')
-parser.add_argument('-o', '--output', nargs='?', default='.', help='Destination directory')
-parser.add_argument('--version', action='version', version=Foam.__version__)
-args = parser.parse_args()
+class DEFAULT:
+    CONV_DIRECTORY = '.'
+    TEST_DIRECTORY = 'test'
+    OPENFOAM = '7'
 
-directory = p.Path(args.output)
-for path in map(p.Path, args.inputs):
-    Foam.from_file(path).save(directory/path.stem)
+
+@click.group()
+@click.version_option(version=Foam.__version__, prog_name=Foam.__name__)
+def cli():
+    pass
+
+@cli.command(help=Foam.__doc__)
+@click.argument('paths', nargs=-1)  # YAML format files or directories
+@click.option('-d', '--directory', default=DEFAULT.CONV_DIRECTORY, help='Destination directory')
+@click.option('-v', '--version', default=DEFAULT.OPENFOAM, help='OpenFOAM version')
+@click.option('-o', '--exist-ok', is_flag=True, help='If `exist_ok` then do not overwrite')
+def conv(paths: t.Tuple[str, ...], directory: str, version: str, exist_ok: bool) -> None:
+    root = p.Path(directory, version)
+    for path in map(p.Path, paths):
+        if path.exists():
+            if path.is_file():
+                dest = root / path.stem
+                if not (exist_ok and dest.exists()):
+                    Foam.from_file(path).save(dest)
+            elif path.is_dir():
+                path = path.absolute()
+                for sth in path.glob('**/*'):
+                    if sth.is_file():
+                        try:
+                            foam = Foam.from_file(sth)
+                        except Exception:  # TODO: Foam.from_file exception
+                            continue
+                        if str(foam.meta.get('openfoam', '')) == version:
+                            name = '_'.join(sth.relative_to(path).parts)
+                            dest = root / name
+                            if not (exist_ok and dest.exists()):
+                                foam.save(dest)
+
+@cli.command()
+@click.option('-d', '--directory', default=DEFAULT.TEST_DIRECTORY, help='Directory containing YAML format files')
+@click.option('-v', '--version', default=DEFAULT.OPENFOAM, help='OpenFOAM version')
+def test(directory: str, version: str) -> None:
+    '''For batch testing whether the converted files are operational'''
+    errors = []
+    root = p.Path(directory, version)
+    if root.exists():
+        for node in root.iterdir():
+            if node.is_dir():
+                if 0 != os.system(f'cd {node} && ./Allrun'):
+                    errors.append(node.name)
+        click.echo(f'Errors: {errors}')
+
+
+if __name__ == '__main__':
+    cli()

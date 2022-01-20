@@ -4,6 +4,7 @@
     "files.associations": {
         ".gitignore": "ignore",
         "LICENSE": "plaintext",
+        "Makefile": "makefile",
         "All*": "makefile",
         "*.json": "jsonc",
         "*.lock": "toml",
