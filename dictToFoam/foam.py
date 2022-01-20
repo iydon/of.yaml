@@ -1,4 +1,6 @@
-#!/usr/bin/env poetry run python
+__all__ = ['Foam']
+
+
 import io
 import json
 import pathlib as p
@@ -15,6 +17,9 @@ List = t.List[Dict]
 
 class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case'''
+
+    __version__ = '0.3.0'
+
     def __init__(self, data: List, root: p.Path) -> None:
         self._list = data
         self._root = root
@@ -143,16 +148,3 @@ class Foam:
                 yield f'{key} {{{string}}}'
             else:
                 raise Exception(f'Unknown type "{type(value).__name__}"')
-
-
-if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser(description=Foam.__doc__)
-    parser.add_argument('inputs', nargs='*', help='YAML format files')
-    parser.add_argument('-o', '--output', nargs='?', default='.', help='Destination directory')
-    args = parser.parse_args()
-
-    directory = p.Path(args.output)
-    for path in map(p.Path, args.inputs):
-        Foam.from_file(path).save(directory/path.stem)
