@@ -39,7 +39,7 @@ def conv(paths: t.Tuple[str, ...], directory: str, version: str, exist_ok: bool)
                             foam = Foam.from_file(sth)
                         except Exception:  # TODO: Foam.from_file exception
                             continue
-                        if str(foam.meta.get('openfoam', '')) == version:
+                        if version in set(map(str, foam.meta.get('openfoam', []))):
                             name = '_'.join(sth.relative_to(path).parts)
                             dest = root / name
                             if not (exist_ok and dest.exists()):

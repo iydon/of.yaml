@@ -1,5 +1,5 @@
 ---  # meta
-openfoam: 7
+openfoam: [7]
 version: 0.3
 order:
     - meta
