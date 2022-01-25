@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "of.yaml"
-version = "0.3.0"
+version = "0.4.0"
 description = "OpenFOAM tutorials in YAML format"
 authors = ["Iydon Liang <liangiydon@gmail.com>"]
 

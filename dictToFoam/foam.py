@@ -16,7 +16,7 @@ Path = t.Union[str, p.Path]
 class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case'''
 
-    __version__ = '0.3.0'
+    __version__ = '0.4.0'
 
     def __init__(self, data: List, root: Path) -> None:
         self._list = data
