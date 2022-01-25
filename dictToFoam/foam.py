@@ -56,7 +56,12 @@ class Foam:
     def from_yaml(cls, text: str, root: Path) -> 'Foam':
         import yaml
 
-        data = list(yaml.load_all(text, Loader=yaml.SafeLoader))
+        try:
+            from yaml import CSafeLoader as SafeLoader
+        except:
+            from yaml import SafeLoader
+
+        data = list(yaml.load_all(text, Loader=SafeLoader))
         return cls(data, root)
 
     def save(self, dest: Path) -> None:
