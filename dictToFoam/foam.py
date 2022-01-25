@@ -6,6 +6,7 @@ import json
 import pathlib as p
 import shutil
 import typing as t
+import warnings
 
 
 Dict = t.Dict[str, t.Any]
@@ -19,8 +20,17 @@ class Foam:
     __version__ = '0.4.0'
 
     def __init__(self, data: List, root: Path) -> None:
+        from packaging.version import parse
+
         self._list = data
         self._root = p.Path(root)
+
+        version = parse(self.__version__)
+        current = parse(str(self.meta.get('version', '0.0.0')))
+        if version < current:
+            warnings.warn('Forward compatibility is not yet guaranteed')
+        elif version > current:
+            warnings.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional[Dict]:
         try:
