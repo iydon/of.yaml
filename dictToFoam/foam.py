@@ -32,9 +32,9 @@ class Foam:
         elif version > current:
             warnings.warn('Backward compatibility is not yet guaranteed')
 
-    def __getitem__(self, key: str) -> t.Optional[Dict]:
+    def __getitem__(self, key: str) -> t.Optional['Data']:
         try:
-            return self._list[self.meta['order'].index(key)]
+            return Data(self._list[self.meta['order'].index(key)])
         except ValueError:
             return None
 
@@ -87,7 +87,7 @@ class Foam:
     def _save_static(self, dest: p.Path) -> None:
         import py7zr
 
-        for static in self['static'] or []:
+        for static in self['static'] or []:  # 
             # TODO: rewritten as match statement when updated to 3.10
             out = dest / static['name']
             out.parent.mkdir(parents=True, exist_ok=True)
@@ -119,7 +119,8 @@ class Foam:
             raise Exception(f'Unknown types "{static["type"]}"')
 
     def _save_foam(self, dest: p.Path) -> None:
-        for keys, data in self._extract_file_recursively(self['foam'] or {}):
+        foam = self['foam']
+        for keys, data in self._extract_file_recursively({} if foam is None else foam.data):
             path = dest / p.Path(*map(str, keys))
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self._convert_dict_recursively(data)))
@@ -167,3 +168,45 @@ class Foam:
                 yield f'{key} {{{string}}}'
             else:
                 raise Exception(f'Unknown type "{type(value).__name__}"')
+
+
+class Data:
+    def __init__(self, data: t.Union[Dict, List]) -> None:
+        self._data = data
+
+    def __getitem__(self, keys: t.Any) -> t.Any:
+        if isinstance(keys, tuple):
+            ans = self._data
+            for key in keys:
+                ans = ans[key]
+            return ans
+        else:
+            return self._data[keys]
+
+    def __setitem__(self, keys: t.Any, value: t.Any) -> None:
+        if isinstance(keys, tuple):
+            assert keys
+            ans = self._data
+            for key in keys[:-1]:
+                if isinstance(ans, dict):
+                    ans = ans.setdefault(key, {})
+                elif isinstance(ans, list):
+                    ans = ans[key]
+                else:
+                    raise Exception
+            ans[keys[-1]] = value
+        else:
+            self._data[keys] = value
+
+    def __bool__(self) -> bool:
+        return bool(self._data)  # 'list' object has no attribute '__bool__'
+
+    def __iter__(self) -> t.Iterator[t.Any]:
+        return self._data.__iter__()
+
+    def __repr__(self) -> str:
+        return self._data.__repr__()
+
+    @property
+    def data(self) -> t.Union[Dict, List]:
+        return self._data
