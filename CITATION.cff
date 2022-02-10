@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Liang"
+  given-names: "Iydon"
+  orcid: "https://orcid.org/0000-0003-1923-4002"
+title: "My Research Software"
+version: 0.4.0
+date-released: 2022-2-6
+url: "https://github.com/github/linguist"
