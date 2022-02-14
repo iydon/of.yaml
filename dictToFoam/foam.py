@@ -5,6 +5,8 @@ import io
 import json
 import pathlib as p
 import shutil
+import subprocess
+import time
 import typing as t
 import warnings
 
@@ -15,7 +17,18 @@ Path = t.Union[str, p.Path]
 
 
 class Foam:
-    '''Convert multiple dictionary type data to OpenFOAM test case'''
+    '''Convert multiple dictionary type data to OpenFOAM test case
+
+    Example:
+        >>> path = pathlib.Path('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
+        >>> foam = Foam.from_file(path)
+        >>> foam.meta['openfoam'].append(8)
+        >>> foam['foam']['system', 'controlDict', 'endTime'] = 700
+        >>> foam.save(path.stem)
+        >>> process = foam.run('./Allrun', output=True)
+        >>> print(process)
+        Process(code=0, time=7.043395757675171, stdout=b'Running simpleFoam on airFoil2D\n', stderr=b'')
+    '''
 
     __version__ = '0.4.0'
 
@@ -24,6 +37,7 @@ class Foam:
 
         self._list = data
         self._root = p.Path(root)
+        self._dest = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -74,22 +88,34 @@ class Foam:
         data = list(yaml.load_all(text, Loader=SafeLoader))
         return cls(data, root)
 
-    def save(self, dest: Path) -> None:
-        dest = p.Path(dest)
-        dest.mkdir(parents=True, exist_ok=True)
-        self._save_foam(dest)
-        self._save_static(dest)
+    def save(self, dest: Path) -> 'Foam':
+        '''Persist case to hard disk'''
+        self._dest = p.Path(dest)
+        self._dest.mkdir(parents=True, exist_ok=True)
+        self._save_foam()
+        self._save_static()
+        return self
+
+    def run(self, command: str, output: bool = True) -> 'Process':
+        '''Execute command in case directory'''
+        assert self._dest is not None, 'Please call `save` method first'
+        now = time.time()
+        cp = subprocess.run(command, cwd=self._dest, capture_output=output)
+        return Process(
+            code=cp.returncode, time=time.time()-now,
+            stdout=cp.stdout, stderr=cp.stderr,
+        )
 
     def _write(self, path: p.Path, string: str) -> None:
         with open(path, 'w', encoding='utf-8', newline='\n') as f:  # CRLF -> LF
             f.write(string)
 
-    def _save_static(self, dest: p.Path) -> None:
+    def _save_static(self) -> None:
         import py7zr
 
         for static in self['static'] or []:  # 
             # TODO: rewritten as match statement when updated to 3.10
-            out = dest / static['name']
+            out = self._dest / static['name']  # self._dest is not None
             out.parent.mkdir(parents=True, exist_ok=True)
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
@@ -118,10 +144,10 @@ class Foam:
                     continue
             raise Exception(f'Unknown types "{static["type"]}"')
 
-    def _save_foam(self, dest: p.Path) -> None:
+    def _save_foam(self) -> None:
         foam = self['foam']
         for keys, data in self._extract_file_recursively({} if foam is None else foam.data):
-            path = dest / p.Path(*map(str, keys))
+            path = self._dest / p.Path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self._convert_dict_recursively(data)))
 
@@ -210,3 +236,11 @@ class Data:
     @property
     def data(self) -> t.Union[Dict, List]:
         return self._data
+
+
+class Process(t.NamedTuple):
+    # args: str  # does this field need to be deleted?
+    code: int
+    time: float
+    stdout: t.Optional[bytes] = None
+    stderr: t.Optional[bytes] = None
