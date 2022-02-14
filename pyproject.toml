@@ -9,9 +9,9 @@ python = "^3.8"
 PyYAML = "^6.0"
 py7zr = "^0.17.2"
 packaging = "^21.3"
+click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
-click = "^8.0.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
