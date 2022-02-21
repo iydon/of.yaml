@@ -30,7 +30,7 @@ class Foam:
         Process(code=0, time=7.043395757675171, stdout=b'Running simpleFoam on airFoil2D\n', stderr=b'')
     '''
 
-    __version__ = '0.4.0'
+    __version__ = '0.5.0'
 
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
