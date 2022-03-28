@@ -5,10 +5,10 @@ import io
 import json
 import pathlib as p
 import shutil
-import subprocess
-import time
 import typing as t
 import warnings
+
+from .command import Command
 
 
 Dict = t.Dict[str, t.Any]
@@ -25,7 +25,7 @@ class Foam:
         >>> foam.meta['openfoam'].append(8)
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 700
         >>> foam.save(path.stem)
-        >>> process = foam.run('./Allrun', output=True)
+        >>> process = foam.cmd.run('./Allrun', output=True)
         >>> print(process)
         Process(code=0, time=7.043395757675171, stdout=b'Running simpleFoam on airFoil2D\n', stderr=b'')
     '''
@@ -38,6 +38,8 @@ class Foam:
         self._list = data
         self._root = p.Path(root)
         self._dest = None
+
+        self._cmd = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -58,6 +60,12 @@ class Foam:
     @property
     def meta(self) -> Dict:
         return self._list[0]
+
+    @property
+    def cmd(self) -> Command:
+        if self._cmd is None:
+            self._cmd = Command(self)
+        return self._cmd
 
     @classmethod
     def from_file(cls, path: Path) -> 'Foam':
@@ -96,16 +104,6 @@ class Foam:
         self._save_static()
         return self
 
-    def run(self, command: str, output: bool = True) -> 'Process':
-        '''Execute command in case directory'''
-        assert self._dest is not None, 'Please call `save` method first'
-        now = time.time()
-        cp = subprocess.run(command, cwd=self._dest, capture_output=output)
-        return Process(
-            code=cp.returncode, time=time.time()-now,
-            stdout=cp.stdout, stderr=cp.stderr,
-        )
-
     def _write(self, path: p.Path, string: str) -> None:
         with open(path, 'w', encoding='utf-8', newline='\n') as f:  # CRLF -> LF
             f.write(string)
@@ -113,7 +111,7 @@ class Foam:
     def _save_static(self) -> None:
         import py7zr
 
-        for static in self['static'] or []:  # 
+        for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
             out = self._dest / static['name']  # self._dest is not None
             out.parent.mkdir(parents=True, exist_ok=True)
@@ -236,11 +234,3 @@ class Data:
     @property
     def data(self) -> t.Union[Dict, List]:
         return self._data
-
-
-class Process(t.NamedTuple):
-    # args: str  # does this field need to be deleted?
-    code: int
-    time: float
-    stdout: t.Optional[bytes] = None
-    stderr: t.Optional[bytes] = None
