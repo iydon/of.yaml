@@ -9,11 +9,8 @@ import typing as t
 import warnings
 
 from .command import Command
-
-
-Dict = t.Dict[str, t.Any]
-List = t.List[Dict]
-Path = t.Union[str, p.Path]
+from .parse import Parse
+from .type import Dict, List, Path, Data
 
 
 class Foam:
@@ -35,11 +32,12 @@ class Foam:
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
 
+        self.cmd = Command(self)
+        self.parse = Parse(self)
+
         self._list = data
         self._root = p.Path(root)
         self._dest = None
-
-        self._cmd = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -60,12 +58,6 @@ class Foam:
     @property
     def meta(self) -> Dict:
         return self._list[0]
-
-    @property
-    def cmd(self) -> Command:
-        if self._cmd is None:
-            self._cmd = Command(self)
-        return self._cmd
 
     @classmethod
     def from_file(cls, path: Path) -> 'Foam':
@@ -118,14 +110,11 @@ class Foam:
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
                     self._write(out, static['data'])
-                    continue
                 elif static['type'][1] == 'binary':
                     out.write_bytes(static['data'])
-                    continue
                 elif static['type'][1] == '7z':
                     with py7zr.SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
                         z.extractall(path=out.parent)
-                    continue
             elif static['type'][0] == 'path':
                 in_ = self._root / static['data']
                 if static['type'][1] == 'raw':
@@ -135,21 +124,20 @@ class Foam:
                         shutil.copyfile(in_, out)
                     else:
                         raise Exception('Target is neither a file nor a directory')
-                    continue
                 elif static['type'][1] == '7z':
                     with py7zr.SevenZipFile(in_, mode='r') as z:
                         z.extractall(path=out.parent)
-                    continue
-            raise Exception(f'Unknown types "{static["type"]}"')
+            else:
+                raise Exception(f'Unknown types "{static["type"]}"')
 
     def _save_foam(self) -> None:
         foam = self['foam']
-        for keys, data in self._extract_file_recursively({} if foam is None else foam.data):
+        for keys, data in self._extract_files({} if foam is None else foam.data):
             path = self._dest / p.Path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._write(path, '\n'.join(self._convert_dict_recursively(data)))
+            self._write(path, '\n'.join(self.parse.data(data)))
 
-    def _extract_file_recursively(
+    def _extract_files(
         self,
         data: Dict, keys: t.List[str] = [],
     ) -> t.Iterator[t.Tuple[t.List[str], Dict]]:
@@ -157,80 +145,4 @@ class Foam:
             yield keys, data
         else:
             for key, value in data.items():
-                yield from self._extract_file_recursively(value, keys+[key])
-
-    def _convert_dict_recursively(self, data: Dict) -> t.Iterator[str]:
-        for key, value in data.items():
-            # pre-process
-            key = key.replace(' ', '')  # div(phi, U) -> div(phi,U)
-            if any(c in key for c in '()*'):  # (U|k|epsilon) -> "(U|k|epsilon)"
-                key = f'"{key}"'
-            # TODO: rewritten as match statement when updated to 3.10
-            if isinstance(value, bool):  # bool < int
-                yield f'{key} {str(value).lower()};'
-            elif isinstance(value, (str, int, float)):
-                yield f'{key} {value};'
-            elif isinstance(value, list):
-                if not value or isinstance(value[0], (str, int, float)):
-                    yield f'{key} ({" ".join(map(str, value))});'
-                elif isinstance(value[0], dict):
-                    strings = []
-                    for element in value:
-                        head = tuple(k for k, v in element.items() if v is None)
-                        if head:
-                            element.pop(head[0])
-                            string = ' '.join(self._convert_dict_recursively(element))
-                            strings.append(f'{head[0]} {{{string}}}')
-                        else:
-                            string = ' '.join(self._convert_dict_recursively(element))
-                            strings.append(f'{{{string}}}')
-                    yield f'{key} ({" ".join(strings)});'
-                else:
-                    raise Exception(f'Unknown list "{value}"')
-            elif isinstance(value, dict):
-                string = ' '.join(self._convert_dict_recursively(value))
-                yield f'{key} {{{string}}}'
-            else:
-                raise Exception(f'Unknown type "{type(value).__name__}"')
-
-
-class Data:
-    def __init__(self, data: t.Union[Dict, List]) -> None:
-        self._data = data
-
-    def __getitem__(self, keys: t.Any) -> t.Any:
-        if isinstance(keys, tuple):
-            ans = self._data
-            for key in keys:
-                ans = ans[key]
-            return ans
-        else:
-            return self._data[keys]
-
-    def __setitem__(self, keys: t.Any, value: t.Any) -> None:
-        if isinstance(keys, tuple):
-            assert keys
-            ans = self._data
-            for key in keys[:-1]:
-                if isinstance(ans, dict):
-                    ans = ans.setdefault(key, {})
-                elif isinstance(ans, list):
-                    ans = ans[key]
-                else:
-                    raise Exception
-            ans[keys[-1]] = value
-        else:
-            self._data[keys] = value
-
-    def __bool__(self) -> bool:
-        return bool(self._data)  # 'list' object has no attribute '__bool__'
-
-    def __iter__(self) -> t.Iterator[t.Any]:
-        return self._data.__iter__()
-
-    def __repr__(self) -> str:
-        return self._data.__repr__()
-
-    @property
-    def data(self) -> t.Union[Dict, List]:
-        return self._data
+                yield from self._extract_files(value, keys+[key])
