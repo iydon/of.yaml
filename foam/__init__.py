@@ -1,4 +1,4 @@
-from .foam import Foam
+from .core import Foam
 
 
 __doc__ = Foam.__doc__

@@ -5,7 +5,7 @@ import functools as f
 import typing as t
 
 if t.TYPE_CHECKING:
-    from . import Foam
+    from .core import Foam
     from .type import Dict
 
 
