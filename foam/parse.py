@@ -41,10 +41,9 @@ class Parse:
 
     @value.register(list)
     def _(self, value: t.List[t.Any]) -> str:
-        T = type(value[0]) if value else None
-        if T in {str, int, float}:
+        if not value or isinstance(value[0], (str, int, float)):
             return f'({" ".join(map(str, value))});'
-        elif T is dict:
+        elif isinstance(value[0], dict):
             strings = []
             for element in value:
                 head = tuple(k for k, v in element.items() if v is None)
