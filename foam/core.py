@@ -88,12 +88,14 @@ class Foam:
         data = list(yaml.load_all(text, Loader=SafeLoader))
         return cls(data, root)
 
-    def save(self, dest: Path) -> 'Foam':
+    def save(self, dest: Path, paraview: bool = True) -> 'Foam':
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)
         self._dest.mkdir(parents=True, exist_ok=True)
         self._save_foam()
         self._save_static()
+        if paraview:
+            self._write(self._dest/'paraview.foam', '')
         return self
 
     def _write(self, path: p.Path, string: str) -> None:
