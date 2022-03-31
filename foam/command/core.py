@@ -25,7 +25,7 @@ class Command:
     def run(
         self,
         commands: t.List[str],
-        suffix: str = '', overwrite: bool = False,
+        suffix: str = '', overwrite: bool = False, exception: bool = True,
     ) -> t.List[p.Path]:
         '''https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions'''
         self._check()
@@ -35,10 +35,12 @@ class Command:
             args = shlex.split(command.replace('__app__', self.application))
             path = self._foam._dest / f'log.{args[0]}{suffix}'
             if not overwrite and path.exists():
-                raise Exception(
-                    f'{args[0]} already run on {path.parent.absolute()}: '
-                    f'remove log file "{path.name}" to re-run'
-                )
+                message = f'{args[0]} already run on {path.parent.absolute()}: remove log file "{path.name}" to re-run'
+                if exception:
+                    raise Exception(message)
+                else:
+                    print(message)
+                    continue
             # TODO: rewritten as parenthesized context managers when updated to 3.10
             App = Apps.get(args[0], Default)
             with popen(args) as proc, open(path, 'wb') as file, App(self._foam) as app:
