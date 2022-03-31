@@ -1,6 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
+pipeline:
+    - blockMesh
+    - boxTurb
+    - __app__
+    - postProcess -func enstrophy
 order:
     - meta
     - foam
@@ -199,7 +204,7 @@ system:
         runApplication blockMesh
         runApplication boxTurb
         runApplication $application
-        runApplication -s enstrophy  postProcess -func enstrophy
+        runApplication -s enstrophy postProcess -func enstrophy
 -
     name: Allclean
     type: [embed, text]

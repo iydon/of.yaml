@@ -1,6 +1,12 @@
 ---
 openfoam: [7]
 version: 0.5.0
+pipeline:
+    - ansysToFoam flange.ans -scale 0.001
+    - __app__
+    - foamToEnsight
+    - foamToEnsightParts
+    - foamToVTK
 order:
     - meta
     - foam

@@ -1,6 +1,13 @@
 ---
 openfoam: [7]
 version: 0.5.0
+pipeline:
+    - m4 system/blockMeshDict.m4 > system/blockMeshDict
+    - blockMesh
+    - setFields
+    - decomposePar -cellDist
+    - __app__
+    - reconstructPar
 order:
     - meta
     - foam
@@ -129,7 +136,7 @@ system:
         hierarchicalCoeffs:
             n: (4 2 2)
             delta: 0.001
-            prder: xyz
+            order: xyz
         manualCoeffs:
             dataFile: >
                 ""
@@ -205,6 +212,7 @@ system:
             nNonOrthogonalCorrectors: 0
             correctPhi: no
             pRefPoint: (0 0 0.15)
+            pRefCell: 0  # https://www.cfd-online.com/Forums/openfoam-solving/105598-foam-fatal-io-error-unable-set-reference-cell-field-p-please-supply.html
             pRefValue: 1e5
         relaxationFactors:
             equations:

@@ -1,6 +1,8 @@
 ---  # meta
 openfoam: [7]
 version: 0.5.0
+pipeline:
+    - __app__
 order:
     - meta
     - foam

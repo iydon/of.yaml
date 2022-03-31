@@ -1,6 +1,12 @@
 ---
 openfoam: [7]
 version: 0.5.0
+pipeline:
+    - blockMesh
+    - setFields
+    - decomposePar
+    - __app__
+    - reconstructPar
 order:
     - meta
     - foam
