@@ -4,21 +4,48 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
+import tqdm
+
+if t.TYPE_CHECKING:
+    from ..core import Foam
+
 
 class Default:
-    def __init__(self, start: float, end: float) -> None:
-        self.start, self.end = start, end
+    def __init__(self, foam: 'Foam') -> None:
+        pass
+
+    def __enter__(self) -> 'Default':
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        pass
+
+    def step(self, line: bytes) -> None:
+        pass
+
+    def close(self) -> None:
+        pass
+
+class FoamBase(Default):
+    def __init__(self, foam: 'Foam') -> None:
+        self._foam = foam
+        start = float(foam['foam']['system', 'controlDict', 'startTime'])
+        end = float(foam['foam']['system', 'controlDict', 'endTime'])
+        self.pbar = tqdm.tqdm(total=end-start)
         self._new = self._old = start
 
-    def delta(self, line: bytes) -> float:
+    def __exit__(self, type, value, traceback) -> None:
+        self.pbar.close()
+
+    def step(self, line: bytes) -> None:
         now = self.now(line) or self._new
         self._new, self._old = now, self._new
-        return self._new - self._old
+        self.pbar.update(self._new-self._old)
 
     def now(self, line: bytes) -> t.Optional[float]:
-        return None
+        raise NotImplementedError
 
-class FoamByTime(Default):
+class FoamByTime(FoamBase):
     '''
     - multiphase:
         - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/multiphase/cavitatingFoam/cavitatingFoam.C
@@ -91,7 +118,7 @@ class FoamByTime(Default):
         if line.startswith(b'Time = '):
             return float(line[7:])
 
-class FoamByIterationI(Default):
+class FoamByIterationI(FoamBase):
     '''
     - electromagnetics:
         - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/electromagnetics/electrostaticFoam/electrostaticFoam.C
@@ -101,7 +128,7 @@ class FoamByIterationI(Default):
         if line.startswith(b'Iteration = '):
             return float(line[12:])
 
-class FoamByIterationII(Default):
+class FoamByIterationII(FoamBase):
     '''
     - stressAnalysis:
         - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidEquilibriumDisplacementFoam/solidEquilibriumDisplacementFoam.C
@@ -112,7 +139,7 @@ class FoamByIterationII(Default):
         if line.startswith(b'Iteration: '):
             return float(line[11:])
 
-class FoamByOther(Default):
+class FoamByOther(FoamBase):
     '''
     - combustion:
         - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/combustion/XiFoam/XiEngineFoam/XiEngineFoam.C

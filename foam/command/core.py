@@ -24,35 +24,35 @@ class Command:
 
     def run(
         self,
-        *commands: str,
+        commands: t.List[str],
         suffix: str = '', overwrite: bool = False,
     ) -> t.List[p.Path]:
         '''https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions'''
-        import tqdm
-
+        self._check()
+        popen = lambda args: s.Popen(args, cwd=self._foam._dest, stdout=s.PIPE)
         paths = [None] * len(commands)
         for ith, command in enumerate(commands):
-            command = shlex.split(command or self.application)
-            path = self._foam._dest / f'log.{command[0]}{suffix}'
+            args = shlex.split(command.replace('__app__', self.application))
+            path = self._foam._dest / f'log.{args[0]}{suffix}'
             if not overwrite and path.exists():
                 raise Exception(
-                    f'{command[0]} already run on {path.parent.absolute()}: '
+                    f'{args[0]} already run on {path.parent.absolute()}: '
                     f'remove log file "{path.name}" to re-run'
                 )
-            process = s.Popen(command, cwd=self._foam._dest, stdout=s.PIPE)
-            start = self._foam['foam']['system', 'controlDict', 'startTime']
-            end = self._foam['foam']['system', 'controlDict', 'endTime']
-            app = Apps.get(command[0], Default)(start, end)
-            with open(path, 'wb') as f:
-                with tqdm.tqdm(total=float(end)-float(start)) as pbar:
-                    for line in process.stdout:
-                        f.write(line)
-                        pbar.update(app.delta(line))
+            # TODO: rewritten as parenthesized context managers when updated to 3.10
+            App = Apps.get(args[0], Default)
+            with popen(args) as proc, open(path, 'wb') as file, App(self._foam) as app:
+                for line in proc.stdout:
+                    file.write(line)
+                    app.step(line)
             paths[ith] = path
         return paths
 
-    def exec(self, command: str, output: bool = True) -> s.CompletedProcess:
+    def raw(self, command: str, output: bool = True) -> s.CompletedProcess:
         '''Execute raw command in case directory'''
-        assert self._foam._dest is not None, 'Please call `Foam::save` method first'
+        self._check()
         args = shlex.split(command)
         return s.run(args, cwd=self._foam._dest, capture_output=output)
+
+    def _check(self) -> None:
+        assert self._foam._dest is not None, 'Please call `Foam::save` method first'
