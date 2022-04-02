@@ -1,13 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - __app__
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     V:
@@ -136,3 +134,7 @@ system:
 
         runApplication blockMesh
         runApplication $application
+---
+pipeline:
+    - blockMesh
+    - __app__

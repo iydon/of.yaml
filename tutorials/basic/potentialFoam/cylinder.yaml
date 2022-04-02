@@ -1,14 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - __app__ -withFunctionObjects -writePhi -writep
-    - postProcess -func streamFunction
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     p.orig:
@@ -339,3 +336,8 @@ system:
         find 0 -type f  ! -name "*.*" -delete > /dev/null 2>&1
 
         cleanCase
+---
+pipeline:
+    - blockMesh
+    - __app__ -withFunctionObjects -writePhi -writep
+    - postProcess -func streamFunction

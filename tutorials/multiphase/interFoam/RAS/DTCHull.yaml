@@ -1,11 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline: null
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.water.orig:
@@ -885,3 +885,5 @@ system:
 
         The Allrun script copies the surface from the $FOAM_TUTORIALS/resources/geometry
         folder
+---
+pipeline: null

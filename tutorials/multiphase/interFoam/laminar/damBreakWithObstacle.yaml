@@ -1,19 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - topoSet
-    - subsetMesh -overwrite c0 -patch walls -noFields
-    - setFields
-    - decomposePar -cellDist
-    - __app__
-    - reconstructParMesh
-    - reconstructPar
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.water.orig:
@@ -372,3 +364,13 @@ system:
         cellSet c0 new
         cellSet c0 invert
         cellSet c0 delete boxToCell (0.375 0.375 0) (0.625 0.625 0.25)
+---
+pipeline:
+    - blockMesh
+    - topoSet
+    - subsetMesh -overwrite c0 -patch walls -noFields
+    - setFields
+    - decomposePar -cellDist
+    - __app__
+    - reconstructParMesh
+    - reconstructPar

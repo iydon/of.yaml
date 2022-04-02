@@ -1,15 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - boxTurb
-    - __app__
-    - postProcess -func enstrophy
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     p:
@@ -218,3 +214,9 @@ system:
 
         cleanCase
         rm -rf 0/enstrophy
+---
+pipeline:
+    - blockMesh
+    - boxTurb
+    - __app__
+    - postProcess -func enstrophy

@@ -1,17 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - topoSet
-    - refineHexMesh c0 -overwrite
-    - decomposePar -cellDist
-    - __app__
-    - reconstructPar
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     epsilon:
@@ -416,3 +410,11 @@ system:
         rm -f 0/cellDist
 
         cleanCase
+---
+pipeline:
+    - blockMesh
+    - topoSet
+    - refineHexMesh c0 -overwrite
+    - decomposePar -cellDist
+    - __app__
+    - reconstructPar

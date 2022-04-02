@@ -38,7 +38,7 @@ class Command:
             return 1
 
     def all_run(self) -> None:
-        pipe = self._foam.meta.get('pipeline', None)
+        pipe = (self._foam['other'] or {}).get('pipeline', None)
         if pipe is None:
             self.raw('./Allrun')
         else:

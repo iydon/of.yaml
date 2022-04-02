@@ -1,14 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - ./makeMesh
-    - setFields
-    - __app__
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.air.orig:
@@ -384,3 +381,8 @@ system:
         taSnsvI2Pg/8qbvJJs256r4+Toe1yfr5S5BTIWus/BJw2fPRY1D37I0SrzonvfqfPaAZBOLeun1i
         iwABBAYAAQmJrgAHCwEAASEhAQUMwChNAAgKAcws+NwAAAUBGQkAAAAAAAAAAAARIwBiAGwAbwBj
         AGsATQBlAHMAaABEAGkAYwB0AC4AbQA0AAAAGQAUCgEAnBOwwNMK2AEVBgEAIAAAAAAA
+---
+pipeline:
+    - ./makeMesh
+    - setFields
+    - __app__

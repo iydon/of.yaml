@@ -1,17 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - m4 system/blockMeshDict.m4 > system/blockMeshDict
-    - blockMesh
-    - setFields
-    - decomposePar -cellDist
-    - __app__
-    - reconstructPar
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.water:
@@ -358,3 +352,11 @@ system:
         +v1WU38+nDODc9/dLATsGgkFHhhAAAEEBgABCYSjAAcLAQABISEBAAyPswAICgF25ca7AAAFARkK
         AAAAAAAAAAAAABEjAGIAbABvAGMAawBNAGUAcwBoAEQAaQBjAHQALgBtADQAAAAZABQKAQBQzQB7
         ZAbYARUGAQAgAAAAAAA=
+---
+pipeline:
+    - m4 system/blockMeshDict.m4 > system/blockMeshDict
+    - blockMesh
+    - setFields
+    - decomposePar -cellDist
+    - __app__
+    - reconstructPar

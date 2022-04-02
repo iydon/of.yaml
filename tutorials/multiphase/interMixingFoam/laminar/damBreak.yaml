@@ -1,16 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - blockMesh
-    - setFields
-    - decomposePar -cellDist
-    - __app__
-    - reconstructPar
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.air.orig:
@@ -365,3 +360,10 @@ system:
         cd ${0%/*} || exit 1    # Run from this directory
 
         foamCleanTutorials cases
+---
+pipeline:
+    - blockMesh
+    - setFields
+    - decomposePar -cellDist
+    - __app__
+    - reconstructPar

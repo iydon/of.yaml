@@ -1,11 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline: null
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     U:
@@ -415,3 +415,5 @@ system:
         cleanCase
         rm -rf machineA
         rm -rf machineB
+---
+pipeline: null

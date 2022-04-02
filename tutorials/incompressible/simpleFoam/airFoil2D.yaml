@@ -1,12 +1,11 @@
 ---  # meta
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - __app__
 order:
     - meta
     - foam
     - static
+    - other
 ---  # foam
 "0":
     nut:
@@ -212,3 +211,6 @@ system:
     type: [path, 7z]
     permision: null
     data: static/airFoil2D-polyMesh.7z
+---  # other
+pipeline:
+    - __app__

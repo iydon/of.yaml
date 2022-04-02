@@ -1,11 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline: null
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     alpha.fuel:
@@ -459,3 +459,5 @@ system:
 
         cleanCase
         rm system/topoSetDict > /dev/null 2>&1
+---
+pipeline: null

@@ -1,15 +1,11 @@
 ---
 openfoam: [7]
 version: 0.5.0
-pipeline:
-    - fluentMeshToFoam elbow.msh
-    - __app__
-    - foamMeshToFluent
-    - foamDataToFluent
 order:
     - meta
     - foam
     - static
+    - other
 ---
 "0":
     p:
@@ -377,3 +373,9 @@ system:
         NWhRMWqDaHoOmfXKHGuqEFxcSVfut4MVu/31koAAAQQGAAEJrIYABwsBAAEhIQEGDMByfQAICgEc
         PKivAAAFARkJAAAAAAAAAAAAERUAZQBsAGIAbwB3AC4AbQBzAGgAAAAUCgEAq+5IH74F2AEVBgEA
         IAAAAAAA
+---
+pipeline:
+    - fluentMeshToFoam elbow.msh
+    - __app__
+    - foamMeshToFluent
+    - foamDataToFluent
