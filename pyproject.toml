@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "foam"
-version = "0.5.0"
-description = "OpenFOAM tutorials in YAML format"
+version = "0.6.0"
+description = "Python interface for OpenFOAM using YAML format as configuration file"
 authors = ["Iydon Liang <liangiydon@gmail.com>"]
 keywords = ["OpenFOAM", "YAML"]
 readme = "README.md"
