@@ -241,6 +241,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -257,6 +258,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -268,6 +270,7 @@ system:
 -
     name: system/singleGraph
     type: [embed, text]
+    permission: null
     data: |
         singleGraph {
             start   (0 0.5 0.25);

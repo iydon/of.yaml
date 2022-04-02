@@ -297,6 +297,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -312,6 +313,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -323,6 +325,7 @@ system:
 -
     name: makeMesh
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
 
@@ -333,6 +336,7 @@ system:
 -
     name: system/blockMeshDict.m4
     type: [embed, 7z]
+    permision: null
     data: !!binary |
         N3q8ryccAARPIknBrgkAAAAAAABqAAAAAAAAAOUx1VbgTScJpl0AF4qCFKj5AG+U3trgcUxDtybp
         KRu1DJLsDevm/7GVRmJE5X1tnO+gAdQZCyFFgWioGXYAFzEi7k2gCuj8LTLIWtxTTYCH+Q13mk68

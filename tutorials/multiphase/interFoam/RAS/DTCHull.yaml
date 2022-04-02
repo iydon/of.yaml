@@ -811,6 +811,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -848,6 +849,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -866,6 +868,7 @@ system:
 -
     name: README
     type: [embed, text]
+    permision: null
     data: |
         Reference:
         Duisburg Test Case (DTC)
@@ -876,6 +879,7 @@ system:
 -
     name: constant/triSurface/README
     type: [embed, text]
+    permision: null
     data: |
         Folder to house tri-surfaces
 

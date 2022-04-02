@@ -98,9 +98,11 @@ class Foam:
             self._write(self._dest/'paraview.foam', '')
         return self
 
-    def _write(self, path: p.Path, string: str) -> None:
+    def _write(self, path: p.Path, string: str, permission: t.Optional[int] = None) -> None:
         with open(path, 'w', encoding='utf-8', newline='\n') as f:  # CRLF -> LF
             f.write(string)
+        if permission is not None:
+            path.chmod(int(str(permission), base=8))
 
     def _save_static(self) -> None:
         import py7zr
@@ -109,9 +111,10 @@ class Foam:
             # TODO: rewritten as match statement when updated to 3.10
             out = self._dest / static['name']  # self._dest is not None
             out.parent.mkdir(parents=True, exist_ok=True)
+            out: p.Path
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
-                    self._write(out, static['data'])
+                    self._write(out, static['data'], static.get('permision', None))
                 elif static['type'][1] == 'binary':
                     out.write_bytes(static['data'])
                 elif static['type'][1] == '7z':

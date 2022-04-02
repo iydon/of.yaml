@@ -96,6 +96,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -125,6 +126,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
+    permision: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -138,4 +140,5 @@ system:
 -
     name: flange.ans
     type: [path, 7z]
+    permision: null
     data: static/flange-ans.7z
