@@ -38,9 +38,9 @@ class Foam:
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
-        if version.major < current.major:
+        if (version.major, version.minor) < (current.major, current.minor):
             warnings.warn('Forward compatibility is not yet guaranteed')
-        elif version.major > current.major:
+        elif (version.major, version.minor) > (current.major, current.minor):
             warnings.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional['Data']:

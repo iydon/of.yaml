@@ -33,4 +33,4 @@
 
 ## `v0.7`
 
-- ...
+- Fix version comparison problem (major and minor)
