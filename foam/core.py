@@ -25,7 +25,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.6.1'
+    __version__ = '0.7.0'
 
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse

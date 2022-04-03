@@ -6,17 +6,20 @@
 - Modify the YAML file to include multiple documents (meta, foam, static)
 - ...
 
+
 ## [`v0.4`](https://github.com/iydon/of.yaml/tree/v0.4)
 
 - Add command line tool with [click](https://github.com/pallets/click)
 - Modify the original single file to Python package
 - ...
 
+
 ## [`v0.5`](https://github.com/iydon/of.yaml/tree/v0.5)
 
 - Add version information for YAML
 - Modify project name
 - ...
+
 
 ## [`v0.6`](https://github.com/iydon/of.yaml/tree/v0.6)
 
@@ -26,3 +29,8 @@
 - Add this changelog :)
 - Modify `README.md` according to the [template](https://github.com/othneildrew/Best-README-Template)
 - Remove the idea of rewriting the project using Rust
+
+
+## `v0.7`
+
+- ...
