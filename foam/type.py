@@ -50,3 +50,6 @@ class Data:
     @property
     def data(self) -> t.Union[Dict, List]:
         return self._data
+
+    def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+        return self._data.get(key, default)
