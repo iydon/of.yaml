@@ -56,10 +56,10 @@ t = typing
 {show.source(Data)}
 
 {show.source(progress.Default)}
-{show.source(progress.FoamBase)}
-{show.source(progress.FoamByTime)}
-{show.source(progress.FoamByIterationI)}
-{show.source(progress.FoamByIterationII)}
+{show.source(progress.AppBase)}
+{show.source(progress.AppByTime)}
+{show.source(progress.AppByIterationI)}
+{show.source(progress.AppByIterationII)}
 
 Apps = {show.apps(progress.Apps)}
 
