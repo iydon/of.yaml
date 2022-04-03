@@ -60,6 +60,7 @@ t = typing
 {show.source(progress.AppByTime)}
 {show.source(progress.AppByIterationI)}
 {show.source(progress.AppByIterationII)}
+{show.source(progress.AppByProcessor)}
 
 Apps = {show.apps(progress.Apps)}
 

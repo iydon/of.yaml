@@ -112,6 +112,10 @@ class AppByTime(AppBase):
         - basic:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/laplacianFoam/laplacianFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/scalarTransportFoam/scalarTransportFoam.C
+    - utility:
+        - parallelProcessing:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructParMesh/reconstructParMesh.C
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
     '''
     def now(self, line):
         line = line.strip()
@@ -140,6 +144,26 @@ class AppByIterationII(AppBase):
         line = line.strip()
         if line.startswith(b'Iteration: '):
             return float(line[11:])
+
+class AppByProcessor(AppBase):
+    '''
+    - utility:
+        - parallelProcessing:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
+    '''
+    def __init__(self, foam: 'Foam'):
+        import tqdm
+
+        start = 0
+        end = foam.cmd.number_of_processors - 1
+        self.pbar = tqdm.tqdm(total=end-start)
+        self._new = self._old = start
+
+    def now(self, line):
+        line = line.strip()
+        if line.startswith(b'Processor ') and line[10:].isdigit():
+            return int(line[10:])
 
 class AppByOther(AppBase):
     '''
@@ -254,11 +278,6 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamListTimes/foamListTimes.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamFormatConvert/foamFormatConvert.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/patchSummary/patchSummary.C
-        - parallelProcessing:
-            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructParMesh/reconstructParMesh.C
-            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
-            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
-            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
         - thermophysical:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/thermophysical/chemkinToFoam/chemkinToFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/thermophysical/equilibriumFlameT/equilibriumFlameT.C
@@ -320,6 +339,6 @@ class AppByOther(AppBase):
 
 Apps = {}
 pattern = re.compile(r'\w+(?=\.C)')
-for App in [AppByTime, AppByIterationI, AppByIterationII]:
+for App in [AppByTime, AppByIterationI, AppByIterationII, AppByProcessor]:
     for name in pattern.findall(App.__doc__):
         Apps[name] = App
