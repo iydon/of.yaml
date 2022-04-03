@@ -8,9 +8,11 @@ import shutil
 import typing as t
 import warnings
 
-from .command import Command
-from .parse import Parse
 from .type import Dict, List, Path, Data
+
+if t.TYPE_CHECKING:
+    from .command import Command
+    from .parse import Parse
 
 
 class Foam:
@@ -32,12 +34,11 @@ class Foam:
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
 
-        self.cmd = Command.from_foam(self)
-        self.parse = Parse.from_foam(self)
-
         self._list = data
         self._root = p.Path(root)
         self._dest = None
+        self._cmd = None
+        self._parse = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -58,6 +59,22 @@ class Foam:
     @property
     def meta(self) -> Dict:
         return self._list[0]
+
+    @property
+    def cmd(self) -> 'Command':
+        from .command import Command
+
+        if self._cmd is None:
+            self._cmd = Command.from_foam(self)
+        return self._cmd
+
+    @property
+    def parse(self) -> 'Parse':
+        from .parse import Parse
+
+        if self._parse is None:
+            self._parse = Parse.from_foam(self)
+        return self._parse
 
     @classmethod
     def from_file(cls, path: Path) -> 'Foam':
