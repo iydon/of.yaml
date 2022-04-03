@@ -25,7 +25,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.6.0'
+    __version__ = '0.6.1'
 
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
@@ -38,9 +38,9 @@ class Foam:
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
-        if version < current:
+        if version.major < current.major:
             warnings.warn('Forward compatibility is not yet guaranteed')
-        elif version > current:
+        elif version.major > current.major:
             warnings.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional['Data']:

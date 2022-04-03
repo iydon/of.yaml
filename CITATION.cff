@@ -5,6 +5,6 @@ authors:
   given-names: "Iydon"
   orcid: "https://orcid.org/0000-0003-1923-4002"
 title: "Python interface for OpenFOAM using YAML format as configuration file"
-version: 0.6.0
+version: 0.6.1
 date-released: 2022-2-6
 url: "https://github.com/iydon/of.yaml"
