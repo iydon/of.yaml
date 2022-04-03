@@ -4,25 +4,25 @@ PYTHON = $(POETRY) run python
 
 .PHONY: help demo shell test
 
-help:          ## 打印帮助信息
+help:          ## Print the usage
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-demo:          ## 运行示例程序
+demo:          ## Run the demo code
 	$(PYTHON) -m foam conv tutorials/incompressible/simpleFoam/airFoil2D.yaml
 
-dependencies:  ## 以树状形式列出依赖关系
+dependencies:  ## List the dependencies as a tree
 	@$(POETRY) show --no-dev --tree
 
-shell:         ## 在虚拟环境中生成 shell
+shell:         ## Activate the virtual environment
 	@$(POETRY) shell
 
-test:          ## 运行测试程序
+test:          ## Run unit tests
 	for version in 7 ; do \
 		$(PYTHON) -m foam conv tutorials --directory test --version $$version --exist-ok ; \
 		$(PYTHON) -m foam test           --directory test --version $$version ; \
 	done
 
-standalone:    ## 转换 Python 库到单文件
+standalone:    ## Convert Python package into a single file
 	@cp script/standalone.py .
 	@$(PYTHON) standalone.py
 	@rm standalone.py
