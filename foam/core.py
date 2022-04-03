@@ -32,8 +32,8 @@ class Foam:
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
 
-        self.cmd = Command(self)
-        self.parse = Parse(self)
+        self.cmd = Command.from_foam(self)
+        self.parse = Parse.from_foam(self)
 
         self._list = data
         self._root = p.Path(root)

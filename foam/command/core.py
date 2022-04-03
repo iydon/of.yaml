@@ -16,8 +16,11 @@ if t.TYPE_CHECKING:
 class Command:
     '''OpenFOAM command wrapper'''
 
-    def __init__(self, foam: 'Foam') -> None:
-        self._foam = foam
+    @classmethod
+    def from_foam(cls, foam: 'Foam') -> 'Command':
+        cmd = cls()
+        cmd._foam = foam
+        return cmd
 
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:

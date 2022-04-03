@@ -12,8 +12,9 @@ if t.TYPE_CHECKING:
 class Parse:
     '''OpenFOAM YAML parser'''
 
-    def __init__(self, foam: 'Foam') -> None:
-        self._foam = foam
+    @classmethod
+    def from_foam(cls, _: 'Foam') -> 'Parse':
+        return cls()
 
     def data(self, data: 'Dict') -> t.Iterator[str]:
         for key, value in data.items():
