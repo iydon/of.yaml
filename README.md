@@ -574,7 +574,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPL-3.0 License. See `LICENSE` for more information.
+Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -601,4 +601,4 @@ Project Link: [https://github.com/iydon/of.yaml](https://github.com/iydon/of.yam
 [issues-shield]: https://img.shields.io/github/issues/iydon/of.yaml.svg?style=for-the-badge
 [issues-url]: https://github.com/iydon/of.yaml/issues
 [license-shield]: https://img.shields.io/github/license/iydon/of.yaml.svg?style=for-the-badge
-[license-url]: https://github.com/iydon/of.yaml/blob/master/LICENSE
+[license-url]: https://github.com/iydon/of.yaml/blob/master/LICENSE.txt
