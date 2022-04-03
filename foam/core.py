@@ -19,14 +19,10 @@ class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case
 
     Example:
-        >>> path = pathlib.Path('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
-        >>> foam = Foam.from_file(path)
-        >>> foam.meta['openfoam'].append(8)
+        >>> foam = Foam.from_file('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 700
-        >>> foam.save(path.stem)
-        >>> process = foam.cmd.run('./Allrun', output=True)
-        >>> print(process)
-        Process(code=0, time=7.043395757675171, stdout=b'Running simpleFoam on airFoil2D\n', stderr=b'')
+        >>> foam.save('airFoil2D')
+        >>> foam.cmd.all_run()
     '''
 
     __version__ = '0.6.0'

@@ -21,3 +21,8 @@ test:          ## 运行测试程序
 		$(PYTHON) -m foam conv tutorials --directory test --version $$version --exist-ok ; \
 		$(PYTHON) -m foam test           --directory test --version $$version ; \
 	done
+
+standalone:    ## 转换 Python 库到单文件
+	@cp script/standalone.py .
+	@$(PYTHON) standalone.py
+	@rm standalone.py

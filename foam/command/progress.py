@@ -4,8 +4,6 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-import tqdm
-
 if t.TYPE_CHECKING:
     from ..core import Foam
 
@@ -28,6 +26,8 @@ class Default:
 
 class FoamBase(Default):
     def __init__(self, foam: 'Foam') -> None:
+        import tqdm
+
         self._foam = foam
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
