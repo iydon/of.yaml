@@ -226,7 +226,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
-    permision: 777
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -241,7 +241,7 @@ system:
 -
     name: gen6DoF
     type: [embed, 7z]
-    permision: null
+    permission: null
     data: !!binary |
         N3q8ryccAATsgr4PXgUAAAAAAAAjAAAAAAAAABrTS+fgC50Etl0AF4qCFMEHx/WUudR7d2FmFZf7
         tEMv0jTd/+nUx1Uuu6OgzYLAaWYf3ny/TKtDR8X/XLUndRlqu/3SqjDm3Dk/kQ6S2Teryaz0d++R
@@ -272,7 +272,7 @@ system:
 -
     name: constant/6DoF.dat
     type: [embed, 7z]
-    permision: null
+    permission: null
     data: !!binary |
         N3q8ryccAAQNYUZhXwoAAAAAAABaAAAAAAAAACx8rOngGgAKV10ABQ0pPROkhrs7DAcooPWoEZTr
         l5BPTr5w8ZRQP6Jo5ffp6lYIiraB41qo6NwuCfBUHn5xarJflMZju3kb5t1mirtiegf3VxGG4Lkw
@@ -326,7 +326,7 @@ system:
 -
     name: system/blockMeshDict.m4
     type: [embed, 7z]
-    permision: null
+    permission: null
     data: !!binary |
         N3q8ryccAAQhyivfowQAAAAAAABqAAAAAAAAAPVPWz/gD7IEm10AF4qCFKj5AG+U3trgcUxDtybp
         KRu1DJLsDevm/7GVRmJE5X1tnO+gAdQZCyFFgWioGXYAFzEi7k2gCuj8LTLIWtxTTYCH+Q13mk68

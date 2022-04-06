@@ -127,7 +127,7 @@ class Foam:
             out: p.Path
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
-                    self._write(out, static['data'], static.get('permision', None))
+                    self._write(out, static['data'], static.get('permission', None))
                 elif static['type'][1] == 'binary':
                     out.write_bytes(static['data'])
                 elif static['type'][1] == '7z':

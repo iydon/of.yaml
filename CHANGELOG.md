@@ -35,3 +35,4 @@
 
 - Add more progress bar adapters for applications
 - Fix version comparison problem (major and minor)
+- Fix typo: permision -> permission

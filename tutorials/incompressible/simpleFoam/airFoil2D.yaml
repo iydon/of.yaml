@@ -184,7 +184,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
-    permision: 777
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -198,7 +198,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
-    permision: 777
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -209,7 +209,7 @@ system:
 -
     name: constant/polyMesh
     type: [path, 7z]
-    permision: null
+    permission: null
     data: static/airFoil2D-polyMesh.7z
 ---  # other
 pipeline:

@@ -136,7 +136,7 @@ system:
 -
     name: Allrun
     type: [embed, text]
-    permision: 777
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -154,7 +154,7 @@ system:
 -
     name: Allclean
     type: [embed, text]
-    permision: 777
+    permission: 777
     data: |
         #!/bin/sh
         cd ${0%/*} || exit 1    # Run from this directory
@@ -168,7 +168,7 @@ system:
 -
     name: elbow.msh
     type: [embed, 7z]
-    permision: null
+    permission: null
     data: !!binary |
         N3q8ryccAAQLosHbhiwAAAAAAABaAAAAAAAAABf4P8fgfXEsfl0AFAxAIWfpcsWE2ZWH4aSDmnOT
         kCHgAaTwMlaA+ke0zLEj/vD0wQl1dL686rn6aym7ULfwW+8x/9zb10Ur6Gug/neQJN+18SmzaSn+
