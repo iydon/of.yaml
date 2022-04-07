@@ -249,7 +249,7 @@ system:
         hierarchicalCoeffs:
             n: (1 1 1)
             delta: 0.001
-            prder: xyz
+            order: xyz
         manualCoeffs:
             dataFile: >
                 ""
