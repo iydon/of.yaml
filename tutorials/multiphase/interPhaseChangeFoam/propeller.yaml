@@ -464,7 +464,6 @@ system:
                     file: >
                         "propeller.eMesh"
                     level: 4
-
             # Surface based refinement
             # ~~~~~~~~~~~~~~~~~~~~~~~~
             # Specifies two levels for every surface. The first is the minimum level,
