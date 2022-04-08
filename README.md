@@ -178,6 +178,7 @@ The following table shows the OpenFOAM cases that have been converted to YAML fo
   | [plateHole.yaml](tutorials/stressAnalysis/solidDisplacementFoam/plateHole.yaml) | [plateHole](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/stressAnalysis/solidDisplacementFoam/plateHole) | 7 | [stressAnalysis/solidDisplacementFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/stressAnalysis/solidDisplacementFoam) |
   | [sloshingTank3D6DoF.yaml](tutorials/multiphase/interFoam/laminar/sloshingTank3D6DoF.yaml) | [sloshingTank3D6DoF](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interFoam/laminar/sloshingTank3D6DoF) | 7 | [multiphase/interFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interFoam) |
   | [propeller.yaml](tutorials/multiphase/interPhaseChangeFoam/propeller.yaml) | [propeller](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interPhaseChangeFoam/propeller) | 7 | [multiphase/interPhaseChangeFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interPhaseChangeFoam) |
+  | [mixerVesselAMI.yaml](tutorials/multiphase/interFoam/RAS/mixerVesselAMI.yaml) | [mixerVesselAMI](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interFoam/RAS/mixerVesselAMI) | 7 | [multiphase/interFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interFoam) |
 </details>
 
 ### Task List
@@ -459,7 +460,7 @@ The following is a task list to convert [OpenFOAM-7](https://github.com/OpenFOAM
               - [ ] damBreak
               - [ ] damBreakPorousBaffle
               - [ ] floatingObject
-              - [ ] mixerVesselAMI
+              - [x] mixerVesselAMI
               - [ ] waterChannel
               - [ ] weirOverflow
           - [ ] laminar
