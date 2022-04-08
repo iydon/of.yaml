@@ -733,7 +733,7 @@ system:
     name: constant/triSurface
     type: [path, 7z]
     permission: null
-    data: static/propeller-tri_surface.7z
+    data: static/propeller-triSurface.7z
 ---
 pipeline:
     - cp $FOAM_TUTORIALS/resources/geometry/propeller.obj.gz constant/triSurface/

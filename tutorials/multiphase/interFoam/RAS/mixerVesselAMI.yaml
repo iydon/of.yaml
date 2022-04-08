@@ -927,7 +927,7 @@ system:
     name: constant/triSurface
     type: [path, 7z]
     permission: null
-    data: static/mixerVesselAMI-tri_surface.7z
+    data: static/mixerVesselAMI-triSurface.7z
 ---
 pipeline:
     - blockMesh
