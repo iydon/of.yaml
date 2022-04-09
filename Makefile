@@ -2,7 +2,7 @@ POETRY = poetry
 PYTHON = $(POETRY) run python
 
 
-.PHONY: help demo shell test
+.PHONY: help demo dependencies shell test standalone preview docs
 
 help:          ## Print the usage
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
@@ -26,3 +26,9 @@ standalone:    ## Convert Python package into a single file
 	@cp script/standalone.py .
 	@$(PYTHON) standalone.py
 	@rm standalone.py
+
+preview:       ## Run the builtin development server
+	$(PYTHON) -m mkdocs serve
+
+docs:          ## Build the MkDocs documentation
+	$(PYTHON) -m mkdocs Build

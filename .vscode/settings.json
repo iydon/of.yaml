@@ -13,6 +13,7 @@
         "*.rs": "rust",
         "*.toml": "toml",
         "*.yaml": "yaml",
+        "*.yml": "yaml",
         "*": "OpenFOAM"
     },
     "[yaml]": {
