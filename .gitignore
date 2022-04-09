@@ -1,8 +1,8 @@
 # python
 __pycache__/
 
-# rust
-dictToFoam/target/
+# mkdocs
+site/
 
 # Alltest
 !test/README.md
