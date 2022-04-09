@@ -1,1 +1,66 @@
-site_name: My Docs
+site_name: OpenFOAM.YAML
+
+copyright: Copyright &copy; 2022 Iydon Liang
+
+repo_url: https://github.com/iydon/of.yaml
+
+theme:
+    name: material
+    favicon: assets/image/favicon.png
+    palette:
+        primary: green
+    features:
+        - navigation.instant
+        - navigation.tabs
+        - navigation.tabs.sticky
+        - navigation.top
+
+plugins:
+    - search:
+        lang:
+            - en
+
+markdown_extensions:
+    # https://squidfunk.github.io/mkdocs-material/reference/abbreviations/
+    - abbr
+    # https://squidfunk.github.io/mkdocs-material/reference/admonitions/
+    - admonition
+    - pymdownx.details
+    - pymdownx.superfences
+    # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
+    - pymdownx.highlight
+    - pymdownx.inlinehilite
+    - pymdownx.superfences
+    - pymdownx.snippets
+    # https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
+    - pymdownx.superfences
+    - pymdownx.tabbed:
+        alternate_style: true
+    # https://squidfunk.github.io/mkdocs-material/reference/data-tables/
+    - tables
+    # https://squidfunk.github.io/mkdocs-material/reference/footnotes/
+    - footnotes
+    # https://squidfunk.github.io/mkdocs-material/reference/formatting/
+    - pymdownx.critic
+    - pymdownx.caret
+    - pymdownx.keys
+    - pymdownx.mark
+    - pymdownx.tilde
+    # https://squidfunk.github.io/mkdocs-material/reference/icons-emojis/
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+    # https://squidfunk.github.io/mkdocs-material/reference/images/
+    - attr_list
+    - md_in_html
+    # https://squidfunk.github.io/mkdocs-material/reference/lists/
+    - def_list
+    - pymdownx.tasklist:
+        custom_checkbox: true
+    # https://facelessuser.github.io/pymdown-extensions/extensions/magiclink/
+    - pymdownx.magiclink
+    # https://facelessuser.github.io/pymdown-extensions/extensions/smartsymbols/
+    - pymdownx.smartsymbols
+
+nav:
+    - Home: 'index.md'
