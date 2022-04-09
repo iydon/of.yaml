@@ -64,3 +64,6 @@ markdown_extensions:
 
 nav:
     - Home: 'index.md'
+    - Getting started:
+        - YAML Configuration: 'yaml.md'
+        - Interface Library: 'interface.md'

@@ -144,7 +144,7 @@ Running the demo code in the virtual environment results in the following output
 
 ```sh
 $ poetry run python demo.py
-Running simpleFoam on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D
+Running simpleFoam on .../of.yaml/airFoil2D
  63%|██████████████████████████████████████▏                      | 313.0/500.0 [00:06<00:04, 46.66it/s]
 ```
 
