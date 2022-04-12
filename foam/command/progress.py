@@ -44,7 +44,7 @@ class AppBase(Default):
     def now(self, line: bytes) -> t.Optional[float]:
         raise NotImplementedError
 
-class AppByTime(AppBase):
+class AppByTimeI(AppBase):
     '''
     - solver:
         - multiphase:
@@ -121,6 +121,17 @@ class AppByTime(AppBase):
         line = line.strip()
         if line.startswith(b'Time = '):
             return float(line[7:])
+
+class AppByTimeII(AppBase):
+    '''
+    - utility:
+        - postProcessing:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK.C
+    '''
+    def now(self, line):
+        line = line.strip()
+        if line.startswith(b'Time: '):
+            return float(line[6:])
 
 class AppByIterationI(AppBase):
     '''
@@ -339,6 +350,6 @@ class AppByOther(AppBase):
 
 Apps = {}
 pattern = re.compile(r'\w+(?=\.C)')
-for App in [AppByTime, AppByIterationI, AppByIterationII, AppByProcessor]:
+for App in [AppByTimeI, AppByTimeII, AppByIterationI, AppByIterationII, AppByProcessor]:
     for name in pattern.findall(App.__doc__):
         Apps[name] = App

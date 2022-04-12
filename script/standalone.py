@@ -7,6 +7,7 @@ import typing as t
 from foam import Foam
 from foam.command import Command, progress
 from foam.parse import Parse
+from foam.postprocessing import VTK
 from foam.type import Dict, List, Path, Data
 
 
@@ -48,6 +49,7 @@ f = functools
 p = pathlib
 s = subprocess
 t = typing
+w = warnings
 
 {Dict = !r}
 {List = !r}
@@ -57,16 +59,20 @@ t = typing
 
 {show.source(progress.Default)}
 {show.source(progress.AppBase)}
-{show.source(progress.AppByTime)}
+{show.source(progress.AppByTimeI)}
+{show.source(progress.AppByTimeII)}
 {show.source(progress.AppByIterationI)}
 {show.source(progress.AppByIterationII)}
 {show.source(progress.AppByProcessor)}
+{show.source(progress.AppByOther)}
 
 Apps = {show.apps(progress.Apps)}
 
 {show.source(Command)}
 
 {show.source(Parse)}
+
+{show.source(VTK)}
 
 {show.source(Foam)}
 '''))

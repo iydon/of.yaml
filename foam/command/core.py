@@ -16,11 +16,14 @@ if t.TYPE_CHECKING:
 class Command:
     '''OpenFOAM command wrapper'''
 
+    Self = __qualname__
+
+    def __init__(self, foam: 'Foam') -> None:
+        self._foam = foam
+
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Command':
-        cmd = cls()
-        cmd._foam = foam
-        return cmd
+    def from_foam(cls, foam: 'Foam') -> Self:
+        return cls(foam)
 
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
@@ -40,12 +43,16 @@ class Command:
         except:
             return 1
 
-    def all_run(self) -> None:
+    def all_run(
+        self,
+        overwrite: bool = False, exception: bool = False,
+        parallel: bool = True, unsafe: bool = True,
+    ) -> None:
         pipe = (self._foam['other'] or {}).get('pipeline', None)
         if pipe is None:
             self.raw('./Allrun')
         else:
-            self.run(pipe, overwrite=False, exception=False, parallel=True, unsafe=True)
+            self.run(pipe, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
     def run(
         self,

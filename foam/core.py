@@ -6,7 +6,7 @@ import json
 import pathlib as p
 import shutil
 import typing as t
-import warnings
+import warnings as w
 
 from .type import Dict, List, Path, Data
 
@@ -27,6 +27,8 @@ class Foam:
 
     __version__ = '0.7.0'
 
+    Self = __qualname__
+
     def __init__(self, data: List, root: Path) -> None:
         from packaging.version import parse
 
@@ -39,9 +41,9 @@ class Foam:
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
         if (version.major, version.minor) < (current.major, current.minor):
-            warnings.warn('Forward compatibility is not yet guaranteed')
+            w.warn('Forward compatibility is not yet guaranteed')
         elif (version.major, version.minor) > (current.major, current.minor):
-            warnings.warn('Backward compatibility is not yet guaranteed')
+            w.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional['Data']:
         try:
@@ -73,7 +75,7 @@ class Foam:
         return self._parse
 
     @classmethod
-    def from_file(cls, path: Path) -> 'Foam':
+    def from_file(cls, path: Path) -> Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
         for suffixes, method in [
@@ -85,12 +87,12 @@ class Foam:
         raise Exception(f'Suffix "{path.suffix}" not supported')
 
     @classmethod
-    def from_json(cls, text: str, root: Path) -> 'Foam':
+    def from_json(cls, text: str, root: Path) -> Self:
         data = json.loads(text)
         return cls(data, root)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path) -> 'Foam':
+    def from_yaml(cls, text: str, root: Path) -> Self:
         import yaml
 
         try:
@@ -101,7 +103,7 @@ class Foam:
         data = list(yaml.load_all(text, Loader=SafeLoader))
         return cls(data, root)
 
-    def save(self, dest: Path, paraview: bool = True) -> 'Foam':
+    def save(self, dest: Path, paraview: bool = True) -> Self:
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)
         self._dest.mkdir(parents=True, exist_ok=True)

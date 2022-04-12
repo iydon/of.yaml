@@ -35,5 +35,6 @@
 
 - Add more progress bar adapters for applications
 - Add MkDocs support, which will be used to build documentation in the future
+- Add post-processing sub-module for VTK
 - Fix version comparison problem (major and minor)
 - Fix typo: permision -> permission
