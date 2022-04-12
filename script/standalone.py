@@ -45,6 +45,10 @@ import subprocess
 import typing
 import warnings
 
+if typing.TYPE_CHECKING:
+    import numpy as np
+    import vtkmodules as vtk
+
 f = functools
 p = pathlib
 s = subprocess
