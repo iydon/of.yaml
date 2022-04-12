@@ -17,6 +17,7 @@ py7zr = "^0.17.2"
 packaging = "^21.3"
 click = "^8.0.3"
 tqdm = "^4.63.1"
+vtk = "^9.1.0"
 
 [tool.poetry.dev-dependencies]
 mkdocs-material = "^8.2.9"
