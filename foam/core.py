@@ -60,6 +60,8 @@ class Foam:
 
     @property
     def cmd(self) -> 'Command':
+        assert self._dest is not None, 'Please call `Foam::save` method first'
+
         from .command import Command
 
         if self._cmd is None:

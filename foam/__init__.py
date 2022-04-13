@@ -1,5 +1,5 @@
 from .core import Foam
-from .postprocessing import VTK
+from . import postprocessing
 
 
 __doc__ = Foam.__doc__

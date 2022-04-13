@@ -6,6 +6,7 @@ import pathlib as p
 import shlex
 import subprocess as s
 import typing as t
+import warnings as w
 
 from .progress import Default, Apps
 
@@ -25,11 +26,23 @@ class Command:
     def from_foam(cls, foam: 'Foam') -> Self:
         return cls(foam)
 
+    @property
+    def times(self) -> t.List[float]:
+        times = []
+        for path in self._foam._dest.iterdir():
+            try:
+                time = float(path.stem)
+            except ValueError:
+                continue
+            times.append(time)
+        return sorted(times)
+
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
         return {
             '__app__': self.application,
             '__procs__': str(self.number_of_processors),
+            '__pwd__': self._foam._dest.absolute().as_posix(),
         }
 
     @f.cached_property
@@ -43,16 +56,20 @@ class Command:
         except:
             return 1
 
+    @f.cached_property
+    def pipe(self) -> t.List[str]:
+        return (self._foam['other'] or {}).get('pipeline', [])
+
     def all_run(
         self,
         overwrite: bool = False, exception: bool = False,
         parallel: bool = True, unsafe: bool = True,
     ) -> None:
-        pipe = (self._foam['other'] or {}).get('pipeline', None)
-        if pipe is None:
+        if not self.pipe:
+            assert (self._foam._dest/'Allrun').exists()
             self.raw('./Allrun')
         else:
-            self.run(pipe, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
+            self.run(self.pipe, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
     def run(
         self,
@@ -61,7 +78,6 @@ class Command:
         parallel: bool = True, unsafe: bool = False,
     ) -> t.List[p.Path]:
         '''https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions'''
-        self._check()
         popen = lambda args: s.Popen(
             ' '.join(args) if unsafe else args,
             cwd=self._foam._dest, shell=unsafe, stdout=s.PIPE,
@@ -76,9 +92,9 @@ class Command:
                 if exception:
                     raise Exception(message)
                 else:
-                    print(message)
+                    w.warn(message)
                     continue
-            print(f'Running {raws[0]} on {path.parent.absolute()}')
+            print(f'Running {raws[0]} on {path.parent.absolute()} using {self.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
             App = Apps.get(raws[0], Default)
             with popen(args) as proc, open(path, 'wb') as file, App(self._foam) as app:
@@ -86,16 +102,13 @@ class Command:
                     file.write(line)
                     app.step(line)
             paths[ith] = path
+        # TODO: Use exit status as return
         return paths
 
     def raw(self, command: str, output: bool = True) -> s.CompletedProcess:
         '''Execute raw command in case directory'''
-        self._check()
         args = shlex.split(command)
         return s.run(args, cwd=self._foam._dest, capture_output=output)
-
-    def _check(self) -> None:
-        assert self._foam._dest is not None, 'Please call `Foam::save` method first'
 
     def _replace(self, command: str) -> str:
         for old, new in self.macros.items():

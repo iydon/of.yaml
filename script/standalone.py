@@ -12,26 +12,35 @@ from foam.type import Dict, List, Path, Data
 
 
 class show:
-    @staticmethod
-    def source(obj: object) -> str:
+    @classmethod
+    def source(cls, obj: object) -> str:
         pattern = re.compile(r'from \.[\w\.]* import \w+')
-        content = inspect.getsource(obj)
-        return pattern.sub('', content)
+        return pattern.sub('', inspect.getsource(obj))
 
-    @staticmethod
-    def apps(obj: t.Dict[str, t.Type]) -> str:
+    @classmethod
+    def apps(cls, obj: t.Dict[str, t.Type]) -> str:
         content = ',\n'.join(
             f'{key!r}: {value.__name__}'
             for key, value in obj.items()
         )
-        return '{\n' + textwrap.indent(content, '    ') + '\n}'
+        return f'{{\n{cls._indent(content)}\n}}'
 
-    @staticmethod
-    def code(obj: str) -> str:
+    @classmethod
+    def code(cls, obj: str) -> str:
         br = '\n'
+        pattern = re.compile(fr'{br}{{3,}}')
         lines = obj.strip().splitlines()
         code = br.join(map(str.rstrip, lines)) + br
-        return code.replace(3*br, 2*br)
+        return pattern.sub(2*br, code)
+
+    @classmethod
+    def submodule(cls, module: str, *objs: object) -> str:
+        content = '\n\n'.join(cls.source(obj) for obj in objs)
+        return f'class {module}(types.ModuleType):\n{cls._indent(content)}'
+
+    @classmethod
+    def _indent(cls, content: str, level: int = 1) -> str:
+        return textwrap.indent(content, 4*level*' ')
 
 
 p.Path('foam.py').write_text(show.code(f'''
@@ -42,6 +51,7 @@ import pathlib
 import shlex
 import shutil
 import subprocess
+import types
 import typing
 import warnings
 
@@ -68,7 +78,6 @@ w = warnings
 {show.source(progress.AppByIterationI)}
 {show.source(progress.AppByIterationII)}
 {show.source(progress.AppByProcessor)}
-{show.source(progress.AppByOther)}
 
 Apps = {show.apps(progress.Apps)}
 
@@ -76,7 +85,7 @@ Apps = {show.apps(progress.Apps)}
 
 {show.source(Parse)}
 
-{show.source(VTK)}
+{show.submodule('postprocessing', VTK)}
 
 {show.source(Foam)}
 '''))
