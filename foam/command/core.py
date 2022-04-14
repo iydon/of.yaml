@@ -40,36 +40,21 @@ class Command:
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
         return {
-            '__app__': self.application,
-            '__procs__': str(self.number_of_processors),
+            '__app__': self._foam.application,
+            '__procs__': str(self._foam.number_of_processors),
             '__pwd__': self._foam._dest.absolute().as_posix(),
         }
-
-    @f.cached_property
-    def application(self) -> str:
-        return self._foam['foam']['system', 'controlDict', 'application']
-
-    @f.cached_property
-    def number_of_processors(self) -> int:
-        try:
-            return self._foam['foam']['system', 'decomposeParDict', 'numberOfSubdomains']
-        except:
-            return 1
-
-    @f.cached_property
-    def pipe(self) -> t.List[str]:
-        return (self._foam['other'] or {}).get('pipeline', [])
 
     def all_run(
         self,
         overwrite: bool = False, exception: bool = False,
         parallel: bool = True, unsafe: bool = True,
     ) -> None:
-        if not self.pipe:
+        if not self._foam.pipeline:
             assert (self._foam._dest/'Allrun').exists()
             self.raw('./Allrun')
         else:
-            self.run(self.pipe, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
+            self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
     def run(
         self,
@@ -85,7 +70,7 @@ class Command:
         paths = [None] * len(commands)
         for ith, command in enumerate(commands):
             raws = shlex.split(self._replace(command))
-            args = self._split(command, parallel and self.number_of_processors>1)
+            args = self._split(command, parallel and self._foam.number_of_processors>1)
             path = self._foam._dest / f'log.{raws[0].replace("./", "")}{suffix}'
             if not overwrite and path.exists():
                 message = f'{raws[0]} already run on {path.parent.absolute()}: remove log file "{path.name}" to re-run'
@@ -94,7 +79,7 @@ class Command:
                 else:
                     w.warn(message)
                     continue
-            print(f'Running {raws[0]} on {path.parent.absolute()} using {self.number_of_processors} processes if in parallel')
+            print(f'Running {raws[0]} on {path.parent.absolute()} using {self._foam.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
             App = Apps.get(raws[0], Default)
             with popen(args) as proc, open(path, 'wb') as file, App(self._foam) as app:
@@ -102,7 +87,7 @@ class Command:
                     file.write(line)
                     app.step(line)
             paths[ith] = path
-        # TODO: Use exit status as return
+        # TODO: use exit status as return
         return paths
 
     def raw(self, command: str, output: bool = True) -> s.CompletedProcess:

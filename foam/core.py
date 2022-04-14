@@ -1,6 +1,7 @@
 __all__ = ['Foam']
 
 
+import functools as f
 import io
 import json
 import pathlib as p
@@ -75,6 +76,21 @@ class Foam:
         if self._parse is None:
             self._parse = Parse.from_foam(self)
         return self._parse
+
+    @f.cached_property
+    def application(self) -> str:
+        return self['foam']['system', 'controlDict', 'application']
+
+    @f.cached_property
+    def number_of_processors(self) -> int:
+        try:
+            return self['foam']['system', 'decomposeParDict', 'numberOfSubdomains']
+        except:
+            return 1
+
+    @f.cached_property
+    def pipeline(self) -> t.List[str]:
+        return (self['other'] or {}).get('pipeline', [])
 
     @classmethod
     def from_file(cls, path: Path) -> Self:
