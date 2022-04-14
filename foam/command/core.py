@@ -56,6 +56,10 @@ class Command:
         else:
             self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
+    def all_clean(self) -> None:
+        # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
+        self.raw('./Allclean')
+
     def run(
         self,
         commands: t.List[str],

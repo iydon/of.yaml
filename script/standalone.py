@@ -44,6 +44,7 @@ class show:
 
 
 p.Path('foam.py').write_text(show.code(f'''
+import collections
 import functools
 import io
 import json
@@ -59,6 +60,7 @@ if typing.TYPE_CHECKING:
     import numpy as np
     import vtkmodules as vtk
 
+c = collections
 f = functools
 p = pathlib
 s = subprocess

@@ -167,7 +167,7 @@ class AppByProcessor(AppBase):
         import tqdm
 
         start = 0
-        end = foam.cmd.number_of_processors - 1
+        end = foam.number_of_processors - 1
         self.pbar = tqdm.tqdm(total=end-start)
         self._new = self._old = start
 
