@@ -49,8 +49,9 @@ class Parse:
             for element in value:
                 head = tuple(k for k, v in element.items() if v is None)
                 if head:
-                    element.pop(head[0])
-                    string = ' '.join(self.data(element))
+                    element_cloned = element.copy()
+                    element_cloned.pop(head[0])
+                    string = ' '.join(self.data(element_cloned))
                     strings.append(f'{head[0]} {{{string}}}')
                 else:
                     string = ' '.join(self.data(element))
