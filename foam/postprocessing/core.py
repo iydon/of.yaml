@@ -2,7 +2,6 @@ __all__ = ['VTK']
 
 
 import collections as c
-import functools as f
 import typing as t
 import warnings as w
 
@@ -20,23 +19,39 @@ class VTK:
 
     Self = __qualname__
 
-    def __init__(self, reader: 'vtk.vtkIOLegacy.vtkDataReader') -> None:
-        self._points = self._to_numpy(reader.GetOutput().GetPoints().GetData())
-        arrays = reader.GetOutput().GetPointData()
-        self._fields = {}
-        for ith in range(arrays.GetNumberOfArrays()):
-            array = arrays.GetArray(ith)
-            self._fields[array.GetName()] = self._to_numpy(array)
+    def __init__(self, reader: 'vtk.vtkIOLegacy.vtkDataReader', point: bool = True, cell: bool = True) -> None:
+        import numpy as np
+
+        self._points, self._cells = None, None
+        self._point_fields = {}
+        self._cell_fields = {}
+        if point:
+            self._points = self._to_numpy(reader.GetOutput().GetPoints().GetData())
+            arrays = reader.GetOutput().GetPointData()
+            for ith in range(arrays.GetNumberOfArrays()):
+                array = arrays.GetArray(ith)
+                self._point_fields[array.GetName()] = self._to_numpy(array)
+        if cell:
+            arrays = reader.GetOutput().GetCellData()
+            for ith in range(arrays.GetNumberOfArrays()):
+                array = arrays.GetArray(ith)
+                self._cell_fields[array.GetName()] = self._to_numpy(array)
+            cell_ids = set(self._cell_fields['cellID'])  # TODO: explore why cell_id is sometimes repeated
+            for key, value in self._cell_fields.items():
+                self._cell_fields[key] = value[:len(cell_ids)]
+            self._cells = np.zeros((len(cell_ids), 3))
+            for cell_id in cell_ids:
+                reader.GetOutput().GetCell(cell_id).GetCentroid(self._cells[cell_id])
         reader.CloseVTKFile()
 
     def __contains__(self, key: str) -> bool:
-        return key in self._fields
+        return key in self._point_fields or key in self._cell_fields
 
     def __getitem__(self, key: str) -> 'np.ndarray':
-        return self._fields[key]
+        raise NotImplementedError
 
     @classmethod
-    def from_file(cls, path: Path) -> Self:
+    def from_file(cls, path: Path, **kwargs) -> Self:
         import vtkmodules.all as vtk
 
         reader = vtk.vtkGenericDataObjectReader()
@@ -45,10 +60,11 @@ class VTK:
             if attr.startswith('ReadAll') and attr.endswith('On'):
                 getattr(reader, attr)()
         reader.Update()
-        return cls(reader)
+        return cls(reader, **kwargs)
 
     @classmethod
-    def from_foam(cls, foam: 'Foam', options: str = '', overwrite: bool = False) -> t.Iterator[Self]:
+    def from_foam(cls, foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
+        foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=overwrite, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)
         paths = [
             path
@@ -56,15 +72,27 @@ class VTK:
             if path.is_file() and path.suffix=='.vtk'
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
-            yield cls.from_file(path)
+            yield cls.from_file(path, **kwargs)
 
     @property
     def points(self) -> 'np.ndarray':
+        assert self._points
         return self._points
 
     @property
-    def fields(self) -> 'np.ndarray':
-        return self._fields
+    def cells(self) -> 'np.ndarray':
+        assert self._cells
+        return self._cells
+
+    @property
+    def point_fields(self) -> t.Dict[str, 'np.ndarray']:
+        assert self._point_fields
+        return self._point_fields
+
+    @property
+    def cell_fields(self) -> t.Dict[str, 'np.ndarray']:
+        assert self._cell_fields
+        return self._cell_fields
 
     @property
     def x(self) -> 'np.ndarray':
@@ -79,38 +107,18 @@ class VTK:
         return self._points[:, 2]
 
     def keys(self) -> t.List[str]:
-        return list(self._fields.keys())
+        raise NotImplementedError
 
-    @f.lru_cache
-    def density(self, nx: int, ny: int, nz: int) -> 'np.ndarray':
-        import numpy as np
-
-        xs, ys, zs = self.points.T
-        x0, xn = xs.min(), xs.max()
-        y0, yn = ys.min(), ys.max()
-        z0, zn = zs.min(), zs.max()
-        dx, dy, dz = (xn-x0)/nx, (yn-y0)/ny, (zn-z0)/nz
-        density = np.ones(self.points.shape[0])
-        f = lambda ns, n0, dn, nn: np.clip(np.round((ns-n0)/dn-0.5).astype(np.uint64), 0, nn-1)
-        iths, jths, kths = f(xs, x0, dx, nx), f(ys, y0, dy, ny), f(zs, z0, dz, nz)
-        count = c.Counter(zip(iths, jths, kths))
-        for nth, (ith, jth, kth) in enumerate(zip(iths, jths, kths)):
-            density[nth] /= count[(ith, jth, kth)]
-        return density
-
-    def centroid(self, key: str, density: t.Optional['np.ndarray'] = None) -> 'np.ndarray':
-        '''
-        - Argument:
-            - density: this parameter must be specified for unstructured grid
-        '''
-        field = self.fields[key]
-        density = 1.0 if density is None else density
+    def centroid(self, key: str, structured: bool = False) -> 'np.ndarray':
+        if structured:
+            coords = self._points
+            field = self._point_fields[key]
+        else:
+            coords = self._cells
+            field = self._cell_fields[key] * self._cell_fields['V']
         if len(field.shape) != 1:
             w.warn('NotImplemented')
-        return (self.points.T @ (field*density)) / sum(field*density)
-
-    def centroid_with_density(self, key: str, nx: int, ny: int, nz: int) -> 'np.ndarray':
-        return self.centroid(key, self.density(nx, ny, nz))
+        return (coords.T @ field) / sum(field)
 
     def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> 'np.ndarray':
         from vtkmodules.util.numpy_support import vtk_to_numpy
