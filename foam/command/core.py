@@ -60,6 +60,7 @@ class Command:
     def all_clean(self) -> None:
         # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
         shutil.rmtree(self._foam._dest)
+        self._foam.save(self._foam._dest)
 
     def run(
         self,
