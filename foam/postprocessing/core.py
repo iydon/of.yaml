@@ -39,9 +39,7 @@ class VTK:
             cell_ids = set(self._cell_fields['cellID'])  # TODO: explore why cell_id is sometimes repeated
             for key, value in self._cell_fields.items():
                 self._cell_fields[key] = value[:len(cell_ids)]
-            self._cells = np.zeros((len(cell_ids), 3))
-            for cell_id in cell_ids:
-                reader.GetOutput().GetCell(cell_id).GetCentroid(self._cells[cell_id])
+            self._cells = self._cell_fields['C']
         reader.CloseVTKFile()
 
     def __contains__(self, key: str) -> bool:
@@ -64,7 +62,8 @@ class VTK:
 
     @classmethod
     def from_foam(cls, foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
-        foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=overwrite, exception=False, unsafe=True)
+        foam.cmd.run(['postProcess -func writeCellCentres'], overwrite=True, exception=False, unsafe=True)
+        foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=True, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)
         paths = [
             path

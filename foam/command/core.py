@@ -4,6 +4,7 @@ __all__ = ['Command']
 import functools as f
 import pathlib as p
 import shlex
+import shutil
 import subprocess as s
 import typing as t
 import warnings as w
@@ -58,7 +59,7 @@ class Command:
 
     def all_clean(self) -> None:
         # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
-        self.raw('./Allclean')
+        shutil.rmtree(self._foam._dest)
 
     def run(
         self,
