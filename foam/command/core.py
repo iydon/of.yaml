@@ -38,6 +38,14 @@ class Command:
             times.append(time)
         return sorted(times)
 
+    @property
+    def logs(self) -> t.Set[p.Path]:
+        logs = set()
+        for path in self._foam._dest.iterdir():
+            if path.stem == 'log':
+                logs.add(path)
+        return logs
+
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
         return {
@@ -50,12 +58,12 @@ class Command:
         self,
         overwrite: bool = False, exception: bool = False,
         parallel: bool = True, unsafe: bool = True,
-    ) -> None:
+    ) -> t.List[int]:
         if not self._foam.pipeline:
             assert (self._foam._dest/'Allrun').exists()
-            self.raw('./Allrun')
+            return [self.raw('./Allrun').returncode]
         else:
-            self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
+            return self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
     def all_clean(self) -> None:
         # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
@@ -67,13 +75,13 @@ class Command:
         commands: t.List[str],
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
-    ) -> t.List[p.Path]:
+    ) -> t.List[int]:
         '''https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions'''
         popen = lambda args: s.Popen(
             ' '.join(args) if unsafe else args,
             cwd=self._foam._dest, shell=unsafe, stdout=s.PIPE,
         )
-        paths = [None] * len(commands)
+        codes = [None] * len(commands)
         for ith, command in enumerate(commands):
             raws = shlex.split(self._replace(command))
             args = self._split(command, parallel and self._foam.number_of_processors>1)
@@ -92,9 +100,8 @@ class Command:
                 for line in proc.stdout:
                     file.write(line)
                     app.step(line)
-            paths[ith] = path
-        # TODO: use exit status as return
-        return paths
+            codes[ith] = proc.returncode
+        return codes
 
     def raw(self, command: str, output: bool = True) -> s.CompletedProcess:
         '''Execute raw command in case directory'''
