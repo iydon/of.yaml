@@ -4,18 +4,16 @@ import re
 import textwrap
 import typing as t
 
-from foam import Foam
-from foam.command import Command, progress
-from foam.parse import Parse
-from foam.postprocessing import VTK
-from foam.type import Dict, List, Path, Data
+from foam.app import command, information, postprocess
+from foam.core import Foam
+from foam.parse import Parser
+from foam.type import Data, Dict, List, Path
 
 
 class show:
     @classmethod
     def source(cls, obj: object) -> str:
-        pattern = re.compile(r'from \.[\w\.]* import \w+')
-        return pattern.sub('', inspect.getsource(obj))
+        return inspect.getsource(obj)
 
     @classmethod
     def apps(cls, obj: t.Dict[str, t.Type]) -> str:
@@ -27,11 +25,19 @@ class show:
 
     @classmethod
     def code(cls, obj: str) -> str:
+        '''
+        - Steps:
+            1. convert ": Foam" to ": 'Foam'"
+            2. remove trailing whitespace
+            3. remove relative imports
+            4. remove redundant spaces
+        '''
         br = '\n'
-        pattern = re.compile(fr'{br}{{3,}}')
-        lines = obj.strip().splitlines()
+        pattern_im = re.compile(r'from \.[\w\.]* import \w+')
+        pattern_br = re.compile(fr'{br}{{3,}}')
+        lines = obj.replace(': Foam', ': \'Foam\'').strip().splitlines()
         code = br.join(map(str.rstrip, lines)) + br
-        return pattern.sub(2*br, code)
+        return pattern_br.sub(2*br, pattern_im.sub('', code))
 
     @classmethod
     def submodule(cls, module: str, *objs: object) -> str:
@@ -44,9 +50,11 @@ class show:
 
 
 p.Path('foam.py').write_text(show.code(f'''
+import collections
 import functools
 import io
 import json
+import os
 import pathlib
 import shlex
 import shutil
@@ -59,6 +67,7 @@ if typing.TYPE_CHECKING:
     import numpy as np
     import vtkmodules as vtk
 
+c = collections
 f = functools
 p = pathlib
 s = subprocess
@@ -71,21 +80,25 @@ w = warnings
 
 {show.source(Data)}
 
-{show.source(progress.Default)}
-{show.source(progress.AppBase)}
-{show.source(progress.AppByTimeI)}
-{show.source(progress.AppByTimeII)}
-{show.source(progress.AppByIterationI)}
-{show.source(progress.AppByIterationII)}
-{show.source(progress.AppByProcessor)}
+{show.source(command.adapter.Default)}
+{show.source(command.adapter.AppBase)}
+{show.source(command.adapter.AppByTimeI)}
+{show.source(command.adapter.AppByTimeII)}
+{show.source(command.adapter.AppByIterationI)}
+{show.source(command.adapter.AppByIterationII)}
+{show.source(command.adapter.AppByProcessor)}
 
-Apps = {show.apps(progress.Apps)}
+Apps = {show.apps(command.adapter.Apps)}
 
-{show.source(Command)}
+{show.source(command.Command)}
 
-{show.source(Parse)}
+{show.source(Parser)}
 
-{show.submodule('postprocessing', VTK)}
+{show.submodule('app', command.Command, information.Information, postprocess.PostProcess)}
+
+Command = app.Command
+Information = app.Information
+PostProcess = app.PostProcess
 
 {show.source(Foam)}
 '''))
