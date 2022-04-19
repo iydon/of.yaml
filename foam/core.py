@@ -4,6 +4,7 @@ __all__ = ['Foam']
 import functools as f
 import io
 import json
+import os
 import pathlib as p
 import shutil
 import typing as t
@@ -64,8 +65,6 @@ class Foam:
 
     @property
     def cmd(self) -> 'Command':
-        assert self._dest is not None, 'Please call `Foam::save` method first'
-
         from .app import Command
 
         if self._cmd is None:
@@ -82,8 +81,6 @@ class Foam:
 
     @property
     def vtks(self) -> t.List['PostProcess']:
-        assert self._dest is not None, 'Please call `Foam::save` method first'
-
         from .app import PostProcess
 
         if self._vtks is None:
@@ -104,6 +101,14 @@ class Foam:
     @f.cached_property
     def pipeline(self) -> t.List[str]:
         return (self['other'] or {}).get('pipeline', [])
+
+    @f.cached_property
+    def environ(self) -> t.Dict[str, str]:
+        return {
+            key: value
+            for key, value in os.environ.items()
+            if key.startswith('FOAM')
+        }
 
     @classmethod
     def from_file(cls, path: Path) -> Self:

@@ -58,6 +58,8 @@ class PostProcess:
 
     @classmethod
     def from_foam(cls, foam: Foam, options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
+        assert foam._dest is not None, 'Please call `Foam::save` method first'
+
         foam.cmd.run(['postProcess -func writeCellCentres'], overwrite=True, exception=False, unsafe=True)
         foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=True, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)
@@ -72,21 +74,25 @@ class PostProcess:
     @property
     def points(self) -> 'np.ndarray':
         assert self._points
+
         return self._points
 
     @property
     def cells(self) -> 'np.ndarray':
         assert self._cells
+
         return self._cells
 
     @property
     def point_fields(self) -> t.Dict[str, 'np.ndarray']:
         assert self._point_fields
+
         return self._point_fields
 
     @property
     def cell_fields(self) -> t.Dict[str, 'np.ndarray']:
         assert self._cell_fields
+
         return self._cell_fields
 
     @property

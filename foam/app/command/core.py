@@ -23,6 +23,12 @@ class Command:
 
     @classmethod
     def from_foam(cls, foam: Foam) -> Self:
+        assert foam._dest is not None, 'Please call `Foam::save` method first'
+
+        return cls(foam)
+
+    @classmethod
+    def from_foam_without_asserting(cls, foam: Foam) -> Self:
         return cls(foam)
 
     @property
@@ -59,6 +65,7 @@ class Command:
     ) -> t.List[int]:
         if not self._foam.pipeline:
             assert (self._foam._dest/'Allrun').exists()
+
             return [self.raw('./Allrun').returncode]
         else:
             return self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)

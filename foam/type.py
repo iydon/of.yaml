@@ -20,12 +20,15 @@ class Data:
             for key in keys:
                 ans = ans[key]
             return ans
+        elif isinstance(keys, list):
+            return self.__getitem__(tuple(keys))
         else:
             return self._data[keys]
 
     def __setitem__(self, keys: t.Any, value: t.Any) -> None:
         if isinstance(keys, tuple):
             assert keys
+
             ans = self._data
             for key in keys[:-1]:
                 if isinstance(ans, dict):
@@ -35,6 +38,8 @@ class Data:
                 else:
                     raise Exception
             ans[keys[-1]] = value
+        elif isinstance(keys, list):
+            self.__setitem__(tuple(keys), value)
         else:
             self._data[keys] = value
 
@@ -53,3 +58,16 @@ class Data:
 
     def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
         return self._data.get(key, default)
+
+    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[t.Tuple[t.Any, ...], t.Any]]:
+        yield from self._items(self._data, with_list=with_list)
+
+    def _items(self, data: t.Any, with_list: bool = False, keys: t.Tuple[t.Any, ...] = ()) -> None:
+        if isinstance(data, dict):
+            for key, value in data.items():
+                yield from self._items(value, with_list, keys+(key,))
+        elif with_list and isinstance(data, list):
+            for key, value in enumerate(data):
+                yield from self._items(value, with_list, keys+(key,))
+        else:
+            yield keys, data
