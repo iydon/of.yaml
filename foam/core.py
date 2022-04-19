@@ -61,10 +61,12 @@ class Foam:
 
     @property
     def meta(self) -> Dict:
+        '''Meta information'''
         return self._list[0]
 
     @property
     def cmd(self) -> 'Command':
+        '''`app.command.Command`'''
         from .app import Command
 
         if self._cmd is None:
@@ -73,6 +75,7 @@ class Foam:
 
     @property
     def info(self) -> 'Information':
+        '''`app.information.Information`'''
         from .app import Information
 
         if self._info is None:
@@ -81,6 +84,7 @@ class Foam:
 
     @property
     def vtks(self) -> t.List['PostProcess']:
+        '''`app.postprocess.PostProcess`'''
         from .app import PostProcess
 
         if self._vtks is None:
@@ -89,10 +93,20 @@ class Foam:
 
     @f.cached_property
     def application(self) -> str:
+        '''Inspired by `getApplication`
+
+        - Reference:
+            - foamDictionary -disableFunctionEntries -entry application -value system/controlDict
+        '''
         return self['foam']['system', 'controlDict', 'application']
 
     @f.cached_property
     def number_of_processors(self) -> int:
+        '''Inspired by `getNumberOfProcessors`
+
+        - Reference:
+            - foamDictionary -disableFunctionEntries -entry numberOfSubdomains -value system/decomposeParDict
+        '''
         try:
             return self['foam']['system', 'decomposeParDict', 'numberOfSubdomains']
         except:
@@ -104,6 +118,7 @@ class Foam:
 
     @f.cached_property
     def environ(self) -> t.Dict[str, str]:
+        '''OpenFOAM environments'''
         return {
             key: value
             for key, value in os.environ.items()

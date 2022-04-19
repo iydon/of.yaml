@@ -43,4 +43,5 @@
 ## `v0.8`
 
 - Add more cases
+- Add more comments in source code
 - Update program architecture

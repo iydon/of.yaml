@@ -27,14 +27,24 @@ class Information:
 
     @property
     def cmd(self) -> 'Command':
+        '''Command without asserting (no need to call `Foam::save` method first)'''
         from ..command import Command
 
         if self._cmd is None:
             self._cmd = Command.from_foam_without_asserting(self._foam)
         return self._cmd
 
+    @property
+    def environ(self) -> t.Dict[str, str]:
+        '''OpenFOAM environments (aliase for `Foam::environ` property)'''
+        return self._foam.environ
+
+    @property
+    def root(self) -> p.Path:
+        return p.Path(self.environ['FOAM_TUTORIALS']).parent
+
     def search(self, *targets: str, process: bool = True) -> t.Union[str, t.Set[str]]:
-        '''foamSearch wrapper
+        '''`foamSearch` wrapper
 
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
@@ -56,7 +66,7 @@ class Information:
             return stdout
 
     def search_yaml(self, *targets: str, root: Path = '.') -> t.Dict[t.Hashable, t.Set[str]]:
-        '''foamSearch in YAML
+        '''`foamSearch` in YAML
 
         - Note:
             - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file

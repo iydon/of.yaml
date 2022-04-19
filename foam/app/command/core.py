@@ -33,6 +33,7 @@ class Command:
 
     @property
     def times(self) -> t.List[float]:
+        '''Time directories'''
         times = []
         for path in self._foam._dest.iterdir():
             try:
@@ -44,6 +45,7 @@ class Command:
 
     @property
     def logs(self) -> t.Set[p.Path]:
+        '''Log files'''
         logs = set()
         for path in self._foam._dest.iterdir():
             if path.stem == 'log':
@@ -52,6 +54,7 @@ class Command:
 
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
+        '''Macros that can be used in the pipeline field'''
         return {
             '__app__': self._foam.application,
             '__procs__': str(self._foam.number_of_processors),
@@ -63,6 +66,7 @@ class Command:
         overwrite: bool = False, exception: bool = False,
         parallel: bool = True, unsafe: bool = True,
     ) -> t.List[int]:
+        '''Inspired by  `Allrun`'''
         if not self._foam.pipeline:
             assert (self._foam._dest/'Allrun').exists()
 
@@ -71,6 +75,7 @@ class Command:
             return self.run(self._foam.pipeline, overwrite=overwrite, exception=exception, parallel=parallel, unsafe=unsafe)
 
     def all_clean(self) -> None:
+        '''Inspired by `Allclean`'''
         # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
         shutil.rmtree(self._foam._dest)
         self._foam.save(self._foam._dest)
@@ -81,7 +86,11 @@ class Command:
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
     ) -> t.List[int]:
-        '''https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions'''
+        '''Inspired by `runApplication` and `runParallel`
+
+        - Reference:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
+        '''
         popen = lambda args: s.Popen(
             ' '.join(args) if unsafe else args,
             cwd=self._foam._dest, shell=unsafe, stdout=s.PIPE,
