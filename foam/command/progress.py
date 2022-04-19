@@ -113,6 +113,8 @@ class AppByTimeI(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/laplacianFoam/laplacianFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/scalarTransportFoam/scalarTransportFoam.C
     - utility:
+        - postProcessing:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/postProcess/postProcess.C
         - parallelProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructParMesh/reconstructParMesh.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
@@ -193,7 +195,6 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/potentialFoam/potentialFoam.C
     - utility:
         - postProcessing:
-            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/postProcess/postProcess.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/steadyParticleTracks.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/lagrangian/particleTracks/particleTracks.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/miscellaneous/engineCompRatio/engineCompRatio.C
