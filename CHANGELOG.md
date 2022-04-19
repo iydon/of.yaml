@@ -31,7 +31,7 @@
 - Remove the idea of rewriting the project using Rust
 
 
-## `v0.7`
+## [`v0.7`](https://github.com/iydon/of.yaml/tree/v0.7)
 
 - Add more progress bar adapters for applications
 - Add MkDocs support, which will be used to build documentation in the future
