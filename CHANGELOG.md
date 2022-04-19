@@ -42,4 +42,5 @@
 
 ## `v0.8`
 
+- Add more cases
 - Update program architecture

@@ -180,6 +180,7 @@ The following table shows the OpenFOAM cases that have been converted to YAML fo
   | [propeller.yaml](tutorials/multiphase/interPhaseChangeFoam/propeller.yaml) | [propeller](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interPhaseChangeFoam/propeller) | 7 | [multiphase/interPhaseChangeFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interPhaseChangeFoam) |
   | [mixerVesselAMI.yaml](tutorials/multiphase/interFoam/RAS/mixerVesselAMI.yaml) | [mixerVesselAMI](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interFoam/RAS/mixerVesselAMI) | 7 | [multiphase/interFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interFoam) |
   | [sloshingTank2D.yaml](tutorials/multiphase/compressibleInterFoam/laminar/sloshingTank2D.yaml) | [sloshingTank2D](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/compressibleInterFoam/laminar/sloshingTank2D) | 7 | [multiphase/compressibleInterFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/compressibleInterFoam) |
+  | [damBreak4phase.yaml](tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase.yaml) | [damBreak4phase](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase) | 7 | [multiphase/compressibleMultiphaseInterFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/compressibleMultiphaseInterFoam) |
 </details>
 
 ### Task List
@@ -441,10 +442,10 @@ The following is a task list to convert [OpenFOAM-7](https://github.com/OpenFOAM
               - [ ] climbingRod
               - [ ] depthCharge2D
               - [ ] depthCharge3D
-              - [ ] sloshingTank2D
-      - [ ] compressibleMultiphaseInterFoam
-          - [ ] laminar
-              - [ ] damBreak4phase
+              - [x] sloshingTank2D
+      - [x] compressibleMultiphaseInterFoam
+          - [x] laminar
+              - [x] damBreak4phase
       - [ ] driftFluxFoam
           - [ ] RAS
               - [ ] dahl
