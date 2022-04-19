@@ -9,11 +9,11 @@ import shutil
 import typing as t
 import warnings as w
 
+from .parse import Parser
 from .type import Dict, List, Path, Data
 
 if t.TYPE_CHECKING:
-    from .command import Command
-    from .parse import Parse
+    from .app import Command, Information, PostProcess
 
 
 class Foam:
@@ -35,9 +35,12 @@ class Foam:
 
         self._list = data
         self._root = p.Path(root)
+        self._parse = Parser.new()
         self._dest = None
+
         self._cmd = None
-        self._parse = None
+        self._info = None
+        self._vtks = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -63,19 +66,29 @@ class Foam:
     def cmd(self) -> 'Command':
         assert self._dest is not None, 'Please call `Foam::save` method first'
 
-        from .command import Command
+        from .app import Command
 
         if self._cmd is None:
             self._cmd = Command.from_foam(self)
         return self._cmd
 
     @property
-    def parse(self) -> 'Parse':
-        from .parse import Parse
+    def info(self) -> 'Information':
+        from .app import Information
 
-        if self._parse is None:
-            self._parse = Parse.from_foam(self)
-        return self._parse
+        if self._info is None:
+            self._info = Information.from_foam(self)
+        return self._info
+
+    @property
+    def vtks(self) -> t.List['PostProcess']:
+        assert self._dest is not None, 'Please call `Foam::save` method first'
+
+        from .app import PostProcess
+
+        if self._vtks is None:
+            self._vtks = list(PostProcess.from_foam(self))
+        return self._vtks
 
     @f.cached_property
     def application(self) -> str:
@@ -173,7 +186,7 @@ class Foam:
         for keys, data in self._extract_files({} if foam is None else foam.data):
             path = self._dest / p.Path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._write(path, '\n'.join(self.parse.data(data)))
+            self._write(path, '\n'.join(self._parse.data(data)))
 
     def _extract_files(
         self,

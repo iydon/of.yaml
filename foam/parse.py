@@ -1,22 +1,22 @@
-__all__ = ['Parse']
+__all__ = ['Parser']
 
 
 import functools as f
 import typing as t
 
-if t.TYPE_CHECKING:
-    from .core import Foam
-    from .type import Dict
+from .type import Dict
 
 
-class Parse:
+class Parser:
     '''OpenFOAM YAML parser'''
 
+    Self = __qualname__
+
     @classmethod
-    def from_foam(cls, _: 'Foam') -> 'Parse':
+    def new(cls) -> Self:
         return cls()
 
-    def data(self, data: 'Dict') -> t.Iterator[str]:
+    def data(self, data: Dict) -> t.Iterator[str]:
         for key, value in data.items():
             yield f'{self.key(key)} {self.value(value)}'
 
@@ -61,6 +61,6 @@ class Parse:
             raise Exception(f'Unknown list "{value}"')
 
     @value.register(dict)
-    def _(self, value: 'Dict') -> str:
+    def _(self, value: Dict) -> str:
         string = ' '.join(self.data(value))
         return f'{{{string}}}'

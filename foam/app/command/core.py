@@ -9,10 +9,8 @@ import subprocess as s
 import typing as t
 import warnings as w
 
-from .progress import Default, Apps
-
-if t.TYPE_CHECKING:
-    from ..core import Foam
+from .adapter import Default, Apps
+from ...core import Foam
 
 
 class Command:
@@ -20,11 +18,11 @@ class Command:
 
     Self = __qualname__
 
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: Foam) -> None:
         self._foam = foam
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> Self:
+    def from_foam(cls, foam: Foam) -> Self:
         return cls(foam)
 
     @property

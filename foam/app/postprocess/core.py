@@ -1,27 +1,23 @@
-__all__ = ['VTK']
+__all__ = ['PostProcess']
 
 
-import collections as c
 import typing as t
 import warnings as w
 
-from ..type import Path
+from ...core import Foam
+from ...type import Path
 
 if t.TYPE_CHECKING:
     import numpy as np
     import vtkmodules as vtk
 
-    from ..core import Foam
 
-
-class VTK:
+class PostProcess:
     '''OpenFOAM VTK post-processing'''
 
     Self = __qualname__
 
     def __init__(self, reader: 'vtk.vtkIOLegacy.vtkDataReader', point: bool = True, cell: bool = True) -> None:
-        import numpy as np
-
         self._points, self._cells = None, None
         self._point_fields = {}
         self._cell_fields = {}
@@ -61,7 +57,7 @@ class VTK:
         return cls(reader, **kwargs)
 
     @classmethod
-    def from_foam(cls, foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
+    def from_foam(cls, foam: Foam, options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
         foam.cmd.run(['postProcess -func writeCellCentres'], overwrite=True, exception=False, unsafe=True)
         foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=True, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)

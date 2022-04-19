@@ -42,4 +42,4 @@
 
 ## `v0.8`
 
-- pass
+- Update program architecture

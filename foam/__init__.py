@@ -1,5 +1,8 @@
+__all__ = ['app', 'Foam']
+
+
+from . import app
 from .core import Foam
-from . import postprocessing
 
 
 __doc__ = Foam.__doc__

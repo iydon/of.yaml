@@ -4,12 +4,11 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-if t.TYPE_CHECKING:
-    from ..core import Foam
+from ...core import Foam
 
 
 class Default:
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: Foam) -> None:
         pass
 
     def __enter__(self) -> 'Default':
@@ -25,7 +24,7 @@ class Default:
         pass
 
 class AppBase(Default):
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: Foam) -> None:
         import tqdm
 
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
@@ -165,7 +164,7 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
-    def __init__(self, foam: 'Foam'):
+    def __init__(self, foam: Foam):
         import tqdm
 
         start = 0
