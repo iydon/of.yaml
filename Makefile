@@ -33,6 +33,6 @@ preview:       ## Run the builtin development server
 docs:          ## Build the MkDocs documentation
 	$(PYTHON) -m mkdocs Build
 
-uncache:       ## pass
+uncache:       ## Remove __pycache__ directories
 	# https://stackoverflow.com/questions/28991015/python3-project-remove-pycache-folders-and-pyc-files
 	find . -type d -name  "__pycache__" -exec rm -r {} +

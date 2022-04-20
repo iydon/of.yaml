@@ -26,16 +26,16 @@ class show:
         '''
         - Steps:
             1. convert ": Foam" to ": 'Foam'"
-            2. remove trailing whitespace
-            3. remove relative imports
-            4. remove redundant spaces
+            2. remove relative imports
+            3. remove trailing whitespace
+            4. remove redundant line breaks
         '''
         br = '\n'
         pattern_im = re.compile(r'from \.[\w\.]* import \w+')
         pattern_br = re.compile(fr'{br}{{3,}}')
-        lines = obj.replace(': Foam', ': \'Foam\'').strip().splitlines()
-        code = br.join(map(str.rstrip, lines)) + br
-        return pattern_br.sub(2*br, pattern_im.sub('', code))
+        code = pattern_im.sub('', obj.replace(': Foam', ': \'Foam\''))
+        code = br.join(map(str.rstrip, code.strip().splitlines())) + br
+        return pattern_br.sub(2*br, code)
 
     @classmethod
     def submodule(cls, module: str, *objs: object) -> str:
@@ -85,7 +85,6 @@ w = warnings
 {show.source(command.adapter.AppByIterationI)}
 {show.source(command.adapter.AppByIterationII)}
 {show.source(command.adapter.AppByProcessor)}
-{show.source(command.adapter.AppByOther)}
 
 Apps = {show.apps(command.adapter.Apps)}
 
