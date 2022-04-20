@@ -2,6 +2,7 @@ __all__ = ['Information']
 
 
 import collections as c
+import os
 import pathlib as p
 import typing as t
 
@@ -16,7 +17,7 @@ class Information:
 
     Self = __qualname__
 
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: t.Optional[Foam]) -> None:
         self._foam = foam
         self._cmd = None
 
@@ -24,9 +25,15 @@ class Information:
     def from_foam(cls, foam: Foam) -> Self:
         return cls(foam)
 
+    @classmethod
+    def from_nothing(cls) -> Self:
+        return cls(None)
+
     @property
     def cmd(self) -> 'Command':
         '''Command without asserting (no need to call `Foam::save` method first)'''
+        assert self._foam is not None
+
         from ..command import Command
 
         if self._cmd is None:
@@ -36,7 +43,14 @@ class Information:
     @property
     def environ(self) -> t.Dict[str, str]:
         '''OpenFOAM environments (aliase for `Foam::environ` property)'''
-        return self._foam.environ
+        if self._foam is not None:
+            return self._foam.environ
+        else:
+            return {
+                key: value
+                for key, value in os.environ.items()
+                if key.startswith('FOAM')
+            }
 
     @property
     def root(self) -> p.Path:
@@ -52,7 +66,7 @@ class Information:
         assert len(targets) > 1
 
         fields = '.'.join(map(lambda string: string.replace(' ', ''), targets[1:]))
-        command = f'foamSearch {self._foam.environ["FOAM_TUTORIALS"]} {targets[0]} "{fields}"'
+        command = f'foamSearch {self.environ["FOAM_TUTORIALS"]} {targets[0]} "{fields}"'
         stdout = self.cmd.raw(command, output=True).stdout.decode()
         if not process:
             return stdout

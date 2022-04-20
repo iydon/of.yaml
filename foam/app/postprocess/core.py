@@ -16,7 +16,12 @@ class PostProcess:
 
     Self = __qualname__
 
-    def __init__(self, reader: 'vtk.vtkIOLegacy.vtkDataReader', point: bool = True, cell: bool = True) -> None:
+    def __init__(
+        self,
+        reader: 'vtk.vtkIOLegacy.vtkDataReader',
+        foam: t.Optional[Foam] = None, point: bool = True, cell: bool = True,
+    ) -> None:
+        self._foam = foam
         self._points, self._cells = None, None
         self._point_fields = {}
         self._cell_fields = {}
@@ -68,43 +73,43 @@ class PostProcess:
             if path.is_file() and path.suffix=='.vtk'
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
-            yield cls.from_file(path, **kwargs)
+            yield cls.from_file(path, foam=foam, **kwargs)
 
     @property
     def points(self) -> 'np.ndarray':
-        assert self._points
+        assert self._points is not None
 
         return self._points
 
     @property
     def cells(self) -> 'np.ndarray':
-        assert self._cells
+        assert self._cells is not None
 
         return self._cells
 
     @property
     def point_fields(self) -> t.Dict[str, 'np.ndarray']:
-        assert self._point_fields
+        assert self._point_fields is not None
 
         return self._point_fields
 
     @property
     def cell_fields(self) -> t.Dict[str, 'np.ndarray']:
-        assert self._cell_fields
+        assert self._cell_fields is not None
 
         return self._cell_fields
 
     @property
     def x(self) -> 'np.ndarray':
-        return self._points[:, 0]
+        return self.points[:, 0]
 
     @property
     def y(self) -> 'np.ndarray':
-        return self._points[:, 1]
+        return self.points[:, 1]
 
     @property
     def z(self) -> 'np.ndarray':
-        return self._points[:, 2]
+        return self.points[:, 2]
 
     def keys(self) -> t.List[str]:
         raise NotImplementedError
@@ -119,6 +124,30 @@ class PostProcess:
         if len(field.shape) != 1:
             w.warn('NotImplemented')
         return (coords.T @ field) / sum(field)
+
+    def probes(
+        self,
+        *locations: t.Tuple[float, float, float],
+        fields: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+    ) -> None:
+        '''
+        - Reference:
+            - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
+        '''
+        assert self._foam is not None
+
+        import numpy as np
+
+        fields = fields or self._foam.fields
+        points = self.points if point else self.cells
+        data = self.point_fields if point else self.cell_fields
+        func = func or (lambda x: np.square(x).mean(axis=1))
+        return {
+            location: {
+                field: data[field][np.argmin(func(points-location))]
+                for field in fields
+            } for location in locations
+        }
 
     def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> 'np.ndarray':
         from vtkmodules.util.numpy_support import vtk_to_numpy
