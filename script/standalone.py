@@ -5,9 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.core import Foam
-from foam.parse import Parser
-from foam.type import Data, Dict, List, Path
+from foam.base import Foam, Parser, Data, Dict, List, Path
 
 
 class show:
@@ -87,6 +85,7 @@ w = warnings
 {show.source(command.adapter.AppByIterationI)}
 {show.source(command.adapter.AppByIterationII)}
 {show.source(command.adapter.AppByProcessor)}
+{show.source(command.adapter.AppByOther)}
 
 Apps = {show.apps(command.adapter.Apps)}
 
