@@ -41,7 +41,7 @@ class Foam:
 
         self._cmd = None
         self._info = None
-        self._vtks = None
+        self._post = None
 
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
@@ -83,13 +83,13 @@ class Foam:
         return self._info
 
     @property
-    def vtks(self) -> t.List['PostProcess']:
+    def post(self) -> 'PostProcess':
         '''`app.postprocess.PostProcess`'''
         from ..app import PostProcess
 
-        if self._vtks is None:
-            self._vtks = list(PostProcess.from_foam(self))
-        return self._vtks
+        if self._post is None:
+            self._post = PostProcess.from_foam(self)
+        return self._post
 
     @f.cached_property
     def application(self) -> str:

@@ -12,5 +12,5 @@ print(set(foam.info.search_yaml(*targets)))
 codes = foam.cmd.all_run()
 assert all(code==0 for code in codes)
 # vtks
-for time, vtk in zip(foam.cmd.times, foam.vtks):
+for time, vtk in zip(foam.cmd.times, foam.post.vtks):
     print(time, vtk.centroid('p'))

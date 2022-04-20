@@ -94,11 +94,12 @@ Apps = {show.apps(command.adapter.Apps)}
 
 {show.source(Parser)}
 
-{show.submodule('app', command.Command, information.Information, postprocess.PostProcess)}
+{show.submodule('app', command.Command, information.Information, postprocess.PostProcess, postprocess.VTK)}
 
 Command = app.Command
 Information = app.Information
 PostProcess = app.PostProcess
+VTK = app.VTK
 
 {show.source(Foam)}
 '''))

@@ -1,4 +1,4 @@
-__all__ = ['PostProcess']
+__all__ = ['PostProcess', 'VTK']
 
 
-from .core import PostProcess
+from .core import PostProcess, VTK

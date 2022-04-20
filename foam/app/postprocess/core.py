@@ -1,4 +1,4 @@
-__all__ = ['PostProcess']
+__all__ = ['PostProcess', 'VTK']
 
 
 import typing as t
@@ -12,6 +12,26 @@ if t.TYPE_CHECKING:
 
 
 class PostProcess:
+    '''OpenFOAM post-processing'''
+
+    Self = __qualname__
+
+    def __init__(self, foam: Foam) -> None:
+        self._foam = foam
+        self._vtks = None
+
+    @classmethod
+    def from_foam(cls, foam: Foam) -> Self:
+        return cls(foam)
+
+    @property
+    def vtks(self) -> t.List['VTK']:
+        if self._vtks is None:
+            self._vtks = list(VTK.from_foam(self._foam))
+        return self._vtks
+
+
+class VTK:
     '''OpenFOAM VTK post-processing'''
 
     Self = __qualname__
