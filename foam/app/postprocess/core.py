@@ -4,8 +4,7 @@ __all__ = ['PostProcess']
 import typing as t
 import warnings as w
 
-from ...core import Foam
-from ...type import Path
+from ...base import Foam, Path
 
 if t.TYPE_CHECKING:
     import numpy as np

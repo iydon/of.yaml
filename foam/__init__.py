@@ -2,7 +2,7 @@ __all__ = ['app', 'Foam']
 
 
 from . import app
-from .core import Foam
+from .base import Foam
 
 
 __doc__ = Foam.__doc__

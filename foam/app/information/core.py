@@ -5,8 +5,7 @@ import collections as c
 import pathlib as p
 import typing as t
 
-from ...core import Foam
-from ...type import Path
+from ...base import Foam, Path
 
 if t.TYPE_CHECKING:
     from ..command import Command

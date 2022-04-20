@@ -10,7 +10,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...core import Foam
+from ...base import Foam
 
 
 class Command:

@@ -14,7 +14,7 @@ from .parse import Parser
 from .type import Dict, List, Path, Data
 
 if t.TYPE_CHECKING:
-    from .app import Command, Information, PostProcess
+    from ..app import Command, Information, PostProcess
 
 
 class Foam:
@@ -67,7 +67,7 @@ class Foam:
     @property
     def cmd(self) -> 'Command':
         '''`app.command.Command`'''
-        from .app import Command
+        from ..app import Command
 
         if self._cmd is None:
             self._cmd = Command.from_foam(self)
@@ -76,7 +76,7 @@ class Foam:
     @property
     def info(self) -> 'Information':
         '''`app.information.Information`'''
-        from .app import Information
+        from ..app import Information
 
         if self._info is None:
             self._info = Information.from_foam(self)
@@ -85,7 +85,7 @@ class Foam:
     @property
     def vtks(self) -> t.List['PostProcess']:
         '''`app.postprocess.PostProcess`'''
-        from .app import PostProcess
+        from ..app import PostProcess
 
         if self._vtks is None:
             self._vtks = list(PostProcess.from_foam(self))
