@@ -125,6 +125,10 @@ class Foam:
             if key.startswith('FOAM')
         }
 
+    @f.cached_property
+    def fields(self) -> t.Set[str]:
+        return {v['FoamFile']['object'] for v in self['foam']['0'].values()}
+
     @classmethod
     def from_file(cls, path: Path) -> Self:
         '''Supported format: json, yaml'''

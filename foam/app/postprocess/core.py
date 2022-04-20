@@ -128,7 +128,7 @@ class PostProcess:
     def probes(
         self,
         *locations: t.Tuple[float, float, float],
-        fields: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+        keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> None:
         '''
         - Reference:
@@ -138,14 +138,14 @@ class PostProcess:
 
         import numpy as np
 
-        fields = fields or self._foam.fields
-        points = self.points if point else self.cells
-        data = self.point_fields if point else self.cell_fields
+        keys = keys or self._foam.fields
+        coords = self.points if point else self.cells
+        fields = self.point_fields if point else self.cell_fields
         func = func or (lambda x: np.square(x).mean(axis=1))
         return {
-            location: {
-                field: data[field][np.argmin(func(points-location))]
-                for field in fields
+            tuple(location): {
+                key: fields[key][np.argmin(func(coords-location))]
+                for key in keys
             } for location in locations
         }
 

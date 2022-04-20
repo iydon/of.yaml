@@ -40,8 +40,10 @@
 - Fix typo: permision -> permission
 
 
-## `v0.8`
+## [`v0.8`](https://github.com/iydon/of.yaml/tree/v0.8)
 
 - Add more cases
 - Add more comments in source code
+- Add more information about OpenFOAM (root, environ, foamSearch, etc.)
+- Add post-processing (probes)
 - Update program architecture
