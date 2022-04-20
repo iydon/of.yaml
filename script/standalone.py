@@ -25,7 +25,7 @@ class show:
     def code(cls, obj: str) -> str:
         '''
         - Steps:
-            1. convert ": Foam" to ": 'Foam'"
+            1. convert type "Foam" to "'Foam'"
             2. remove relative imports
             3. remove trailing whitespace
             4. remove redundant line breaks
@@ -33,9 +33,11 @@ class show:
         br = '\n'
         pattern_im = re.compile(r'from \.[\w\.]* import \w+')
         pattern_br = re.compile(fr'{br}{{3,}}')
-        code = pattern_im.sub('', obj.replace(': Foam', ': \'Foam\''))
-        code = br.join(map(str.rstrip, code.strip().splitlines())) + br
-        return pattern_br.sub(2*br, code)
+        step_1 = obj.replace(': Foam', ': \'Foam\'').replace(': t.Optional[Foam]', ': t.Optional[\'Foam\']')
+        step_2 = pattern_im.sub('', step_1)
+        step_3 = br.join(map(str.rstrip, step_2.strip().splitlines())) + br
+        step_4 = pattern_br.sub(2*br, step_3)
+        return step_4
 
     @classmethod
     def submodule(cls, module: str, *objs: object) -> str:

@@ -47,3 +47,8 @@
 - Add more information about OpenFOAM (root, environ, foamSearch, etc.)
 - Add post-processing (probes)
 - Update program architecture
+
+
+## `v0.9`
+
+- Fix type hints error in standalone script (`t.Optional['Foam']`)
