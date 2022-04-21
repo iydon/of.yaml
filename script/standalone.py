@@ -5,7 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Data, Dict, List, Path
+from foam.base import Foam, Parser, Array, Data, Dict, List, Path
 
 
 class show:
@@ -77,6 +77,8 @@ w = warnings
 {Dict = !r}
 {List = !r}
 {Path = !r}
+
+{show.source(Array)}
 
 {show.source(Data)}
 

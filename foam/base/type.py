@@ -1,13 +1,28 @@
-__all__ = ['Dict', 'List', 'Path', 'Data']
+__all__ = ['Array', 'Dict', 'List', 'Path', 'Data']
 
 
 import pathlib as p
 import typing as t
 
+if t.TYPE_CHECKING:
+    import numpy as np
+
 
 Dict = t.Dict[str, t.Any]
 List = t.List[Dict]
 Path = t.Union[str, p.Path]
+
+
+def Array(dimension: str) -> t.ForwardRef:
+    return {
+        '0D': t.ForwardRef('np.number'),
+        '1D': t.ForwardRef('np.ndarray'),
+        '2D': t.ForwardRef('np.ndarray'),
+        '12D': t.ForwardRef('np.ndarray'),  # Union[1D, 2D]
+        '02D': t.ForwardRef('np.ndarray'),  # Union[0D, 2D]
+        '01D': t.ForwardRef('np.ndarray'),  # Union[0D, 1D]
+        '012D': t.ForwardRef('np.ndarray'),  # Union[0D, 1D, 2D]
+    }[dimension]
 
 
 class Data:

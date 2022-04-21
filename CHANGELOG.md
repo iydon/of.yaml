@@ -51,5 +51,6 @@
 
 ## `v0.9`
 
+- Add `Array?D` data type
 - Fix type hints error in standalone script (`t.Optional['Foam']`)
 - Update program architecture (original `PostProcess` is renamed `VTK` and degraded to a sub-module of `PostProcess`)

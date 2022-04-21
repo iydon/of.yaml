@@ -4,10 +4,9 @@ __all__ = ['PostProcess', 'VTK']
 import typing as t
 import warnings as w
 
-from ...base import Foam, Path
+from ...base import Foam, Array, Path
 
 if t.TYPE_CHECKING:
-    import numpy as np
     import vtkmodules as vtk
 
 
@@ -65,7 +64,7 @@ class VTK:
     def __contains__(self, key: str) -> bool:
         return key in self._point_fields or key in self._cell_fields
 
-    def __getitem__(self, key: str) -> 'np.ndarray':
+    def __getitem__(self, key: str) -> None:
         raise NotImplementedError
 
     @classmethod
@@ -81,7 +80,11 @@ class VTK:
         return cls(reader, **kwargs)
 
     @classmethod
-    def from_foam(cls, foam: Foam, options: str = '', overwrite: bool = False, **kwargs) -> t.Iterator[Self]:
+    def from_foam(
+        cls,
+        foam: Foam, options: str = '', overwrite: bool = False,
+        **kwargs,
+    ) -> t.Iterator[Self]:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         foam.cmd.run(['postProcess -func writeCellCentres'], overwrite=True, exception=False, unsafe=True)
@@ -96,60 +99,84 @@ class VTK:
             yield cls.from_file(path, foam=foam, **kwargs)
 
     @property
-    def points(self) -> 'np.ndarray':
+    def points(self) -> Array('2D'):
         assert self._points is not None
 
         return self._points
 
     @property
-    def cells(self) -> 'np.ndarray':
+    def cells(self) -> Array('2D'):
         assert self._cells is not None
 
         return self._cells
 
     @property
-    def point_fields(self) -> t.Dict[str, 'np.ndarray']:
+    def point_fields(self) -> t.Dict[str, Array('12D')]:
         assert self._point_fields is not None
 
         return self._point_fields
 
     @property
-    def cell_fields(self) -> t.Dict[str, 'np.ndarray']:
+    def cell_fields(self) -> t.Dict[str, Array('12D')]:
         assert self._cell_fields is not None
 
         return self._cell_fields
 
     @property
-    def x(self) -> 'np.ndarray':
+    def x(self) -> Array('1D'):
         return self.points[:, 0]
 
     @property
-    def y(self) -> 'np.ndarray':
+    def y(self) -> Array('1D'):
         return self.points[:, 1]
 
     @property
-    def z(self) -> 'np.ndarray':
+    def z(self) -> Array('1D'):
         return self.points[:, 2]
 
-    def keys(self) -> t.List[str]:
+    def keys(self) -> None:
         raise NotImplementedError
 
-    def centroid(self, key: str, structured: bool = False) -> 'np.ndarray':
+    def centroid(self, key: str, structured: bool = False) -> Array('12D'):
         if structured:
             coords = self._points
             field = self._point_fields[key]
         else:
             coords = self._cells
-            field = self._cell_fields[key] * self._cell_fields['V']
-        if len(field.shape) != 1:
-            w.warn('NotImplemented')
+            if self._cell_fields[key].ndim == 1:
+                weights = self._cell_fields['V']
+            else:  # ndim == 2
+                weights = self._cell_fields['V'][:, None]
+            field = self._cell_fields[key] * weights
+        if field.ndim != 1:
+            w.warn(f'NotImplemented: {key}')
         return (coords.T @ field) / sum(field)
+
+    def centroids(
+        self,
+        keys: t.Optional[t.Set[str]] = None, structured: bool = False,
+    ) -> t.Dict[str, Array('12D')]:
+        return {
+            key: self.centroid(key, structured)
+            for key in (keys or self._foam.fields)
+        }
+
+    def centroid_with_args(self, *keys: str, structured: bool = False) -> t.Dict[str, Array('12D')]:
+        return self.centroids(set(keys), structured=structured)
+
+    def probe(
+        self,
+        location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
+        point: bool = True, func: t.Optional[t.Callable] = None,
+    ) -> t.Dict[str, Array('01D')]:
+        location = tuple(map(float, location))
+        return self.probes(location, keys=keys, point=point, func=func)[location]
 
     def probes(
         self,
         *locations: t.Tuple[float, float, float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> None:
+    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, Array('01D')]]:
         '''
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
@@ -162,14 +189,16 @@ class VTK:
         coords = self.points if point else self.cells
         fields = self.point_fields if point else self.cell_fields
         func = func or (lambda x: np.square(x).mean(axis=1))
-        return {
-            tuple(location): {
-                key: fields[key][np.argmin(func(coords-location))]
+        ans = {}
+        for location in locations:
+            index = np.argmin(func(coords-location))
+            ans[tuple(map(float, location))] = {
+                key: fields[key][index]
                 for key in keys
-            } for location in locations
-        }
+            }
+        return ans
 
-    def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> 'np.ndarray':
+    def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> Array('12D'):
         from vtkmodules.util.numpy_support import vtk_to_numpy
 
         return vtk_to_numpy(array)
