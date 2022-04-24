@@ -37,7 +37,7 @@ class Command:
         times = []
         for path in self._foam._dest.iterdir():
             try:
-                time = float(path.stem)
+                time = float(path.name)
             except ValueError:
                 continue
             times.append(time)
