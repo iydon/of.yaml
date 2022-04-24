@@ -18,6 +18,7 @@ class PostProcess:
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
         self._vtks = None
+        self._logs = None
 
     @classmethod
     def from_foam(cls, foam: Foam) -> Self:
@@ -28,6 +29,25 @@ class PostProcess:
         if self._vtks is None:
             self._vtks = list(VTK.from_foam(self._foam))
         return self._vtks
+
+    @property
+    def logs(self) -> t.Dict[str, t.Any]:
+        '''Script extract data for each time-step from a log file for graphing
+
+        - Reference:
+            - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
+        '''
+        if self._logs is None:
+            import numpy as np
+
+            filename = next(log for log in self._foam.cmd.logs if self._foam.application in log.name).name
+            self._foam.cmd.run([f'foamLog {filename}'], overwrite=True, exception=False, unsafe=True)
+            self._logs = {
+                path.name.replace('_0', ''): np.loadtxt(path)
+                for path in (self._foam._dest/'logs').iterdir()
+                if path.suffix != '.awk'
+            }
+        return self._logs
 
     def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array(1, 2)]:
         ans = {}
