@@ -49,7 +49,7 @@ class Information:
             return {
                 key: value
                 for key, value in os.environ.items()
-                if key.startswith('FOAM')
+                if any(key.startswith(p) for p in ['FOAM_', 'WM_'])
             }
 
     @property
