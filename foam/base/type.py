@@ -13,16 +13,16 @@ List = t.List[Dict]
 Path = t.Union[str, p.Path]
 
 
-def Array(dimension: str) -> t.ForwardRef:
-    return {
-        '0D': t.ForwardRef('np.number'),
-        '1D': t.ForwardRef('np.ndarray'),
-        '2D': t.ForwardRef('np.ndarray'),
-        '12D': t.ForwardRef('np.ndarray'),  # Union[1D, 2D]
-        '02D': t.ForwardRef('np.ndarray'),  # Union[0D, 2D]
-        '01D': t.ForwardRef('np.ndarray'),  # Union[0D, 1D]
-        '012D': t.ForwardRef('np.ndarray'),  # Union[0D, 1D, 2D]
-    }[dimension]
+def Array(*dimensions: int) -> t.Union['np.number', 'np.ndarray']:
+    assert dimensions and all(d>=0 for d in dimensions)
+
+    import numpy as np
+
+    dimensions = set(dimensions)
+    if dimensions == {0}:
+        return np.number
+    else:
+        return np.ndarray
 
 
 class Data:

@@ -25,7 +25,7 @@ class Command:
     def from_foam(cls, foam: Foam) -> Self:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
-        return cls(foam)
+        return cls.from_foam_without_asserting(foam)
 
     @classmethod
     def from_foam_without_asserting(cls, foam: Foam) -> Self:
