@@ -1,0 +1,524 @@
+---
+openfoam: [7]
+version: 0.9.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"-180":
+    Su:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: Su
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform 0.4
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+    T:
+        FoamFile:
+            class: volScalarField
+            object: T
+            <<: *FoamFile
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 373
+        boundaryField:
+            piston:
+                type: fixedValue
+                value: uniform 433
+            liner:
+                type: fixedValue
+                value: uniform 373
+            cylinderHead:
+                type: fixedValue
+                value: uniform 383
+    Tu:
+        FoamFile:
+            class: volScalarField
+            object: Tu
+            <<: *FoamFile
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 373
+        boundaryField:
+            piston:
+                type: fixedValue
+                value: uniform 433
+            liner:
+                type: fixedValue
+                value: uniform 373
+            cylinderHead:
+                type: fixedValue
+                value: uniform 383
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            piston:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            liner:
+                type: noSlip
+            cylinderHead:
+                type: noSlip
+    Xi:
+        FoamFile:
+            class: volScalarField
+            object: Xi
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+    alphat:
+        FoamFile:
+            class: volScalarField
+            object: alphat
+            <<: *FoamFile
+        dimensions: "[1 -1 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            piston:
+                type: compressible::alphatWallFunction
+                Prt: 0.85
+                value: uniform 0
+            liner:
+                type: compressible::alphatWallFunction
+                Prt: 0.85
+                value: uniform 0
+            cylinderHead:
+                type: compressible::alphatWallFunction
+                Prt: 0.85
+                value: uniform 0
+    b:
+        FoamFile:
+            class: volScalarField
+            object: b
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+    epsilon:
+        FoamFile:
+            class: volScalarField
+            object: epsilon
+            <<: *FoamFile
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 450
+        boundaryField:
+            piston:
+                type: epsilonWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 450
+            liner:
+                type: epsilonWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 450
+            cylinderHead:
+                type: epsilonWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 450
+    ft:
+        FoamFile:
+            class: volScalarField
+            object: ft
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0.0623
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+    fu:
+        FoamFile:
+            class: volScalarField
+            object: fu
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 4
+        boundaryField:
+            piston:
+                type: kqRWallFunction
+                value: uniform 4
+            liner:
+                type: kqRWallFunction
+                value: uniform 4
+            cylinderHead:
+                type: kqRWallFunction
+                value: uniform 4
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            piston:
+                type: nutkWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 0
+            liner:
+                type: nutkWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 0
+            cylinderHead:
+                type: nutkWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 0
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 100000
+        boundaryField:
+            piston:
+                type: zeroGradient
+            liner:
+                type: zeroGradient
+            cylinderHead:
+                type: zeroGradient
+constant:
+    combustionProperties:
+        FoamFile:
+            class: dictionary
+            object: combustionProperties
+            <<: *FoamFile
+        laminarFlameSpeedCorrelation: Gulders
+        fuel: IsoOctane
+        Su: Su [0 1 -1 0 0 0 0] 0
+        SuModel: unstrained
+        equivalenceRatio: equivalenceRatio [0 0 0 0 0 0 0] 1
+        sigmaExt: sigmaExt [0 0 -1 0 0 0 0] 100000
+        XiModel: transport
+        XiCoef: XiCoef [0 0 0 0 0 0 0] 0.62
+        XiShapeCoef: XiShapeCoef [0 0 0 0 0 0 0] 1
+        uPrimeCoef: uPrimeCoef [0 0 0 0 0 0 0] 1
+        GuldersCoeffs:
+            Methane:
+                W: 0.422
+                eta: 0.15
+                xi: 5.18
+                alpha: 2
+                beta: -0.5
+                f: 2.3
+            Propane:
+                W: 0.446
+                eta: 0.12
+                xi: 4.95
+                alpha: 1.77
+                beta: -0.2
+                f: 2.3
+            IsoOctane:
+                W: 0.4658
+                eta: -0.326
+                xi: 4.48
+                alpha: 1.56
+                beta: -0.22
+                f: 2.3
+        ignite: yes
+        ignitionSites:
+            -
+                location: (0.03 0 0.091)
+                diameter: 0.002
+                start: -15
+                duration: 20
+                strength: 4
+        ignitionSphereFraction: 1
+        ignitionThickness: ignitionThickness [0 1 0 0 0 0 0] 0
+        ignitionCircleFraction: 1
+        ignitionKernelArea: ignitionKernelArea [0 2 0 0 0 0 0] 0
+    engineGeometry:
+        FoamFile:
+            class: dictionary
+            object: engineGeometry
+            <<: *FoamFile
+        engineMesh: layered
+        conRodLength: conRodLength [0 1 0 0 0 0 0] 0.147
+        bore: bore [0 1 0 0 0 0 0] 0.092
+        stroke: stroke [0 1 0 0 0 0 0] 0.08423
+        clearance: clearance [0 1 0 0 0 0 0] 0.00115
+        rpm: rpm [0 0 -1 0 0 0 0] 1500
+    thermophysicalProperties:
+        FoamFile:
+            class: dictionary
+            object: thermophysicalProperties
+            <<: *FoamFile
+        thermoType:
+            type: heheuPsiThermo
+            mixture: inhomogeneousMixture
+            transport: sutherland
+            thermo: janaf
+            equationOfState: perfectGas
+            specie: specie
+            energy: absoluteEnthalpy  # absoluteInternalEnergy
+        stoichiometricAirFuelMassRatio: stoichiometricAirFuelMassRatio [0 0 0 0 0 0 0] 15.0336
+        fuel:
+            specie:
+                molWeight: 114.23
+            thermodynamics:
+                Tlow: 298.15
+                Thigh: 5000
+                Tcommon: 1000
+                highCpCoeffs: ( 19.3963 0.0488137 -1.55798e-05 2.17831e-09 -1.08391e-13 -37133.9 -78.8531 )
+                lowCpCoeffs: ( 0.429357 0.0765769 8.41306e-06 -5.86603e-08 2.79414e-11 -30446.4 25.6735 )
+            transport:
+                As: 1.67212e-06
+                Ts: 170.672
+        oxidant:
+            specie:
+                molWeight: 28.8504
+            thermodynamics:
+                Tlow: 200
+                Thigh: 6000
+                Tcommon: 1000
+                highCpCoeffs: ( 3.10205 0.00123963 -4.17512e-07 6.60292e-11 -3.87448e-15 -985.517 5.35187 )
+                lowCpCoeffs: ( 3.58378 -0.0007269 1.66985e-06 -1.08452e-10 -4.31951e-13 -1050.53 3.11223 )
+            transport:
+                As: 1.67212e-06
+                Ts: 170.672
+        burntProducts:
+            specie:
+                molWeight: 28.6068
+            thermodynamics:
+                Tlow: 200
+                Thigh: 6000
+                Tcommon: 1000
+                highCpCoeffs: ( 3.12468 0.00178578 -5.94695e-07 9.09801e-11 -5.1246e-15 -11005.8 5.03593 )
+                lowCpCoeffs: ( 3.47612 0.000758205 -3.68739e-07 1.3449e-09 -8.08868e-13 -11071.5 3.3058 )
+            transport:
+                As: 1.67212e-06
+                Ts: 170.672
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RAS
+        RAS:
+            RASModel: kEpsilon
+            turbulence: on
+            printCoeffs: on
+            kEpsilonCoeffs:
+                C3: -0.33
+system:
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict.1st
+            <<: *FoamFile
+        application: XiEngineFoam
+        startFrom: startTime
+        startTime: -180
+        stopAt: endTime
+        endTime: 60
+        deltaT: 0.25
+        writeControl: runTime
+        writeInterval: 5
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+        adjustTimeStep: no
+        maxCo: 0.2
+        maxDeltaT: 1
+        functions:
+            timeStep:
+                type: coded
+                libs: ("libutilityFunctionObjects.so")
+                name: setDeltaT
+                code: |
+                    #{
+                    #};
+                codeExecute: |
+                    #{
+                        const Time& runTime = mesh().time();
+                        if (runTime.timeToUserTime(runTime.value()) >= -15.0)
+                        {
+                            const_cast<Time&>(runTime).setDeltaT
+                            (
+                                runTime.userTimeToTime(0.025)
+                            );
+                        }
+                    #};
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: none
+            div(phi, U): Gauss upwind
+            div(phi, K): Gauss upwind
+            div(phid, p): Gauss upwind
+            div(meshPhi, p): Gauss upwind
+            div(phiv, p): Gauss upwind
+            div(phi, k): Gauss upwind
+            div(phi, epsilon): Gauss upwind
+            div(phi, R): Gauss upwind
+            div(R): Gauss linear
+            div(phiXi, Xi): Gauss upwind
+            div(phiXi, Su): Gauss upwind
+            div(phiSt, b): Gauss limitedLinear01 1
+            div(phi, ft_b_ha_hau): |
+                Gauss multivariateSelection {
+                    fu  limitedLinear01 1;
+                    ft  limitedLinear01 1;
+                    b   limitedLinear01 1;
+                    ha  limitedLinear 1;
+                    hau limitedLinear 1;
+                    ea  limitedLinear 1;
+                    eau limitedLinear 1;
+                }
+            div(U): Gauss linear
+            div((Su*n)): Gauss linear
+            div((U+((Su*Xi)*n))): Gauss linear
+            div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited corrected 0.5
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: limited corrected 0.5
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            p: &p
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-06
+                relTol: 0.1
+            pFinal:
+                tolerance: 1e-06
+                relTol: 0
+                <<: *p
+            rho: &rho
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-05
+                relTol: 0.1
+            rhoFinal:
+                tolerance: 1e-05
+                relTol: 0
+                <<: *rho
+            (U|Xi|hau|eau|ft|b|ha|ea|k|epsilon): &U
+                solver: PBiCGStab
+                preconditioner: DILU
+                tolerance: 1e-05
+                relTol: 0.1
+            (U|ft|Xi|hau|eau|b|ha|ea|k|epsilon)Final:
+                tolerance: 1e-05
+                relTol: 0
+                <<: *U
+        PIMPLE:
+            nCorrectors: 2
+            nNonOrthogonalCorrectors: 1
+            momentumPredictor: yes
+---
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        # Get application name
+        application=$(getApplication)
+
+        runApplication kivaToFoam -file otape17
+
+        runApplication $application
+-
+    name: Allclean
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial clean functions
+        . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+        mv ./-180 temp180
+        cleanCase
+
+        rm -rf 0 > /dev/null 2>&1
+        rm -f constant/polyMesh/boundary > /dev/null 2>&1
+
+        mv temp180 ./-180
+-
+    name: otape17
+    type: [path, 7z]
+    permision: null
+    data: static/kivaTest-otape17.7z
+---
+pipeline:
+    - kivaToFoam -file otape17
+    - __app__
