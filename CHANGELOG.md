@@ -52,5 +52,7 @@
 ## `v0.9`
 
 - Add `Array?D` data type
+- Add draft conversion of OpenFOAM case to YAML format
+- Add more cases
 - Fix type hints error in standalone script (`t.Optional['Foam']`)
 - Update program architecture (original `PostProcess` is renamed `VTK` and degraded to a sub-module of `PostProcess`)

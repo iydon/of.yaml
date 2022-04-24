@@ -181,6 +181,7 @@ The following table shows the OpenFOAM cases that have been converted to YAML fo
   | [mixerVesselAMI.yaml](tutorials/multiphase/interFoam/RAS/mixerVesselAMI.yaml) | [mixerVesselAMI](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/interFoam/RAS/mixerVesselAMI) | 7 | [multiphase/interFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/interFoam) |
   | [sloshingTank2D.yaml](tutorials/multiphase/compressibleInterFoam/laminar/sloshingTank2D.yaml) | [sloshingTank2D](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/compressibleInterFoam/laminar/sloshingTank2D) | 7 | [multiphase/compressibleInterFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/compressibleInterFoam) |
   | [damBreak4phase.yaml](tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase.yaml) | [damBreak4phase](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase) | 7 | [multiphase/compressibleMultiphaseInterFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/compressibleMultiphaseInterFoam) |
+  | [flamePropagationWithObstacles.yaml](tutorials/combustion/PDRFoam/flamePropagationWithObstacles.yaml) | [flamePropagationWithObstacles](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/PDRFoam/flamePropagationWithObstacles) | 7 | [combustion/PDRFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/PDRFoam) |
 </details>
 
 ### Task List
@@ -204,8 +205,8 @@ The following is a task list to convert [OpenFOAM-7](https://github.com/OpenFOAM
       - [x] scalarTransportFoam
           - [x] pitzDaily
   - [ ] combustion
-      - [ ] PDRFoam
-          - [ ] flamePropagationWithObstacles
+      - [x] PDRFoam
+          - [x] flamePropagationWithObstacles
       - [ ] XiEngineFoam
           - [ ] kivaTest
       - [ ] XiFoam
