@@ -183,6 +183,7 @@ The following table shows the OpenFOAM cases that have been converted to YAML fo
   | [damBreak4phase.yaml](tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase.yaml) | [damBreak4phase](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/compressibleMultiphaseInterFoam/laminar/damBreak4phase) | 7 | [multiphase/compressibleMultiphaseInterFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/compressibleMultiphaseInterFoam) |
   | [flamePropagationWithObstacles.yaml](tutorials/combustion/PDRFoam/flamePropagationWithObstacles.yaml) | [flamePropagationWithObstacles](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/PDRFoam/flamePropagationWithObstacles) | 7 | [combustion/PDRFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/PDRFoam) |
   | [kivaTest.yaml](tutorials/combustion/XiEngineFoam/kivaTest.yaml) | [kivaTest](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/XiEngineFoam/kivaTest) | 7 | [combustion/XiEngineFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/XiFoam/XiEngineFoam) |
+  | [moriyoshiHomogeneous.yaml](tutorials/combustion/XiFoam/RAS/moriyoshiHomogeneous.yaml) | [moriyoshiHomogeneous](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/XiFoam/RAS/moriyoshiHomogeneous) | 7 | [combustion/XiFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/XiFoam) |
 </details>
 
 ### Task List
@@ -210,9 +211,9 @@ The following is a task list to convert [OpenFOAM-7](https://github.com/OpenFOAM
           - [x] flamePropagationWithObstacles
       - [x] XiEngineFoam
           - [x] kivaTest
-      - [ ] XiFoam
-          - [ ] RAS
-              - [ ] moriyoshiHomogeneous
+      - [x] XiFoam
+          - [x] RAS
+              - [x] moriyoshiHomogeneous
       - [ ] chemFoam
           - [ ] gri
           - [ ] h2

@@ -1,0 +1,579 @@
+---
+openfoam: [7]
+version: 0.9.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    Su:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: Su
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform 0.434
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    T:
+        FoamFile:
+            class: volScalarField
+            object: T
+            <<: *FoamFile
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 300
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    Tu:
+        FoamFile:
+            class: volScalarField
+            object: Tu
+            <<: *FoamFile
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 300
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    Xi:
+        FoamFile:
+            class: volScalarField
+            object: Xi
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    alphat:
+        FoamFile:
+            class: volScalarField
+            object: alphat
+            <<: *FoamFile
+        dimensions: "[1 -1 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    b:
+        FoamFile:
+            class: volScalarField
+            object: b
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    epsilon:
+        FoamFile:
+            class: volScalarField
+            object: epsilon
+            <<: *FoamFile
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 375
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    ft:
+        FoamFile:
+            class: volScalarField
+            object: ft
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0.06
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    fu:
+        FoamFile:
+            class: volScalarField
+            object: fu
+            <<: *FoamFile
+        dimensions: "[0 0 0 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 1.5
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 118000
+        boundaryField:
+            left:
+                type: symmetryPlane
+            right:
+                type: symmetryPlane
+            top:
+                type: symmetryPlane
+            bottom:
+                type: symmetryPlane
+            frontAndBack:
+                type: empty
+constant:
+    combustionProperties:
+        FoamFile:
+            class: dictionary
+            object: combustionProperties
+            <<: *FoamFile
+        laminarFlameSpeedCorrelation: Gulders
+        fuel: Propane
+        Su: Su [0 1 -1 0 0 0 0] 0.434
+        SuModel: unstrained
+        equivalenceRatio: equivalenceRatio [0 0 0 0 0 0 0] 1
+        sigmaExt: sigmaExt [0 0 -1 0 0 0 0] 100000
+        XiModel: transport
+        XiCoef: XiCoef [0 0 0 0 0 0 0] 0.62
+        XiShapeCoef: XiShapeCoef [0 0 0 0 0 0 0] 1
+        uPrimeCoef: uPrimeCoef [0 0 0 0 0 0 0] 1
+        GuldersCoeffs:
+            Methane:
+                W: 0.422
+                eta: 0.15
+                xi: 5.18
+                alpha: 2
+                beta: -0.5
+                f: 2.3
+            Propane:
+                W: 0.446
+                eta: 0.12
+                xi: 4.95
+                alpha: 1.77
+                beta: -0.2
+                f: 2.3
+            IsoOctane:
+                W: 0.4658
+                eta: -0.326
+                xi: 4.48
+                alpha: 1.56
+                beta: -0.22
+                f: 2.3
+        RaviPetersenCoeffs:
+            HydrogenInAir:
+                TRef: 320
+                pPoints: ( 1.0e05 5.0e05 1.0e06 2.0e06 3.0e06 )
+                EqRPoints: (0.5 2.0 5.0)
+                alpha:
+                    - (-0.03   -2.347  9.984  -6.734  1.361)
+                      ( 1.61   -9.708 19.026 -11.117  2.098)
+                      ( 2.329 -12.287 21.317 -11.973  2.207)
+                      ( 2.593 -12.813 20.815 -11.471  2.095)
+                      ( 2.728 -13.164 20.794 -11.418  2.086)
+                    - ( 3.558   0.162 -0.247   0.0253 0    )
+                      ( 4.818  -0.872 -0.053   0.0138 0    )
+                      ( 3.789  -0.312 -0.208   0.028  0    )
+                      ( 4.925  -1.841  0.211  -0.0059 0    )
+                      ( 4.505  -1.906  0.259  -0.0105 0    )
+                beta:
+                    - ( 5.07  -6.42  3.87  -0.767)
+                      ( 5.52  -6.73  3.88  -0.728)
+                      ( 5.76  -6.92  3.92  -0.715)
+                      ( 6.02  -7.44  4.37  -0.825)
+                      ( 7.84 -11.55  7.14  -1.399)
+                    - ( 1.405  0.053 0.022  0    )
+                      ( 1.091  0.317 0      0    )
+                      ( 1.64  -0.03  0.07   0    )
+                      ( 0.84   0.56  0      0    )
+                      ( 0.81   0.64  0      0    )
+        ignite: yes
+        ignitionSites:
+            -
+                location: (0 0 0.0005)
+                diameter: 0.003
+                start: 0
+                duration: 0.003
+                strength: 2
+        ignitionSphereFraction: 1
+        ignitionThickness: ignitionThickness [0 1 0 0 0 0 0] 0.001
+        ignitionCircleFraction: 0.5
+        ignitionKernelArea: ignitionKernelArea [0 2 0 0 0 0 0] 0.001
+    thermophysicalProperties:
+        FoamFile:
+            class: dictionary
+            object: thermophysicalProperties
+            <<: *FoamFile
+        thermoType:
+            type: heheuPsiThermo
+            mixture: homogeneousMixture
+            transport: const
+            thermo: janaf
+            equationOfState: perfectGas
+            specie: specie
+            energy: absoluteEnthalpy
+        stoichiometricAirFuelMassRatio: stoichiometricAirFuelMassRatio [0 0 0 0 0 0 0] 15.675
+        reactants:
+            specie:
+                molWeight: 29.4649
+            thermodynamics:
+                Tlow: 200
+                Thigh: 6000
+                Tcommon: 1000
+                highCpCoeffs: |
+                    (
+                        3.24515 0.00202212 -6.98806e-07 1.11477e-10
+                        -6.60444e-15 -1601.58 4.60831
+                    )
+                lowCpCoeffs: |
+                    (
+                        3.60909 -0.000628822 4.45105e-06 -3.81328e-09
+                        1.0553e-12 -1587.86 3.21309
+                    )
+            transport:
+                mu: 1e-5
+                Pr: 1
+                As: 1.67212e-06
+                Ts: 170.672
+        products:
+            specie:
+                molWeight: 28.3233
+            thermodynamics:
+                Tlow: 200
+                Thigh: 6000
+                Tcommon: 1000
+                highCpCoeffs: |
+                    (
+                        3.10561 0.00179748 -5.94701e-07 9.05612e-11
+                        -5.08447e-15 -11003.6 5.12109
+                    )
+                lowCpCoeffs: |
+                    (
+                        3.498 0.000638554 -1.83885e-07 1.20991e-09
+                        -7.68702e-13 -11080.6 3.1819
+                    )
+            transport:
+                mu: 1e-5
+                Pr: 1
+                As: 1.67212e-06
+                Ts: 170.672
+    thermophysicalProperties.hydrogen:
+        FoamFile:
+            class: dictionary
+            object: thermophysicalProperties
+            <<: *FoamFile
+        thermoType:
+            type: heheuPsiThermo
+            mixture: homogeneousMixture
+            transport: sutherland
+            thermo: janaf
+            equationOfState: perfectGas
+            specie: specie
+            energy: absoluteEnthalpy
+        stoichiometricAirFuelMassRatio: stoichiometricAirFuelMassRatio [0 0 0 0 0 0 0] 34.074
+        reactants:
+            specie:
+                molWeight: 16.0243
+            thermodynamics:
+                Tlow: 200
+                Thigh: 5000
+                Tcommon: 1000
+                highCpCoeffs: ( 3.02082 0.00104314 -2.88613e-07 4.20369e-11 -2.37182e-15 -902.964 2.3064 )
+                lowCpCoeffs: ( 2.99138 0.00343493 -8.43792e-06 9.57755e-09 -3.75097e-12 -987.16 1.95123 )
+            transport:
+                As: 1.67212e-06
+                Ts: 170.672
+        products:
+            specie:
+                molWeight: 17.9973
+            thermodynamics:
+                Tlow: 200
+                Thigh: 5000
+                Tcommon: 1000
+                highCpCoeffs: ( 2.879 0.00161934 -4.61257e-07 6.41382e-11 -3.3855e-15 -8023.54 4.11691 )
+                lowCpCoeffs: ( 3.3506 0.00176018 -4.28718e-06 5.63372e-09 -2.35948e-12 -8211.42 1.36387 )
+            transport:
+                As: 1.67212e-06
+                Ts: 170.672
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RAS
+        RAS:
+            RASModel: LaunderSharmaKE
+            turbulence: on
+            printCoeffs: on
+system:
+    blockMeshDict:
+        FoamFile:
+            class: dictionary
+            object: blockMeshDict
+            <<: *FoamFile
+        convertToMeters: 0.001
+        vertices:
+            - (0 0 0)
+            - (0 35 0)
+            - (70 0 0)
+            - (70 35 0)
+            - (0 0 1)
+            - (0 35 1)
+            - (70 0 1)
+            - (70 35 1)
+        blocks:
+            - hex (0 2 3 1 4 6 7 5) (70 35 1) simpleGrading (1 1 1)
+        edges: []
+        boundary:
+            - left:
+              type: symmetryPlane
+              faces:
+                - (0 4 5 1)
+            - right:
+              type: symmetryPlane
+              faces:
+                - (2 3 7 6)
+            - top:
+              type: symmetryPlane
+              faces:
+                - (1 5 7 3)
+            - bottom:
+              type: symmetryPlane
+              faces:
+                - (0 2 6 4)
+            - frontAndBack:
+              type: empty
+              faces:
+                - (4 5 7 6)
+                - (0 1 3 2)
+        mergePatchPairs: []
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: XiFoam
+        startFrom: latestTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 0.005
+        deltaT: 5e-06
+        writeControl: timeStep
+        writeInterval: 20
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+        adjustTimeStep: no
+        maxCo: 0.2
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: none
+            div(phi,U): Gauss limitedLinearV 1
+            div(phid,p): Gauss limitedLinear 1
+            div(phi,K): Gauss limitedLinear 1
+            div(phi,k): Gauss limitedLinear 1
+            div(phi,epsilon): Gauss limitedLinear 1
+            div(phi,R): Gauss limitedLinear 1
+            div(R): Gauss linear
+            div(phiXi,Xi): Gauss limitedLinear 1
+            div(phiXi,Su): Gauss limitedLinear 1
+            div(phiSt,b): Gauss limitedLinear01 1
+            div(phi,ft_b_ha_hau): |
+                Gauss multivariateSelection {
+                    fu  limitedLinear01 1;
+                    ft  limitedLinear01 1;
+                    b   limitedLinear01 1;
+                    ha  limitedLinear 1;
+                    hau limitedLinear 1;
+                }
+            div(U): Gauss linear
+            div((Su*n)): Gauss linear
+            div((U+((Su*Xi)*n))): Gauss linear
+            div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            (p|rho): &p
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-06
+                relTol: 0.1
+            (p|rho)Final:
+                tolerance: 1e-06
+                relTol: 0
+                <<: *p
+            (U|b|Su|Xi|ha|hau|k|epsilon):
+                solver: PBiCGStab
+                preconditioner: DILU
+                tolerance: 1e-05
+                relTol: 0.1
+            (U|b|Su|Xi|ha|hau|k|epsilon)Final:
+                solver: PBiCGStab
+                preconditioner: DILU
+                tolerance: 1e-05
+                relTol: 0
+        PIMPLE:
+            nOuterCorrectors: 2
+            nCorrectors: 1
+            nNonOrthogonalCorrectors: 0
+---
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        runApplication blockMesh
+        runApplication $(getApplication)
+---
+pipeline:
+    - blockMesh
+    - __app__
