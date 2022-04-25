@@ -82,7 +82,7 @@ class Command:
 
     def run(
         self,
-        commands: t.List[str],
+        commands: t.List[t.Union[str, t.Dict[str, t.Any]]],
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
     ) -> t.List[int]:
@@ -97,12 +97,22 @@ class Command:
         )
         codes = [None] * len(commands)
         for ith, command in enumerate(commands):
-            raws = shlex.split(self._replace(command))
-            args = self._split(command, parallel and self._foam.number_of_processors>1)
-            path = self._foam._dest / f'log.{raws[0].replace("./", "")}{suffix}'
-            if not overwrite and path.exists():
+            if isinstance(command, str):
+                command_now, suffix_now, overwrite_now, exception_now, parallel_now = \
+                    command, suffix, overwrite, exception, parallel
+            elif isinstance(command, dict):
+                command_now = command['command']
+                suffix_now, overwrite_now, exception_now, parallel_now = \
+                    command.get('suffix', suffix), command.get('overwrite', overwrite), \
+                    command.get('exception', exception), command.get('parallel', parallel)
+            else:
+                raise Exception('`command` does not currently support variables other than `str`, `dict`')
+            raws = shlex.split(self._replace(command_now))
+            args = self._split(command_now, parallel_now and self._foam.number_of_processors>1)
+            path = self._foam._dest / f'log.{raws[0].replace("./", "")}{suffix_now}'
+            if not overwrite_now and path.exists():
                 message = f'{raws[0]} already run on {path.parent.absolute()}: remove log file "{path.name}" to re-run'
-                if exception:
+                if exception_now:
                     raise Exception(message)
                 else:
                     w.warn(message)

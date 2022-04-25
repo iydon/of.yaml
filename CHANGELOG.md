@@ -56,3 +56,4 @@
 - Add more cases
 - Fix type hints error in standalone script (`t.Optional['Foam']`)
 - Update program architecture (original `PostProcess` is renamed `VTK` and degraded to a sub-module of `PostProcess`)
+- Update `Command::run` to allow `pipeline` to specify additional parameters
