@@ -89,17 +89,26 @@ class Case:
         template = '''
             {value}:
                 FoamFile:
-                    class: TODO
-                    object: TODO
+                    class: {cls}
+                    object: {obj}
                     <<: *FoamFile{data}
         '''.rstrip()[1:]
+        pattern_class = re.compile(r'class +.+')
+        pattern_object = re.compile(r'object +.+')
+        pattern_foam = re.compile(r'FoamFile[\s\S]+?\{[\s\S]+?\}')
+        pattern_left = re.compile(r'\n +\{')
+        pattern_right = re.compile(r'\n +\}')
         texts = []
         for keys in self.keys:
             texts.append(f'        {keys[-1]}:')
             for value in self._foam.get(keys, []):
                 path = self._origin / p.Path(*keys) / value
                 data = '\n' + self._indent(self._pre_process(path.read_text()), 16)
-                texts.append(template.format(value=value, data=data))
+                cls = pattern_class.findall(data)[0].split()[-1]
+                obj = pattern_object.findall(data)[0].split()[-1]
+                data = pattern_right.sub('', pattern_left.sub(':', pattern_foam.sub('', data)))
+                text = template.format(value=value, cls=cls, obj=obj, data=data)
+                texts.append(text)
         return '\n'.join(texts) \
             .replace('0:\n', '"0":\n') \
             .replace(';\n', '\n') \
