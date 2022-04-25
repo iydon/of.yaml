@@ -179,9 +179,8 @@ class Foam:
 
         for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
-            out = self._dest / static['name']  # self._dest is not None
+            out = self._path(static['name'])  # self._dest is not None
             out.parent.mkdir(parents=True, exist_ok=True)
-            out: p.Path
             if static['type'][0] == 'embed':
                 if static['type'][1] == 'text':
                     self._write(out, static['data'], static.get('permission', None))
@@ -208,7 +207,7 @@ class Foam:
     def _save_foam(self) -> None:
         foam = self['foam']
         for keys, data in self._extract_files({} if foam is None else foam.data):
-            path = self._dest / p.Path(*map(str, keys))  # self._dest is not None
+            path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self._parse.data(data)))
 
@@ -221,3 +220,8 @@ class Foam:
         else:
             for key, value in data.items():
                 yield from self._extract_files(value, keys+[key])
+
+    def _path(self, *parts: str) -> p.Path:
+        # TODO: use "prefix" will cause some of the `Command` methods to fail
+        prefix = '.'  # (self['other'] or {}).get('directory', '.')
+        return self._dest / prefix / p.Path(*parts)

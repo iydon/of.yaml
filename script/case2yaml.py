@@ -3,6 +3,7 @@
 import os
 import pathlib as p
 import re
+import subprocess
 import textwrap
 import typing as t
 
@@ -38,6 +39,16 @@ class Case:
         text = '---\n' + '\n---\n'.join(map(self._post_process, parts)) + '\n'
         self._target.write_text(text)
         return self
+
+    def readme(self) -> str:
+        version = os.environ['WM_PROJECT_VERSION']
+        target = self._target.as_posix()
+        url = f'https://github.com/OpenFOAM/OpenFOAM-7/tree/master/{target.replace(".yaml", "")}'
+        index = next(ith for ith, part in enumerate(self._target.parts) if part.endswith('Foam'))
+        solver = '/'.join(self._target.parts[index-1:index+1])
+        cp = subprocess.run(f'find $FOAM_APP -name {self._target.parts[index]}', capture_output=True, shell=True)
+        path = p.Path(cp.stdout.decode().strip()).relative_to(self._root).as_posix()
+        return f'| [{self._target.name}]({target}) | [{self._origin.name}]({url}) | {version} | [{solver}](https://github.com/OpenFOAM/OpenFOAM-{version}/tree/master/{path}) |'
 
     def _categorize(self) -> t.Tuple[t.Dict[t.Tuple[str, ...], str], ...]:
         foam, static, todos = {}, {}, {}
@@ -139,3 +150,4 @@ class Case:
 if __name__ == '__main__':
     path = input('(path) >>> ')
     case = Case.from_path(path=path, threshold=16*1024).save()
+    print(case.readme())
