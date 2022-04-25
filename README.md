@@ -185,6 +185,7 @@ The following table shows the OpenFOAM cases that have been converted to YAML fo
   | [kivaTest.yaml](tutorials/combustion/XiEngineFoam/kivaTest.yaml) | [kivaTest](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/XiEngineFoam/kivaTest) | 7 | [combustion/XiEngineFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/XiFoam/XiEngineFoam) |
   | [moriyoshiHomogeneous.yaml](tutorials/combustion/XiFoam/RAS/moriyoshiHomogeneous.yaml) | [moriyoshiHomogeneous](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/combustion/XiFoam/RAS/moriyoshiHomogeneous) | 7 | [combustion/XiFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/combustion/XiFoam) |
   | [throttle.yaml](tutorials/multiphase/cavitatingFoam/LES/throttle.yaml) | [throttle](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/cavitatingFoam/LES/throttle) | 7 | [multiphase/cavitatingFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/cavitatingFoam) |
+  | [throttle3D.yaml](tutorials/multiphase/cavitatingFoam/LES/throttle3D.yaml) | [throttle3D](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/tutorials/multiphase/cavitatingFoam/LES/throttle3D) | 7 | [multiphase/cavitatingFoam](https://github.com/OpenFOAM/OpenFOAM-7/tree/master/applications/solvers/multiphase/cavitatingFoam) |
 </details>
 
 ### Task List
@@ -436,9 +437,9 @@ The following is a task list to convert [OpenFOAM-7](https://github.com/OpenFOAM
           - [ ] motorBike → ../../incompressible/simpleFoam/motorBike
   - [ ] multiphase
       - [ ] cavitatingFoam
-          - [ ] LES
+          - [x] LES
               - [x] throttle
-              - [ ] throttle3D
+              - [x] throttle3D
           - [ ] RAS
               - [ ] throttle
       - [ ] compressibleInterFoam

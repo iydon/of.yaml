@@ -26,7 +26,7 @@ order:
             walls:
                 type: noSlip
             frontBack:
-                type: empty
+                type: noSlip
     alpha.vapour:
         FoamFile:
             class: volScalarField
@@ -45,13 +45,14 @@ order:
                 type: calculated
                 value: uniform 0
             frontBack:
-                type: empty
+                type: calculated
+                value: uniform 0
     k:
         FoamFile:
             class: volScalarField
             object: k
             <<: *FoamFile
-        dimensions: "[0 2 -2 0 0 0 0]"
+        dimensions: "[0 2 -2 0 0]"
         internalField: uniform 10
         boundaryField:
             inlet:
@@ -64,7 +65,7 @@ order:
                 type: kqRWallFunction
                 value: uniform 10
             frontBack:
-                type: empty
+                type: zeroGradient
     nut:
         FoamFile:
             class: volScalarField
@@ -83,7 +84,8 @@ order:
                 type: nutUSpaldingWallFunction
                 value: uniform 0
             frontBack:
-                type: empty
+                type: nutUSpaldingWallFunction
+                value: uniform 0
     p:
         FoamFile:
             class: volScalarField
@@ -101,7 +103,7 @@ order:
             walls:
                 type: zeroGradient
             frontBack:
-                type: empty
+                type: zeroGradient
     rho:
         FoamFile:
             class: volScalarField
@@ -119,7 +121,7 @@ order:
             walls:
                 type: zeroGradient
             frontBack:
-                type: empty
+                type: zeroGradient
 constant:
     thermodynamicProperties:
         FoamFile:
@@ -228,13 +230,13 @@ system:
             - ( 0.00   0.15   0.15)
             - ( 0.00  -0.15   0.15)
         blocks:
-            - hex ( 0  1  2 15 16 17 18 31) ( 50 24 1) simpleGrading (1 1 1)
-            - hex (15  2 11 14 31 18 27 30) ( 50  3 1) simpleGrading (1 1 1)
-            - hex (14 11 12 13 30 27 28 29) ( 50 24 1) simpleGrading (1 1 1)
-            - hex ( 2  3 10 11 18 19 26 27) ( 20  3 1) simpleGrading (1 1 1)
-            - hex ( 4  5  6  3 20 21 22 19) (100 24 1) simpleGrading (1 1 1)
-            - hex ( 3  6  7 10 19 22 23 26) (100  3 1) simpleGrading (1 1 1)
-            - hex (10  7  8  9 26 23 24 25) (100 24 1) simpleGrading (1 1 1)
+            - hex ( 0  1  2 15 16 17 18 31) ( 50 24 10) simpleGrading (1 1 1)
+            - hex (15  2 11 14 31 18 27 30) ( 50  3 10) simpleGrading (1 1 1)
+            - hex (14 11 12 13 30 27 28 29) ( 50 24 10) simpleGrading (1 1 1)
+            - hex ( 2  3 10 11 18 19 26 27) ( 20  3 10) simpleGrading (1 1 1)
+            - hex ( 4  5  6  3 20 21 22 19) (100 24 10) simpleGrading (1 1 1)
+            - hex ( 3  6  7 10 19 22 23 26) (100  3 10) simpleGrading (1 1 1)
+            - hex (10  7  8  9 26 23 24 25) (100 24 10) simpleGrading (1 1 1)
         edges: []
         boundary:
             - inlet:
@@ -263,7 +265,7 @@ system:
                 - (12 11 27 28)
                 - (13 12 28 29)
             - frontBack:
-              type: empty
+              type: wall
               faces:
                 - ( 0 15  2  1)
                 - (15 14 11  2)
@@ -288,10 +290,10 @@ system:
         startFrom: latestTime
         startTime: 0
         stopAt: endTime
-        endTime: 0.0002
+        endTime: 0.0001
         deltaT: 1e-08
         writeControl: adjustableRunTime
-        writeInterval: 2e-05
+        writeInterval: 5e-06
         purgeWrite: 0
         writeFormat: binary
         writePrecision: 6
@@ -319,6 +321,25 @@ system:
                       mean: on
                       prime2Mean: off
                       base: time
+    decomposeParDict:
+        FoamFile:
+            class: dictionary
+            object: decomposeParDict
+            <<: *FoamFile
+        numberOfSubdomains: 4
+        method: simple
+        simpleCoeffs:
+            n: (2 2 1)
+            delta: 0.001
+        hierarchicalCoeffs:
+            n: (1 1 1)
+            delta: 0.001
+            order: xyz
+        manualCoeffs:
+            dataFile: |
+                ""
+        distributed: no
+        roots: ( )
     fvSchemes:
         FoamFile:
             class: dictionary
@@ -346,16 +367,15 @@ system:
             object: fvSolution
             <<: *FoamFile
         solvers:
-            rho:
+            rho: &rho
                 solver: smoothSolver
                 smoother: symGaussSeidel
                 tolerance: 1e-08
                 relTol: 0.1
             rhoFinal:
-                solver: smoothSolver
-                smoother: symGaussSeidel
                 tolerance: 1e-08
                 relTol: 0
+                <<: *rho
             p: &p
                 solver: GAMG
                 tolerance: 0
@@ -365,22 +385,28 @@ system:
                 tolerance: 1e-08
                 relTol: 0
                 <<: *p
-            (U|k|omega):
+            (U|k|omega): &U
                 solver: smoothSolver
                 smoother: symGaussSeidel
                 tolerance: 1e-08
                 relTol: 0.1
             (U|k|omega)Final:
-                solver: smoothSolver
-                smoother: symGaussSeidel
                 tolerance: 1e-08
                 relTol: 0
+                <<: *U
         PIMPLE:
             nCorrectors: 3
             nNonOrthogonalCorrectors: 0
         relaxationFactors:
             equations:
                 .*: 1
+    mapFieldsDict:
+        FoamFile:
+            class: dictionary
+            object: mapFieldsDict
+            <<: *FoamFile
+        patchMap: ( )
+        cuttingPatches: ( )
     refineMeshDict:
         FoamFile:
             class: dictionary
@@ -391,7 +417,8 @@ system:
         globalCoeffs:
             tan1: (1 0 0)
             tan2: (0 1 0)
-        directions: ( tan1 tan2 )
+            tan3: (0 0 1)
+        directions: ( tan1 tan2 tan3 )
         useHexTopology: yes
         geometricCut: no
         writeMesh: no
@@ -449,25 +476,34 @@ system:
         # Set application name
         application=$(getApplication)
 
-        refineMeshByCellSet():
-           while [ $# -ge 1 ]
-           do
-              if [ ! -e log.refineMesh.$1 ]
-              then
-                  echo "Creating cell set for primary zone - $1"
-                  cp system/topoSetDict.$1 system/topoSetDict
-                  topoSet > log.topoSet.$1 2>&1
+        refineMeshByCellSet()
+        {
+        while [ $# -ge 1 ]
+        do
+            if [ ! -e log.refineMesh.$1 ]
+            then
+                echo "Creating cell set for primary zone - $1"
+                cp system/topoSetDict.$1 system/topoSetDict
+                topoSet > log.topoSet.$1 2>&1
 
-                  echo "Refining primary zone - $1"
-                  refineMesh -dict system/refineMeshDict -overwrite \
-                      > log.refineMesh.$1 2>&1
-              fi
-              shift
-           done
+                echo "Refining primary zone - $1"
+                refineMesh -dict system/refineMeshDict -overwrite \
+                    > log.refineMesh.$1 2>&1
+            fi
+            shift
+        done
+        }
 
         runApplication blockMesh
         refineMeshByCellSet 1 2 3
-        runApplication $application
+
+        #echo "mapping fields from 2D throttle case"
+        #runApplication mapFields ../throttle -sourceTime latestTime
+
+        runApplication decomposePar
+        runParallel $application
+        runApplication reconstructPar
+
 -
     name: Allclean
     type: [embed, text]
@@ -479,8 +515,6 @@ system:
         # Source tutorial clean functions
         . $WM_PROJECT_DIR/bin/tools/CleanFunctions
 
-        rm -rf constant/polyMesh/sets > /dev/null 2>&1
-        rm -rf 0/polyMesh > /dev/null 2>&1
         rm system/topoSetDict > /dev/null 2>&1
         cleanCase
 ---
@@ -504,4 +538,6 @@ pipeline:
     -
         command: refineMesh -overwrite
         suffix: ".3"
+    - decomposePar
     - __app__
+    - reconstructPar
