@@ -4,6 +4,7 @@ __all__ = ['Information']
 import collections as c
 import os
 import pathlib as p
+import re
 import typing as t
 
 from ...base import Foam, Path
@@ -54,7 +55,18 @@ class Information:
 
     @property
     def root(self) -> p.Path:
-        return p.Path(self.environ['FOAM_TUTORIALS']).parent
+        return p.Path(self.environ['WM_PROJECT_DIR'])
+
+    @property
+    def shared_libraries(self) -> t.Set[str]:
+        ans = set()
+        pattern = re.compile(fr'{self.environ["FOAM_LIBBIN"]}.+?\.so')
+        for command in self.commands(foam_only=True):
+            path = self.cmd.which(command)
+            if path is not None:
+                stdout = self.cmd.raw(f'ldd {path}').stdout.decode()
+                ans.update(pattern.findall(stdout))
+        return ans
 
     def search(self, *targets: str, process: bool = True) -> t.Union[str, t.Set[str]]:
         '''`foamSearch` wrapper
@@ -103,3 +115,17 @@ class Information:
                         record[foam['foam'][keys]].add(path.absolute().as_posix())
                         break
         return dict(record)
+
+    def commands(self, foam_only: bool = True) -> t.Set[str]:
+        strize = lambda command: {
+            str: lambda x: x,
+            dict: lambda x: x['command'],
+        }[type(command)](command)
+        func = lambda x: self.cmd._split(strize(x), False)[0]
+        commands = set(map(func, self._foam.pipeline))
+        if foam_only:
+            commands = {
+                command for command in commands
+                if self.environ['FOAM_APPBIN'] in (self.cmd.which(command) or '')
+            }
+        return commands

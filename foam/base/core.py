@@ -113,7 +113,7 @@ class Foam:
             return 1
 
     @f.cached_property
-    def pipeline(self) -> t.List[str]:
+    def pipeline(self) -> t.List[t.Union[str, t.Dict[str, t.Any]]]:
         return (self['other'] or {}).get('pipeline', [])
 
     @f.cached_property

@@ -55,11 +55,13 @@ class Command:
     @f.cached_property
     def macros(self) -> t.Dict[str, str]:
         '''Macros that can be used in the pipeline field'''
-        return {
+        macros = {
             '__app__': self._foam.application,
             '__procs__': str(self._foam.number_of_processors),
-            '__pwd__': self._foam._dest.absolute().as_posix(),
         }
+        if self._foam._dest:
+            macros['__pwd__'] = self._foam._dest.absolute().as_posix()
+        return macros
 
     def all_run(
         self,
@@ -131,6 +133,10 @@ class Command:
         '''Execute raw command in case directory'''
         args = shlex.split(command)
         return s.run(args, cwd=self._foam._dest, capture_output=output)
+
+    def which(self, command: str) -> t.Optional[str]:
+        stdout = self.raw(f'which {command}', output=True).stdout.decode().strip()
+        return stdout or None
 
     def _replace(self, command: str) -> str:
         for old, new in self.macros.items():
