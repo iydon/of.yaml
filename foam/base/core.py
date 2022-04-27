@@ -158,6 +158,10 @@ class Foam:
         data = list(yaml.load_all(text, Loader=SafeLoader))
         return cls(data, root)
 
+    @classmethod
+    def as_placeholder(cls) -> Self:
+        return cls([{}], '')
+
     def save(self, dest: Path, paraview: bool = True) -> Self:
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)

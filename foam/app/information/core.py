@@ -18,7 +18,7 @@ class Information:
 
     Self = __qualname__
 
-    def __init__(self, foam: t.Optional[Foam]) -> None:
+    def __init__(self, foam: Foam) -> None:
         self._foam = foam
         self._cmd = None
 
@@ -28,13 +28,11 @@ class Information:
 
     @classmethod
     def from_nothing(cls) -> Self:
-        return cls(None)
+        return cls(Foam.as_placeholder())
 
     @property
     def cmd(self) -> 'Command':
         '''Command without asserting (no need to call `Foam::save` method first)'''
-        assert self._foam is not None
-
         from ..command import Command
 
         if self._cmd is None:
