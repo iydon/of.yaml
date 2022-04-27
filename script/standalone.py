@@ -52,6 +52,7 @@ class show:
 p.Path('foam.py').write_text(show.code(f'''
 import collections
 import functools
+import gc
 import io
 import json
 import os

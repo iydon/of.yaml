@@ -2,6 +2,7 @@ __all__ = ['Foam']
 
 
 import functools as f
+import gc
 import io
 import json
 import os
@@ -170,6 +171,13 @@ class Foam:
         self._save_static()
         if paraview:
             self._write(self._dest/'paraview.foam', '')
+        return self
+
+    def reset(self) -> Self:
+        self._dest = self._cmd = self._info = self._post = None
+        for obj in gc.get_objects():
+            if isinstance(obj, f._lru_cache_wrapper):
+                obj.cache_clear()
         return self
 
     def _write(self, path: p.Path, string: str, permission: t.Optional[int] = None) -> None:
