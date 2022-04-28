@@ -150,8 +150,8 @@ class VTK:
     ) -> t.Iterator[Self]:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
-        foam.cmd.run(['postProcess -func writeCellCentres'], overwrite=True, exception=False, unsafe=True)
-        foam.cmd.run(['postProcess -func writeCellVolumes'], overwrite=True, exception=False, unsafe=True)
+        for name in ['writeCellCentres', 'writeCellVolumes']:
+            foam.cmd.run([f'postProcess -func {name}'], suffix=f'.{name}', overwrite=overwrite, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)
         paths = [
             path
