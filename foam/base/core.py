@@ -44,6 +44,9 @@ class Foam:
         self._info = None
         self._post = None
 
+        openfoam = set(map(str, self.meta.get('openfoam', [])))
+        if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
+            w.warn('OpenFOAM version mismatch')
         version = parse(self.__version__)
         current = parse(str(self.meta.get('version', '0.0.0')))
         if (version.major, version.minor) < (current.major, current.minor):

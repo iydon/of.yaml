@@ -49,6 +49,10 @@ class PostProcess:
             }
         return self._logs
 
+    def vtks_set(self, **kwargs) -> t.List['VTK']:
+        self._vtks = list(VTK.from_foam(self._foam, **kwargs))
+        return self._vtks
+
     def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array(1, 2)]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
