@@ -11,10 +11,19 @@
         "*.md": "markdown",
         "*.py": "python",
         "*.rs": "rust",
+        "*.txt": "plaintext",
         "*.toml": "toml",
         "*.yaml": "yaml",
         "*.yml": "yaml",
-        "*": "OpenFOAM"
+        "*": "OpenFOAM",
+        // third party
+        "files": "makefile",
+        "options": "makefile",
+        "*.C": "cpp",
+        "*.H": "cpp",
+        "*.csv": "csv",
+        ".pvsm": "xml",
+        "*.sh": "shellscript",
     },
     "[yaml]": {
         "editor.tabSize": 4
