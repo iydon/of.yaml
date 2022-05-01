@@ -8,12 +8,12 @@
 # depending on whether errors occured or not
 run () {
     # run the command and get rid of the outputs
-    $1 >/dev/null 2>&1
+    $@ >/dev/null 2>&1
     # check return code, 0 indicates success
     if [ $? -eq 0 ]; then
-        echo "    PASS: "$1
+        echo "    PASS: "$@
     else
-        echo "    FAIL: "$1
+        echo "    FAIL: "$@
     fi
 }
 
@@ -30,13 +30,13 @@ for tutorialDir in */ ; do
 
         # test building and running
         run ./Allwmake
-        cd testCase
-        run ./Allrun
+        # cd testCase
+        run python test.py
 
         # no need to test cleaning the test case
-        ./Allclean >/dev/null 2>&1
+        rm -rf testCase >/dev/null 2>&1
 
         # go back to main directory
-        cd ../..
+        cd ..
     fi
 done

@@ -10,8 +10,7 @@ for tutorialDir in */ ; do
 
         cd $tutorialDir
         ./Allwclean >/dev/null 2>&1
-        cd testCase
-        ./Allclean >/dev/null 2>&1
-        cd ../..
+        rm -rf testCase >/dev/null 2>&1
+        cd ..
     fi
 done
