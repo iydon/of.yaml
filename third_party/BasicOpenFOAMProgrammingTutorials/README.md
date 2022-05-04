@@ -64,9 +64,25 @@ Therefore, to run each tutorial simply execute the following from its top-level
 directory:
 
 ```
+cat > test.py << EOF
+import pathlib as p
+import sys
+
+from foam import Foam
+
+root = p.Path('.').absolute().parents[2]
+sys.path.append(root.as_posix())
+
+foam = Foam \
+    .from_file('case.yaml') \
+    .save('case')
+codes = foam.cmd.all_run()
+
+assert all(code == 0 for code in codes)
+EOF
+
 ./Allwmake
-cd testCase
-./Allrun
+python test.py
 ```
 
 There is also a ```testAll``` script that sequentially builds and tests each of
@@ -220,7 +236,7 @@ Recommended reading:
     and Momentum Transfer" by Murthy, J. Y. 2002:
     https://engineering.purdue.edu/~scalo/menu/teaching/me608/ME608_Notes_Murthy.pdf
 
-![Alt text](OFtutorial10_transportEquation/testCase/2DconvectionDiffusion.png?raw=true "Tutorial 10 - result of 2D convection-diffusion with inlets at left and bottom edges")
+![Alt text](OFtutorial10_transportEquation/asset/2DconvectionDiffusion.png?raw=true "Tutorial 10 - result of 2D convection-diffusion with inlets at left and bottom edges")
 
 ---------
 ## Tutorial 11 - Modifying the mesh
@@ -231,7 +247,7 @@ and export the finished grid to an OpenFOAM case.
 Also recommended to view the 'meshPoints.pdf' or Gmsh files to get a better
 idea of how the mesh is actually constructed from points.
 
-![Alt text](OFtutorial11_modifyingTheMesh/testCase/cellTypes.png?raw=true "Tutorial 11 - different cell topologies")
+![Alt text](OFtutorial11_modifyingTheMesh/asset/cellTypes.png?raw=true "Tutorial 11 - different cell topologies")
 
 ---------
 ## Tutorial 12 - Adding a custom momentum source
@@ -247,7 +263,7 @@ object is structured and how it may be modified to suit ones needs. It is a bit
 more applied than the previous ones but hopefully will be useful to at least
 a few people.
 
-![Alt text](OFtutorial12_momentumSource/testCase/Umagnitude.png?raw=true "Tutorial 12 - velocity affected by a momentum source")
+![Alt text](OFtutorial12_momentumSource/asset/Umagnitude.png?raw=true "Tutorial 12 - velocity affected by a momentum source")
 
 ---------
 ## Tutorial 13 - Waves
@@ -269,7 +285,7 @@ and destructive interference also can be clearly seen. Geometry/mesh is a 1X1X0.
 box with single cell thick, and with "empty" BC on top and bottom faces. The video
 file "output.mp4" is the simulation output generated as an animation.
 
-![Alt text](OFtutorial13_waveEquationSolver/testCase/waveElevation.png?raw=true "Tutorial 13 - wave elevation")
+![Alt text](OFtutorial13_waveEquationSolver/asset/waveElevation.png?raw=true "Tutorial 13 - wave elevation")
 
 ---------
 ## Tutorial 14 - The SIMPLE Algorithm
@@ -294,7 +310,7 @@ tutorial:
 - A rather detailed yet concise notes:
     https://quickersim.com/tutorial/tutorial-2-numerics-simple-scheme
 
-![Alt text](OFtutorial14_SIMPLE_algorithm/testCase/velocity_field.png?raw=true "Tutorial 14 - channel flow velocity distribution")
+![Alt text](OFtutorial14_SIMPLE_algorithm/asset/velocity_field.png?raw=true "Tutorial 14 - channel flow velocity distribution")
 
 ---------
 ## Tutorial 15 - Discretisation schemes
@@ -313,8 +329,8 @@ Recommended reading:
 - Excellent slides by WolfDynamics about theory of CFD as used in OpenFOAM:
     http://www.wolfdynamics.com/training/OF_WS2020/traning_session2020.pdf
 
-![Alt text](OFtutorial15_discretisation/testCase/tutorial15.png?raw=true "Tutorial 15 - discretisation")
-![Alt text](OFtutorial15_discretisation/testCase/cellCentreValues.png?raw=true "Tutorial 15 - discretisation")
+![Alt text](OFtutorial15_discretisation/asset/tutorial15.png?raw=true "Tutorial 15 - discretisation")
+![Alt text](OFtutorial15_discretisation/asset/cellCentreValues.png?raw=true "Tutorial 15 - discretisation")
 
 ---------
 ## Tutorial 16 - Lagrangian Particle Tracking
@@ -328,4 +344,4 @@ is developed. This tutorial introduces following concepts:
 * Lagrangian massless particle tracking.
 * writing VTK file for visualizing the particle's track.
 
-![Alt text](OFtutorial16_particleTracking/testCase/particlePath.png?raw=true "Tutorial 16 - particle tracking")
+![Alt text](OFtutorial16_particleTracking/asset/particlePath.png?raw=true "Tutorial 16 - particle tracking")
