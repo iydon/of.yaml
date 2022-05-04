@@ -3,20 +3,20 @@
 int main(int argc, char *argv[]) {
     #include "setRootCase.H"
 
-	// These two create the time system (instance called runTime) and fvMesh (instance called mesh).
+    // These two create the time system (instance called runTime) and fvMesh (instance called mesh).
     #include "createTime.H"
     #include "createMesh.H"
 
-	// runTime and mesh are instances of objects (or classes).
-	// If you are not familiar with what a class or object is, it is HIGHLY RECOMMENDED you visit this
-	// website and only come back once you've read everything about classes, inheritance and polymorphism:
-	// http://www.cplusplus.com/doc/tutorial/classes/
-	// Note how the next lines call functions .timeName(), .C() and .Cf() implemented in the objects.
-	// It is also important to realise that mesh.C() and .Cf() return vector fields denoting centres of each
+    // runTime and mesh are instances of objects (or classes).
+    // If you are not familiar with what a class or object is, it is HIGHLY RECOMMENDED you visit this
+    // website and only come back once you've read everything about classes, inheritance and polymorphism:
+    // http://www.cplusplus.com/doc/tutorial/classes/
+    // Note how the next lines call functions .timeName(), .C() and .Cf() implemented in the objects.
+    // It is also important to realise that mesh.C() and .Cf() return vector fields denoting centres of each
     // cell and internal face.
-	// Calling the mesh.C().size() method therefore yields the total size of the mesh.
-	Info << "Hello there, the most recent time folder found is " << runTime.timeName() << nl
-		 << "The mesh has " << mesh.C().size() << " cells and " << mesh.Cf().size()
+    // Calling the mesh.C().size() method therefore yields the total size of the mesh.
+    Info << "Hello there, the most recent time folder found is " << runTime.timeName() << nl
+         << "The mesh has " << mesh.C().size() << " cells and " << mesh.Cf().size()
          << " internal faces in it. Wubalubadubdub!" << nl << endl;
 
     // It's possible to iterate over every cell in a standard C++ for loop
