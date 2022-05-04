@@ -1,0 +1,184 @@
+---
+openfoam: [9]
+version: 0.9.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    p:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: p
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            movingWall:
+                type: zeroGradient
+            fixedWalls:
+                type: zeroGradient
+            frontAndBack:
+                type: empty
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            movingWall:
+                type: fixedValue
+                value: uniform (1 0 0)
+            fixedWalls:
+                type: fixedValue
+                value: uniform (0 0 0)
+            frontAndBack:
+                type: empty
+constant:
+    customProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        someWord: myWord
+        someScalar: 0.01
+        someBool: on
+        someList:
+            - 0
+            - 1
+            - 2
+        someHashTable:
+            - key0 (0 0 0)
+            - key1 (1 0 0)
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        nu: "[0 2 -1 0 0 0 0] 0.01"
+system:
+    blockMeshDict:
+        FoamFile:
+            class: dictionary
+            object: blockMeshDict
+            <<: *FoamFile
+        convertToMeters: 0.1
+        vertices:
+            - (0 0 0)
+            - (1 0 0)
+            - (1 1 0)
+            - (0 1 0)
+            - (0 0 0.1)
+            - (1 0 0.1)
+            - (1 1 0.1)
+            - (0 1 0.1)
+        blocks:
+            - hex (0 1 2 3 4 5 6 7) (20 20 1) simpleGrading (1 1 1)
+        edges: []
+        boundary:
+            - movingWall:
+              type: wall
+              faces:
+                - (3 7 6 2)
+            - fixedWalls:
+              type: wall
+              faces:
+                - (0 4 7 3)
+                - (2 6 5 1)
+                - (1 5 4 0)
+            - frontAndBack:
+              type: empty
+              faces:
+                - (0 3 2 1)
+                - (4 5 6 7)
+        mergePatchPairs: []
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: icoFoam
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 0.5
+        deltaT: 0.005
+        writeControl: timeStep
+        writeInterval: 20
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+            grad(p): Gauss linear
+        divSchemes:
+            default: none
+            div(phi, U): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear orthogonal
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: orthogonal
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            p: &p
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-06
+                relTol: 0
+            pFinal:
+                relTol: 0
+                <<: *p
+            U:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-05
+                relTol: 0
+        PISO:
+            nCorrectors: 2
+            nNonOrthogonalCorrectors: 0
+            pRefCell: 0
+            pRefValue: 0
+---
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/bash
+
+        blockMesh > log.blockMesh
+        ofTutorial1
+-
+    name: Allclean
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/bash
+
+        rm -r 1* 2* 3* 4* 5* 6* 7* 8* 9* 0.* constant/polyMesh/* processor* log.* postProcessing 2>/dev/null
+---
+pipeline:
+    - blockMesh
+    - ofTutorial1
