@@ -1,8 +1,10 @@
 #include "derivedClass.H"
 
-// Call the base class constructor to make sure all inherited members get
-// initialised as required
-myDict::myDict(const IOobject& ioObj) : IOdictionary(ioObj) {
+myDict::myDict(const IOobject& ioObj) :
+    // Call the base class constructor to make sure all inherited members get
+    // initialised as required
+    IOdictionary(ioObj)
+{
     // do nothing since we do not have any bespoke fields
 }
 
