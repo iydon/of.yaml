@@ -5,12 +5,12 @@
 # ===
 
 for tutorialDir in */ ; do
-    if [[ $tutorialDir = *OFtutorial* ]]; then
+    if [[ $tutorialDir = *OFtutorial00* ]]; then
         echo "Cleaning:" $tutorialDir
 
         cd $tutorialDir
-        ./Allwclean >/dev/null 2>&1
-        rm -rf testCase >/dev/null 2>&1
+        ./Allwclean
+        rm -rf case/ test.py
         cd ..
     fi
 done

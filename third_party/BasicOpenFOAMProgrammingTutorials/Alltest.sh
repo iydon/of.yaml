@@ -19,22 +19,34 @@ run () {
 
 # go over all tutorial directories
 for tutorialDir in */ ; do
-    if [[ $tutorialDir = *OFtutorial* ]]; then
+    if [[ $tutorialDir = *OFtutorial00* ]]; then
         echo "Checking:" $tutorialDir
 
         # navigate to the tutorial
         cd $tutorialDir
 
-        # no need to test cleaning the code
-        ./Allwclean >/dev/null 2>&1
+        # python script
+        cat > test.py << EOF
+import pathlib as p
+import sys
+
+from foam import Foam
+
+
+root = p.Path('.').absolute().parents[2]
+sys.path.append(root.as_posix())
+
+foam = Foam \
+    .from_file('case.yaml') \
+    .save('case')
+codes = foam.cmd.all_run()
+
+assert all(code == 0 for code in codes)
+EOF
 
         # test building and running
         run ./Allwmake
-        # cd testCase
         run python test.py
-
-        # no need to test cleaning the test case
-        rm -rf testCase >/dev/null 2>&1
 
         # go back to main directory
         cd ..
