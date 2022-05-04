@@ -153,7 +153,8 @@ system:
     data: |
         #!/bin/bash
 
-        ofTutorial2 someWordIPassed 5. -someSwitch -someInt 2 -dict path_to_nowhere_in_particular
+        blockMesh > log.blockMesh
+        ofTutorial3
 -
     name: Allclean
     type: [embed, text]
@@ -164,4 +165,5 @@ system:
         rm -r 1* 2* 3* 4* 5* 6* 7* 8* 9* 0.* constant/polyMesh/* processor* log.* 2>/dev/null
 ---
 pipeline:
-    - ofTutorial2 someWordIPassed 5. -someSwitch -someInt 2 -dict path_to_nowhere_in_particular
+    - blockMesh
+    - ofTutorial3
