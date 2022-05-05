@@ -5,7 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, Data, Dict, List, Path
+from foam.base import Foam, Parser, Array, Data, Dict, List, Path, lib
 
 
 class show:
@@ -75,6 +75,10 @@ p = pathlib
 s = subprocess
 t = typing
 w = warnings
+
+{show.source(lib.__class__)}
+
+lib = Lib.new()
 
 {Dict = !r}
 {List = !r}

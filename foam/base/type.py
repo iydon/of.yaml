@@ -4,6 +4,8 @@ __all__ = ['Array', 'Dict', 'List', 'Path', 'Data']
 import pathlib as p
 import typing as t
 
+from .lib import lib
+
 if t.TYPE_CHECKING:
     import numpy as np
 
@@ -16,13 +18,14 @@ Path = t.Union[str, p.Path]
 def Array(*dimensions: int) -> t.Union['np.number', 'np.ndarray']:
     assert dimensions and all(d>=0 for d in dimensions)
 
-    import numpy as np
-
-    dimensions = set(dimensions)
-    if dimensions == {0}:
-        return np.number
+    if t.TYPE_CHECKING:
+        dimensions = set(dimensions)
+        if dimensions == {0}:
+            return lib['numpy'].number
+        else:
+            return lib['numpy'].ndarray
     else:
-        return np.ndarray
+        return t.Any
 
 
 class Data:

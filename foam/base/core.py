@@ -11,6 +11,7 @@ import shutil
 import typing as t
 import warnings as w
 
+from .lib import lib
 from .parse import Parser
 from .type import Dict, List, Path, Data
 
@@ -31,13 +32,11 @@ class Foam:
     __version__ = '0.10.0'
 
     Self = __qualname__
+    parse = Parser.new()
 
     def __init__(self, data: List, root: Path) -> None:
-        from packaging.version import parse
-
         self._list = data
         self._root = p.Path(root)
-        self._parse = Parser.new()
         self._dest = None
 
         self._cmd = None
@@ -47,8 +46,8 @@ class Foam:
         openfoam = set(map(str, self.meta.get('openfoam', [])))
         if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
             w.warn('OpenFOAM version mismatch')
-        version = parse(self.__version__)
-        current = parse(str(self.meta.get('version', '0.0.0')))
+        version = lib['parse'](self.__version__)
+        current = lib['parse'](str(self.meta.get('version', '0.0.0')))
         if (version.major, version.minor) < (current.major, current.minor):
             w.warn('Forward compatibility is not yet guaranteed')
         elif (version.major, version.minor) > (current.major, current.minor):
@@ -152,14 +151,7 @@ class Foam:
 
     @classmethod
     def from_yaml(cls, text: str, root: Path) -> Self:
-        import yaml
-
-        try:
-            from yaml import CSafeLoader as SafeLoader
-        except:
-            from yaml import SafeLoader
-
-        data = list(yaml.load_all(text, Loader=SafeLoader))
+        data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
         return cls(data, root)
 
     @classmethod
@@ -190,8 +182,6 @@ class Foam:
             path.chmod(int(str(permission), base=8))
 
     def _save_static(self) -> None:
-        import py7zr
-
         for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
             out = self._path(static['name'])  # self._dest is not None
@@ -202,7 +192,7 @@ class Foam:
                 elif static['type'][1] == 'binary':
                     out.write_bytes(static['data'])
                 elif static['type'][1] == '7z':
-                    with py7zr.SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
+                    with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
                         z.extractall(path=out.parent)
             elif static['type'][0] == 'path':
                 in_ = self._root / static['data']
@@ -214,7 +204,7 @@ class Foam:
                     else:
                         raise Exception('Target is neither a file nor a directory')
                 elif static['type'][1] == '7z':
-                    with py7zr.SevenZipFile(in_, mode='r') as z:
+                    with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
                         z.extractall(path=out.parent)
             else:
                 raise Exception(f'Unknown types "{static["type"]}"')
@@ -224,7 +214,7 @@ class Foam:
         for keys, data in self._extract_files({} if foam is None else foam.data):
             path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._write(path, '\n'.join(self._parse.data(data)))
+            self._write(path, '\n'.join(self.parse.data(data)))
 
     def _extract_files(
         self,

@@ -4,7 +4,7 @@ __all__ = ['PostProcess', 'VTK']
 import typing as t
 import warnings as w
 
-from ...base import Foam, Array, Path
+from ...base import Foam, Array, Path, lib
 
 if t.TYPE_CHECKING:
     import vtkmodules as vtk
@@ -38,12 +38,10 @@ class PostProcess:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
         '''
         if self._logs is None:
-            import numpy as np
-
             filename = next(log for log in self._foam.cmd.logs if self._foam.application in log.name).name
             self._foam.cmd.run([f'foamLog {filename}'], overwrite=True, exception=False, unsafe=True)
             self._logs = {
-                path.name.replace('_0', ''): np.loadtxt(path)
+                path.name.replace('_0', ''): lib['numpy'].loadtxt(path)
                 for path in (self._foam._dest/'logs').iterdir()
                 if path.suffix != '.awk'
             }
@@ -132,9 +130,7 @@ class VTK:
 
     @classmethod
     def from_file(cls, path: Path, **kwargs) -> Self:
-        import vtkmodules.all as vtk
-
-        reader = vtk.vtkGenericDataObjectReader()
+        reader = lib['vtk'].vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
             if attr.startswith('ReadAll') and attr.endswith('On'):
@@ -246,15 +242,13 @@ class VTK:
         '''
         assert self._foam is not None
 
-        import numpy as np
-
         keys = keys or self._foam.fields
         coords = self.points if point else self.cells
         fields = self.point_fields if point else self.cell_fields
-        func = func or (lambda x: np.square(x).mean(axis=1))
+        func = func or (lambda x: lib['numpy'].square(x).mean(axis=1))
         ans = {}
         for location in locations:
-            index = np.argmin(func(coords-location))
+            index = lib['numpy'].argmin(func(coords-location))
             ans[tuple(map(float, location))] = {
                 key: fields[key][index]
                 for key in keys
@@ -262,6 +256,4 @@ class VTK:
         return ans
 
     def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> Array(1, 2):
-        from vtkmodules.util.numpy_support import vtk_to_numpy
-
-        return vtk_to_numpy(array)
+        return lib['vtk_to_numpy'](array)

@@ -4,7 +4,7 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-from ...base import Foam
+from ...base import Foam, lib
 
 
 class Default:
@@ -25,11 +25,9 @@ class Default:
 
 class AppBase(Default):
     def __init__(self, foam: Foam) -> None:
-        import tqdm
-
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
-        self.pbar = tqdm.tqdm(total=end-start)
+        self.pbar = lib['tqdm'].tqdm(total=end-start)
         self._new = self._old = start
 
     def __exit__(self, type, value, traceback) -> None:
@@ -165,11 +163,9 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
     def __init__(self, foam: Foam):
-        import tqdm
-
         start = 0
         end = foam.number_of_processors - 1
-        self.pbar = tqdm.tqdm(total=end-start)
+        self.pbar = lib['tqdm'].tqdm(total=end-start)
         self._new = self._old = start
 
     def now(self, line):
