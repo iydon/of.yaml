@@ -5,7 +5,7 @@
 # ===
 
 for tutorialDir in */ ; do
-    if [[ $tutorialDir = *OFtutorial00* ]]; then
+    if [[ $tutorialDir = *OFtutorial* ]]; then
         echo "Cleaning:" $tutorialDir
 
         cd $tutorialDir

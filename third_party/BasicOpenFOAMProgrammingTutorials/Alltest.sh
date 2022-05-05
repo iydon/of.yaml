@@ -19,7 +19,7 @@ run () {
 
 # go over all tutorial directories
 for tutorialDir in */ ; do
-    if [[ $tutorialDir = *OFtutorial00* ]]; then
+    if [[ $tutorialDir = *OFtutorial* ]]; then
         echo "Checking:" $tutorialDir
 
         # navigate to the tutorial
