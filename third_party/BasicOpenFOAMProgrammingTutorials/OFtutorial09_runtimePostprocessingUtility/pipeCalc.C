@@ -124,7 +124,7 @@ bool Foam::functionObjects::pipeCalc::write() {
         const volVectorField& U = obr_.lookupObject<volVectorField>(UName_);
 
         // itnerpolate onto the faces
-		surfaceVectorField Uface = fvc::interpolate(U);
+        surfaceVectorField Uface = fvc::interpolate(U);
 
         // Go over each face zone face and compute the flow rate normal to the
         // face zone faces.
