@@ -62,4 +62,4 @@
 
 ## `v0.10`
 
-- pass
+- Add the ability to import modules on demand
