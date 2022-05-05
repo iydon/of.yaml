@@ -18,7 +18,7 @@
 
 // Incompressible flows are governed by 4 PDEs, 3 momentum equations and 1
 // continuity equation. The field variables involved in computation are also
-// 4, Ux,Uy,Uz and P. So we have 4 equations and 4 unknowns, but we dont have
+// 4, Ux, Uy, Uz and P. So we have 4 equations and 4 unknowns, but we dont have
 // an explicit equation for pressure P, hence the continuity equation is
 // modified to involve pressure and thus solved as a pressure correction
 // equation.

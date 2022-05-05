@@ -80,9 +80,9 @@ class Data:
     def _items(self, data: t.Any, with_list: bool = False, keys: t.Tuple[t.Any, ...] = ()) -> None:
         if isinstance(data, dict):
             for key, value in data.items():
-                yield from self._items(value, with_list, keys+(key,))
+                yield from self._items(value, with_list, keys+(key, ))
         elif with_list and isinstance(data, list):
             for key, value in enumerate(data):
-                yield from self._items(value, with_list, keys+(key,))
+                yield from self._items(value, with_list, keys+(key, ))
         else:
             yield keys, data

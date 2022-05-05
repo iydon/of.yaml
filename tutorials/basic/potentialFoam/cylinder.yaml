@@ -192,10 +192,10 @@ system:
                 codeEnd: |
                     #{
                         // Lookup U
-                        Info<< "Looking up field U\n" << endl;
+                        Info << "Looking up field U\n" << endl;
                         const volVectorField& U = mesh().lookupObject<volVectorField>("U");
 
-                        Info<< "Reading inlet velocity uInfX\n" << endl;
+                        Info << "Reading inlet velocity uInfX\n" << endl;
 
                         scalar ULeft = 0.0;
                         label leftI = mesh().boundaryMesh().findPatchID("left");
@@ -246,27 +246,27 @@ system:
                             U
                         );
 
-                        Info<< "\nEvaluating analytical solution" << endl;
+                        Info << "\nEvaluating analytical solution" << endl;
 
                         const volVectorField& centres = UA.mesh().C();
                         volScalarField magCentres(mag(centres));
-                        volScalarField theta(acos((centres & vector(1,0,0))/magCentres));
+                        volScalarField theta(acos((centres & vector(1, 0, 0))/magCentres));
 
                         volVectorField cs2theta
                         (
-                            cos(2*theta)*vector(1,0,0)
-                        + sin(2*theta)*vector(0,1,0)
+                            cos(2*theta)*vector(1, 0, 0)
+                        + sin(2*theta)*vector(0, 1, 0)
                         );
 
-                        UA = uInfX*(dimensionedVector(vector(1,0,0))
-                        - pow((radius/magCentres),2)*cs2theta);
+                        UA = uInfX*(dimensionedVector(vector(1, 0, 0))
+                        - pow((radius/magCentres), 2)*cs2theta);
 
                         // Force writing of UA (since time has not changed)
                         UA.write();
 
                         volScalarField error("error", mag(U-UA)/mag(UA));
 
-                        Info<<"Writing relative error in U to " << error.objectPath()
+                        Info <<"Writing relative error in U to " << error.objectPath()
                             << endl;
 
                         error.write();

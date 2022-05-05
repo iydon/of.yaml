@@ -30,7 +30,7 @@ The basic directory structure for a OpenFOAM case, that contains the minimum set
 
 ### YAML Configuration
 
-```yaml linenums="1" title="airFoil2D.yaml" 
+```yaml linenums="1" title="airFoil2D.yaml"
 ---  # meta
 ...
 ---  # foam
@@ -198,7 +198,7 @@ OpenFOAM applications contain lists, e.g. a list of vertex coordinates for a mes
 
 #### Scalars, Vectors and Tensors
 
-A scalar is a single number represented as such in a data file. A vector is a VectorSpace of rank 1 and dimension 3, and since the number of elements is always fixed to 3, the simple List format is used. Therefore a vector `(1.0, 1.1,1.2)` is written:
+A scalar is a single number represented as such in a data file. A vector is a VectorSpace of rank 1 and dimension 3, and since the number of elements is always fixed to 3, the simple List format is used. Therefore a vector `(1.0, 1.1, 1.2)` is written:
 
 === "OpenFOAM"
     ```

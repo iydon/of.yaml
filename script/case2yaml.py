@@ -16,7 +16,7 @@ Path = t.Union[str, p.Path]
 class Case:
     Self = __qualname__
     version = __version__
-    keys = [('0',), ('constant',), ('system',)]
+    keys = [('0', ), ('constant', ), ('system', )]
 
     def __init__(self, path: Path, threshold: int) -> None:
         self._threshold = threshold
