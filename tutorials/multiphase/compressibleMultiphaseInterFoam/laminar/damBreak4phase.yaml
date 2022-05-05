@@ -442,13 +442,13 @@ system:
         gradSchemes:
             default: Gauss linear
         divSchemes:
-            div(rhoPhi,U): Gauss upwind
-            div(phi,alpha): Gauss vanLeer
-            div(phirb,alpha): Gauss linear
-            div\(phi,.*rho.*\): Gauss upwind
-            div(rhoPhi,T): Gauss upwind
-            div(rhoPhi,K): Gauss upwind
-            div(phi,p): Gauss upwind
+            div(rhoPhi, U): Gauss upwind
+            div(phi, alpha): Gauss vanLeer
+            div(phirb, alpha): Gauss linear
+            div\(phi, .*rho.*\): Gauss upwind
+            div(rhoPhi, T): Gauss upwind
+            div(rhoPhi, K): Gauss upwind
+            div(phi, p): Gauss upwind
             div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
         laplacianSchemes:
             default: Gauss linear corrected

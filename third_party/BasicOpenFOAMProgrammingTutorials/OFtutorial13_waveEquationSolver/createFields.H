@@ -14,7 +14,7 @@ IOdictionary transportProperties (
 // reading the wave speed "C" value from transportProperties dictionary
 dimensionedScalar C (
     "C",
-    dimensionSet(0,1,-1,0,0),
+    dimensionSet(0, 1, -1, 0, 0),
     transportProperties.lookup("C")
 );
 

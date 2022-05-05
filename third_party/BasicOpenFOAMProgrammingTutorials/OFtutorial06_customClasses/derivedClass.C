@@ -22,7 +22,7 @@ void myDict::printTokensInTheDict() const {
     ss << "Tokens in the file:";
 
     // go over each token in the file
-    forAll(characters,i)
+    forAll(characters, i)
         // if the entry is a word, add it to the message
         if (characters[i].isWord())
             ss << "\n" << tab << characters[i].wordToken();
