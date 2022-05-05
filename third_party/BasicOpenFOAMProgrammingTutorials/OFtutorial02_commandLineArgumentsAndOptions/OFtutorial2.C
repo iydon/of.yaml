@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     label someInt(0);
     args.optionReadIfPresent("someInt", someInt);
     Info << "Integer option value " << someInt << endl;
-    
+
     Info << "End\n" << endl;
 
     return 0;

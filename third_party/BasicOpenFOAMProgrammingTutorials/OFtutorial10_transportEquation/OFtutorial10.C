@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-    
+
     // Create the scalar field and read BCs and the initial conditions
     // NOTE: beta is thus already subjects to the BCs specified in 0/beta
     Info << "Reading field beta" << nl << endl;
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
         ),
         mesh
     );
-    
+
     // Read the constant velocity field
     Info << "Reading field U" << nl << endl;
     volVectorField U (
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
         ),
         mesh
     );
-    
+
     // Read transport properties and get the diffusion constant
     Info << "Reading transportProperties\n" << endl;
     IOdictionary transportProperties (
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     Info << "Reading diffusivity\n" << endl;
     dimensionedScalar gamma (transportProperties.lookup("gamma"));
-    
+
     // Create the flux field
     // NOTE: typically this is done by including createPhi.H from $FOAM_SRC/finiteVolume/cfdTools/incompressible
     Info << "Reading/calculating face flux field phi" << nl << endl;
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
         // a different scheme to be chosen.
         fvc::interpolate(U) & mesh.Sf() // [(m s-1) * (m2) = (m3 s-1)] <=> flow rate
     );
-    
+
     // Solve the steady scalar transport equation using the solver specified in the system/fvSolution dict.
     // Discretisation of the individual terms is specified in system/fvSchemes.
     // Boundary conditions form part of the beta field already, since it's been read from the file,
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
         // NOTE: to use the OpenFOAM interface for applying arbitrary source terms from a dictionary, use:
         //== fvOptions(beta)
     );
-    
+
     // Save the result under a different name - we don't do any time stepping so the result ends up
     // in the same folder as the initial conditions which we don't want to overwrite.
     volScalarField result (
