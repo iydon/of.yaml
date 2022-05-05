@@ -22,7 +22,7 @@ class Parser:
 
     def key(self, key: str) -> str:
         key = key.replace(' ', '')  # div(phi, U) -> div(phi,U)
-        if any(c in key for c in '()*'):  # (U|k|epsilon) -> "(U|k|epsilon)"
+        if any(c in key for c in '()*|'):  # (U|k|epsilon) -> "(U|k|epsilon)"
             key = f'"{key}"'
         return key
 
