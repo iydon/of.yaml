@@ -2,7 +2,7 @@ POETRY = poetry
 PYTHON = $(POETRY) run python
 
 
-.PHONY: help demo dependencies shell test standalone preview docs uncache
+.PHONY: help demo dependencies shell test standalone preview docs uncache publish
 
 help:          ## Print the usage
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
@@ -36,3 +36,7 @@ docs:          ## Build the MkDocs documentation
 uncache:       ## Remove __pycache__ directories
 	# https://stackoverflow.com/questions/28991015/python3-project-remove-pycache-folders-and-pyc-files
 	find . -type d -name  "__pycache__" -exec rm -r {} +
+
+publish:       ## Build and upload the package to a remote repository
+	$(POETRY) build
+	$(POETRY) publish

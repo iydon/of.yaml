@@ -1,17 +1,20 @@
 [tool.poetry]
-name = "foam"
-version = "0.10.0"
+name = "ifoam"
+packages = [
+    {include = "placeholder"}
+]
+version = "0.10.1"
 description = "Python Interface to OpenFOAM Using YAML Configuration"
 authors = ["Iydon Liang <liangiydon@gmail.com>"]
 keywords = ["OpenFOAM", "YAML"]
 readme = "README.md"
-license = "GNU General Public License v3.0"
+license = "GPL-3.0-only"
 homepage = "https://github.com/iydon/of.yaml"
 repository = "https://github.com/iydon/of.yaml"
-include = ["LICENSE"]
+include = ["LICENSE.txt"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8"
 PyYAML = "^6.0"
 py7zr = "^0.17.2"
 packaging = "^21.3"
