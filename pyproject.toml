@@ -12,6 +12,19 @@ license = "GPL-3.0-only"
 homepage = "https://github.com/iydon/of.yaml"
 repository = "https://github.com/iydon/of.yaml"
 include = ["LICENSE.txt"]
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: Chinese (Simplified)",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Utilities",
+    "Typing :: Typed"
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
