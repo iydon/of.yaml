@@ -10,15 +10,26 @@ theme:
     palette:
         primary: green
     features:
-        - navigation.instant
+        # - navigation.instant  # https://github.com/ultrabug/mkdocs-static-i18n/issues/62
         - navigation.tabs
         - navigation.tabs.sticky
         - navigation.top
 
 plugins:
-    - search:
-        lang:
-            - en
+    - search
+    - i18n:
+        default_language: zh
+        docs_structure: suffix
+        languages:
+            zh:
+                name: 中文
+            en:
+                name: English
+        nav_translations:
+            zh:
+                Home: 首页
+                YAML Configuration: YAML 配置
+                Interface Description: 接口说明
 
 markdown_extensions:
     # https://squidfunk.github.io/mkdocs-material/reference/abbreviations/
@@ -63,7 +74,6 @@ markdown_extensions:
     - pymdownx.smartsymbols
 
 nav:
-    - Home: 'index.md'
-    - Getting started:
-        - YAML Configuration: 'yaml.md'
-        - Interface Library: 'interface.md'
+    - Home: index.md
+    - YAML Configuration: tutorial/yaml.md
+    - Interface Description: tutorial/interface.md
