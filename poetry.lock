@@ -430,6 +430,22 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "aliyun"
 
 [[package]]
+name = "mkdocs-static-i18n"
+version = "0.45"
+description = "MkDocs i18n plugin using static translation markdown files"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+mkdocs = ">=1.2.3"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
 name = "multidict"
 version = "6.0.2"
 description = "multidict implementation"
@@ -870,8 +886,8 @@ reference = "aliyun"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.8"
-content-hash = "4c6c12d9890ffa84f883285243832ea597e7f7960d6d961a4ea7e61675215cc4"
+python-versions = ">=3.8"
+content-hash = "b1372df37fa10254c1b038b593550e1c514cae53e2f6786ec1025e9491627b5d"
 
 [metadata.files]
 aiohttp = [
@@ -1348,6 +1364,9 @@ mkdocs-material = [
 mkdocs-material-extensions = [
     {file = "mkdocs-material-extensions-1.0.3.tar.gz", hash = "sha256:bfd24dfdef7b41c312ede42648f9eb83476ea168ec163b613f9abd12bbfddba2"},
     {file = "mkdocs_material_extensions-1.0.3-py3-none-any.whl", hash = "sha256:a82b70e533ce060b2a5d9eb2bc2e1be201cf61f901f93704b4acf6e3d5983a44"},
+]
+mkdocs-static-i18n = [
+    {file = "mkdocs-static-i18n-0.45.tar.gz", hash = "sha256:5d69b4eb284931bd048a36f923367f2a7bd0dc7b0438008dce8ca1a8feee99e2"},
 ]
 multidict = [
     {file = "multidict-6.0.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:0b9e95a740109c6047602f4db4da9949e6c5945cefbad34a1299775ddc9a62e2"},
