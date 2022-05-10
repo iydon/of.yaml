@@ -45,15 +45,16 @@ class Word:
         self,
         path: Path, plain: bool = False,
         style: t.Optional[str] = None, page_break: t.Optional[bool] = None,
+        title: t.Optional[str] = None,
     ) -> Self:
         if plain:
-            return self._add_plain(path, page_break)
+            return self._add_plain(path, page_break, title)
         path = p.Path(path).absolute()
         code = path.read_text()
         lexer = guess_lexer_for_filename(path.name, code)
         styles = dict(get_style_by_name(style or self._default['style']))
         # heading
-        self._doc.add_heading(path.relative_to(self._root).as_posix(), 0)
+        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 0)
         # paragraph
         paragraph = self._doc.add_paragraph()
         for type, value in lexer.get_tokens(code):
@@ -76,9 +77,13 @@ class Word:
         self._doc.save(path)
         return self
 
-    def _add_plain(self, path: Path, page_break: t.Optional[bool] = None) -> Self:
+    def _add_plain(
+        self,
+        path: Path,
+        page_break: t.Optional[bool] = None, title: t.Optional[str] = None,
+    ) -> Self:
         path = p.Path(path).absolute()
-        self._doc.add_heading(path.relative_to(self._root).as_posix(), 0)
+        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 0)
         self._doc.add_paragraph(path.read_text())
         if page_break or self._default['page_break']:
             self._doc.add_page_break()
