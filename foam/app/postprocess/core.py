@@ -130,6 +130,8 @@ class VTK:
 
     @classmethod
     def from_file(cls, path: Path, **kwargs) -> Self:
+        assert lib['vtk'] is not None, 'pip install ifoam[vtk]'  # TODO: improve error message
+
         reader = lib['vtk'].vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):

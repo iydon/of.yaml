@@ -29,7 +29,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.10.1'
+    __version__ = '0.10.2'
 
     Self = __qualname__
     parse = Parser.new()
@@ -192,6 +192,8 @@ class Foam:
                 elif static['type'][1] == 'binary':
                     out.write_bytes(static['data'])
                 elif static['type'][1] == '7z':
+                    assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
+
                     with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
                         z.extractall(path=out.parent)
             elif static['type'][0] == 'path':
@@ -204,6 +206,8 @@ class Foam:
                     else:
                         raise Exception('Target is neither a file nor a directory')
                 elif static['type'][1] == '7z':
+                    assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
+
                     with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
                         z.extractall(path=out.parent)
             else:

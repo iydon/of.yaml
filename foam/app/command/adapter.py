@@ -345,7 +345,8 @@ class AppByOther(AppBase):
 
 
 Apps = {}
-pattern = re.compile(r'\w+(?=\.C)')
-for App in [AppByTimeI, AppByTimeII, AppByIterationI, AppByIterationII, AppByProcessor]:
-    for name in pattern.findall(App.__doc__):
-        Apps[name] = App
+if lib['tqdm'] is not None:
+    pattern = re.compile(r'\w+(?=\.C)')
+    for App in [AppByTimeI, AppByTimeII, AppByIterationI, AppByIterationII, AppByProcessor]:
+        for name in pattern.findall(App.__doc__):
+            Apps[name] = App

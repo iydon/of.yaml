@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ifoam"
 packages = [{ include = "placeholder" }]
-version = "0.10.1"
+version = "0.10.2"
 description = "Python Interface to OpenFOAM Using YAML Configuration"
 authors = ["Iydon Liang <liangiydon@gmail.com>"]
 keywords = ["OpenFOAM", "YAML"]
@@ -25,10 +25,18 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8"
 PyYAML = "^6.0"
-py7zr = "^0.17.2"
-click = "^8.0.3"
-tqdm = "^4.63.1"
-vtk = "^9.1.0"
+py7zr = { version = "^0.17.2", optional = true }
+click = { version = "^8.0.3", optional = true }
+tqdm = { version = "^4.63.1", optional = true }
+vtk = { version = "^9.1.0", optional = true }
+
+# https://github.com/python-poetry/poetry/issues/2567
+[tool.poetry.extras]
+7z = ["py7zr"]
+cli = ["click"]
+tqdm = ["tqdm"]
+vtk = ["vtk"]
+full = ["py7zr", "click", "tqdm", "vtk"]
 
 [tool.poetry.dev-dependencies]
 mkdocs-material = "^8.2.9"

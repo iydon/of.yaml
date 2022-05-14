@@ -64,4 +64,5 @@
 
 - Add the ability to import modules on demand
 - Add support for multilingual documentation
+- Add optional dependencies for package
 - Publish `ifoam` package on [PyPi](https://pypi.org/project/ifoam) using Poetry
