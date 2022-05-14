@@ -92,6 +92,7 @@ class Word:
 
 if __name__ == '__main__':
     word = Word.new(root='.', style='friendly', page_break=False, font_size=9)
+    word.add(word.root/'pyproject.toml')
     for path in (word.root/'foam').rglob('*.py'):
         word.add(path)
     word.add(word.root/'foam.py')
