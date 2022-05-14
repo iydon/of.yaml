@@ -216,6 +216,13 @@ class Foam:
     def _save_foam(self) -> None:
         foam = self['foam']
         for keys, data in self._extract_files({} if foam is None else foam.data):
+            # pre-process FoamFile to avoid duplicate descriptions
+            if isinstance(data['FoamFile'], str):
+                data['FoamFile'] = {'class': data['FoamFile']}
+            data['FoamFile'].setdefault('version', 2.0)
+            data['FoamFile'].setdefault('format', 'ascii')
+            data['FoamFile'].setdefault('object', keys[-1])
+            # write the parsed text data
             path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
             self._write(path, '\n'.join(self.parse.data(data)))
