@@ -5,7 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, Data, Dict, List, Path, lib
+from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, lib
 
 
 class show:
@@ -87,6 +87,8 @@ lib = Lib.new()
 {show.source(Array)}
 
 {show.source(Data)}
+
+{show.source(Version)}
 
 {show.source(command.adapter.Default)}
 {show.source(command.adapter.AppBase)}

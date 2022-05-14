@@ -82,12 +82,6 @@ class Lib:
 
         return SafeLoader
 
-    def func_parse(self) -> t.Callable:
-        '''https://pypi.org/project/packaging'''
-        from packaging.version import parse
-
-        return parse
-
     def func_vtk_to_numpy(self) -> t.Callable:
         '''https://pypi.org/project/vtk'''
         from vtkmodules.util.numpy_support import vtk_to_numpy

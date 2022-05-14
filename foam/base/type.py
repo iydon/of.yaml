@@ -1,4 +1,4 @@
-__all__ = ['Array', 'Dict', 'List', 'Path', 'Data']
+__all__ = ['Array', 'Dict', 'List', 'Path', 'Data', 'Version']
 
 
 import pathlib as p
@@ -89,3 +89,9 @@ class Data:
                 yield from self._items(value, with_list, keys+(key, ))
         else:
             yield keys, data
+
+
+class Version(t.NamedTuple):
+    major: int
+    minor: int
+    micro: int = 0

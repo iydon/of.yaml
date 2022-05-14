@@ -13,7 +13,7 @@ import warnings as w
 
 from .lib import lib
 from .parse import Parser
-from .type import Dict, List, Path, Data
+from .type import Dict, List, Path, Data, Version
 
 if t.TYPE_CHECKING:
     from ..app import Command, Information, PostProcess
@@ -45,9 +45,9 @@ class Foam:
 
         openfoam = set(map(str, self.meta.get('openfoam', [])))
         if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
-            w.warn('OpenFOAM version mismatch')
-        version = lib['parse'](self.__version__)
-        current = lib['parse'](str(self.meta.get('version', '0.0.0')))
+            w.warn(f'OpenFOAM version mismatch: {root}')
+        version = self._parse(self.__version__)
+        current = self._parse(str(self.meta.get('version', '0.0.0')))
         if (version.major, version.minor) < (current.major, current.minor):
             w.warn('Forward compatibility is not yet guaranteed')
         elif (version.major, version.minor) > (current.major, current.minor):
@@ -230,3 +230,6 @@ class Foam:
         # TODO: use "prefix" will cause some of the `Command` methods to fail
         prefix = '.'  # (self['other'] or {}).get('directory', '.')
         return self._dest / prefix / p.Path(*parts)
+
+    def _parse(self, version: str) -> Version:
+        return Version(*map(int, version.split('.')))
