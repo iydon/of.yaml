@@ -110,7 +110,7 @@ This project currently uses Poetry to manage Python dependencies. I've heard goo
    ```
 2. Install Python dependencies
    ```sh
-   poetry install
+   poetry install --extras full
    ```
 3. Activate the virtual environment
    ```sh
@@ -594,8 +594,6 @@ Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 ## Contact
 
 Iydon Liang - [@iydon](https://github.com/iydon) - liangiydon_AT_gmail.com
-
-Project Link: [github.com/iydon/of.yaml](https://github.com/iydon/of.yaml)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

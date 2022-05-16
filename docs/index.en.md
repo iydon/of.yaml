@@ -76,8 +76,6 @@ Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 
 Iydon Liang - [@iydon](https://github.com/iydon) - liangiydon_AT_gmail.com
 
-Project Link: [github.com/iydon/of.yaml](https://github.com/iydon/of.yaml)
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

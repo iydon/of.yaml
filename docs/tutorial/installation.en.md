@@ -13,7 +13,7 @@ This project currently uses Poetry to manage Python dependencies. I've heard goo
    ```
 2. Install Python dependencies
    ```sh
-   poetry install
+   poetry install --extras full
    ```
 3. Activate the virtual environment
    ```sh
