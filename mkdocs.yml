@@ -28,8 +28,11 @@ plugins:
         nav_translations:
             zh:
                 Home: 首页
-                YAML Configuration: YAML 配置
-                Interface Description: 接口说明
+                Installation: 安装
+                YAML: YAML
+                Configuration: 配置
+                Interface: 接口
+                Progress: 进展
 
 markdown_extensions:
     # https://squidfunk.github.io/mkdocs-material/reference/abbreviations/
@@ -75,5 +78,8 @@ markdown_extensions:
 
 nav:
     - Home: index.md
-    - YAML Configuration: tutorial/yaml.md
-    - Interface Description: tutorial/interface.md
+    - Installation: tutorial/installation.md
+    - YAML: tutorial/yaml.md
+    - Configuration: tutorial/configuration.md
+    - Interface: tutorial/interface.md
+    - Progress: tutorial/progress.md
