@@ -593,9 +593,9 @@ Distributed under the GPL-3.0 License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Iydon Liang - [@iydon](https://github.com/iydon) - liangiydon@gmail.com
+Iydon Liang - [@iydon](https://github.com/iydon) - liangiydon_AT_gmail.com
 
-Project Link: [https://github.com/iydon/of.yaml](https://github.com/iydon/of.yaml)
+Project Link: [github.com/iydon/of.yaml](https://github.com/iydon/of.yaml)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
