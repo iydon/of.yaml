@@ -62,6 +62,32 @@ class Foam:
     def __repr__(self) -> str:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
+    @classmethod
+    def from_file(cls, path: Path) -> Self:
+        '''Supported format: json, yaml'''
+        path = p.Path(path)
+        for suffixes, method in [
+            ({'.json'}, cls.from_json),
+            ({'.yaml', '.yml'}, cls.from_yaml),
+        ]:
+            if path.suffix in suffixes:
+                return method(path.read_text('utf-8'), path.parent)
+        raise Exception(f'Suffix "{path.suffix}" not supported')
+
+    @classmethod
+    def from_json(cls, text: str, root: Path) -> Self:
+        data = json.loads(text)
+        return cls(data, root)
+
+    @classmethod
+    def from_yaml(cls, text: str, root: Path) -> Self:
+        data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
+        return cls(data, root)
+
+    @classmethod
+    def as_placeholder(cls) -> Self:
+        return cls([{}], '')
+
     @property
     def meta(self) -> Dict:
         '''Meta information'''
@@ -132,31 +158,24 @@ class Foam:
     def fields(self) -> t.Set[str]:
         return {v['FoamFile']['object'] for v in self['foam']['0'].values()}
 
-    @classmethod
-    def from_file(cls, path: Path) -> Self:
-        '''Supported format: json, yaml'''
-        path = p.Path(path)
-        for suffixes, method in [
-            ({'.json'}, cls.from_json),
-            ({'.yaml', '.yml'}, cls.from_yaml),
-        ]:
-            if path.suffix in suffixes:
-                return method(path.read_text('utf-8'), path.parent)
-        raise Exception(f'Suffix "{path.suffix}" not supported')
-
-    @classmethod
-    def from_json(cls, text: str, root: Path) -> Self:
-        data = json.loads(text)
-        return cls(data, root)
-
-    @classmethod
-    def from_yaml(cls, text: str, root: Path) -> Self:
-        data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
-        return cls(data, root)
-
-    @classmethod
-    def as_placeholder(cls) -> Self:
-        return cls([{}], '')
+    @f.cached_property
+    def ndim(self) -> t.Optional[int]:
+        # TODO: verify that the method is reliable
+        system = self['foam']['system']
+        block_mesh = system.get('blockMeshDict', None)
+        if block_mesh is None:
+            return  # unknown ndim
+        count = 3
+        for block in block_mesh['blocks']:
+            start = block.find(')')
+            if start < 0:
+                return
+            begin, end = block.find('(', start+1), block.find(')', start+1)
+            if begin < 0 or end < 0:
+                return
+            grids = block[begin+1: end].split()
+            count = min(count, len(grids)-grids.count('1'))
+        return count
 
     def save(self, dest: Path, paraview: bool = True) -> Self:
         '''Persist case to hard disk'''
