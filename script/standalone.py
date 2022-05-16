@@ -98,7 +98,7 @@ lib = Lib.new()
 {show.source(command.adapter.AppByIterationII)}
 {show.source(command.adapter.AppByProcessor)}
 
-Apps = {show.apps(command.adapter.Apps)}
+Apps = {{}} if lib['tqdm'] is None else {show.apps(command.adapter.Apps)}
 
 {show.source(command.Command)}
 
