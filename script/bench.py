@@ -5,21 +5,23 @@ import timeit
 from foam import Foam
 
 
-directories = {
-    'tutorials/DNS',
-    'tutorials/basic',
-    'tutorials/incompressible',
-}
-number = 7
+repeat = 99
+n_time = 999
 
 bench = {}
-for directory in directories:
-    for path in p.Path(directory).rglob('*.yaml'):
-        path = path.as_posix()
-        bench[path] = [[None, None] for _ in range(number)]
-        foam = Foam.from_file(path)
-        foam.save('case')
-        for ith in range(number):
+for path in p.Path('tutorials').rglob('*.yaml'):
+    path = path.as_posix()
+    foam = Foam.from_file(path).save('case')
+    control = foam['foam']['system', 'controlDict']
+    if (
+        foam.number_of_processors == 1 and
+        '0' in foam['foam'] and
+        control['startFrom'] == 'startTime' and
+        control['stopAt'] == 'endTime'
+    ):
+        bench[path] = [[None, None] for _ in range(repeat)]
+        control['endTime'] = n_time * float(control['deltaT'])
+        for ith in range(repeat):
             for jth, func in enumerate([
                 lambda: foam.cmd.raw('./Allrun'),
                 lambda: foam.cmd.all_run(),
@@ -31,4 +33,4 @@ for directory in directories:
                 bench[path][ith][jth] = toc - tic
                 print(path, toc-tic)
 with open('bench.json', 'w') as f:
-    json.dump(bench, f, ensure_ascii=False, indent=4)
+    json.dump(bench, f)
