@@ -1,16 +1,14 @@
-测试
+## 为什么使用 YAML 格式
 
-## Why use YAML
-
-Using YAML to describe OpenFOAM cases will make it easy to modify case parameters, thanks to the popularity of YAML (Python has the [PyYAML](https://github.com/yaml/pyyaml) library, for example). When we need to generate cases on a large scale, we can prepare a template as needed and then use the interface library to keep modifying the case parameters.
+由于 YAML 是通用配置文件格式，并且主流编程语言均有工具可以解析该配置文件格式，虽然长篇缩进可能让人迷惑（此时可以借助编辑器的功能减轻部分迷惑），但是 YAML 格式的内容更为紧凑，较 JSON 与 TOML 更便于手写。当您需要大规模生成案例时，可以首先根据需要准备一个 YAML 模板，之后借助本项目不断地修改案例参数，生成对应的 OpenFOAM 案例。
 
 
 
-## File Structure
+## 文件结构
 
-### [OpenFOAM Case](https://www.openfoam.com/documentation/user-guide/2-openfoam-cases/2.1-file-structure-of-openfoam-cases)
+### [OpenFOAM 案例](https://www.openfoam.com/documentation/user-guide/2-openfoam-cases/2.1-file-structure-of-openfoam-cases)
 
-The basic directory structure for a OpenFOAM case, that contains the minimum set of files required to run an application, is shown in Figure 2.1 and described as follows:
+最小 OpenFOAM 案例的基本目录结构如下，其中 `constant/polyMesh` 目录可以由 `system/blockMeshDict` 文件借助 `blockMesh` 命令自动生成。
 
 ```
 📁 <case>
@@ -30,7 +28,7 @@ The basic directory structure for a OpenFOAM case, that contains the minimum set
 ```
 
 
-### YAML Configuration
+### YAML 配置
 
 ```yaml linenums="1" title="airFoil2D.yaml"
 ---  # meta
@@ -48,9 +46,9 @@ system:
 ...
 ```
 
-The YAML file is divided into four main blocks (which can be added as needed):
+YAML 配置文件主要分为四个主要子文档（后续可以根据需要拓展）。
 
-- 1st block is fixed to the meta block that records case meta information, version number, and the name of each block of the YAML file. It is worth noting that neither forward nor backward compatibility is supported until the specification is stable;
+- 第 1 个子文档固定记录元（meta）信息，主要包括案例元信息、所需本项目的版本号与 YAML 各子文档的名称。值得注意的是，在 `v1.0` 版本之前，规范并不稳定，既不保证前向兼容也不保证向后兼容；
 
 ```yaml
 ---  # meta
@@ -63,23 +61,29 @@ order:
     - other
 ```
 
-- 2nd block is the foam block for recording OpenFOAM case files. In order to retain files in arbitrarily deep directories, this block uses a recursive dictionary to store data. The dictionary is treated as a separate file only if it contains the key `FoamFile`, and all keys indexed to that file correspond to the directory in which it is located;
+- 第 2 个子文档一般记为 `foam`，该部分主要记录符合 OpenFOAM 规范的配置文件信息，它们的统一特征为均包含 `FoamFile` 键。为保留任意深度的文件结构，该部分使用递归字典的方式来存储数据，直到见到 `FoamFile` 键为止；
 
 ```yaml
-# the way it is written when it first appears
+# FoamFile 第一次出现时写作
 FoamFile: &FoamFile
     version: 2.0
     format: ascii
-    class: ...
-    object: ...
-# the way it is written the rest of the time
+    class: <class_name>
+    object: <object_name>
+# FoamFile 后续出现时写作
 FoamFile:
-    class: ...
-    object: ...
+    class: <class_name>
+    object: <object_name>
     <<: *FoamFile
+# 更新后可以省略 version 与 format 信息
+FoamFile:
+    class: <class_name>
+    object: <object_name>
+# 甚至当 object 为文件名时也可以省略
+FoamFile: <class_name>
 ```
 
-- 3rd block is the static file block, which is used to record other static files that are not part of the OpenFOAM case specification. This block stores the data as a list, each element of which contains the keys for `name`, `type`, `permission` and `data`;
+- 第 3 个子文档一般记为 `static`，该部分主要记录不符合 OpenFOAM 规范的其他静态文件，该块以列表的方式存储静态文件，每个元素均包含文件名称、类型、权限与数据信息。该部分主要记录对象为 `All*` 等脚本、网格文件等；
 
 ```yaml
 -
@@ -98,11 +102,14 @@ FoamFile:
         runApplication $application
 ```
 
-- 4th block is used to store data for which no category has been thought of yet, and currently this block has pipeline (equivalent to `Allrun`).
+- 第 4 个子文档一般记为 `other`，该部分主要记录尚未想到类别的数据，即大杂烩。目前该部分固定的内容有 `pipeline`，相当于将 `Allrun` 脚本中的命令进行细颗粒度的拆分。
 
 ```yaml
 ---  # other
 pipeline:
+    -
+        command: blockMesh
+        parallel: false
     - __app__
 ```
 
