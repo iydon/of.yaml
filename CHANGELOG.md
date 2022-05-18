@@ -60,7 +60,7 @@
 - Update `Command::run` to allow `pipeline` to specify additional parameters
 
 
-## `v0.10`
+## [`v0.10`](https://github.com/iydon/of.yaml/tree/v0.10)
 
 - Add the ability to import modules on demand
 - Add support for multilingual documentation
