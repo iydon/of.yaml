@@ -1,4 +1,5 @@
 import pathlib as p
+import re
 import typing as t
 
 from docx import Document
@@ -50,11 +51,11 @@ class Word:
         if plain:
             return self._add_plain(path, page_break, title)
         path = p.Path(path).absolute()
-        code = path.read_text()
+        code = self._strip(path.read_text())
         lexer = guess_lexer_for_filename(path.name, code)
         styles = dict(get_style_by_name(style or self._default['style']))
         # heading
-        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 0)
+        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 1)
         # paragraph
         paragraph = self._doc.add_paragraph()
         for type, value in lexer.get_tokens(code):
@@ -83,17 +84,31 @@ class Word:
         page_break: t.Optional[bool] = None, title: t.Optional[str] = None,
     ) -> Self:
         path = p.Path(path).absolute()
-        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 0)
-        self._doc.add_paragraph(path.read_text())
+        self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 1)
+        self._doc.add_paragraph(self._strip(path.read_text()))
         if page_break or self._default['page_break']:
             self._doc.add_page_break()
         return self
 
+    def _strip(self, string: str) -> str:
+        return re.sub(r'\n+', '\n', string.strip())
+
 
 if __name__ == '__main__':
-    word = Word.new(root='.', style='friendly', page_break=False, font_size=9)
+    is_valid = lambda path: 'type: [embed, 7z]' not in path.read_text()
+
+    word = Word.new(root='.', style='friendly', page_break=False, font_size=7)
     word.add(word.root/'pyproject.toml')
+    word.add(word.root/'foam.py')
     for path in (word.root/'foam').rglob('*.py'):
         word.add(path)
-    word.add(word.root/'foam.py')
+    for path in (word.root/'script').rglob('*.py'):
+        word.add(path)
+    for path in (word.root/'tutorials').rglob('*.yaml'):
+        if is_valid(path):
+            word.add(path)
+    for path in (word.root/'third_party').rglob('*'):
+        if path.is_file() and path.suffix in {'.C', '.H', '.yaml', '.sh'}:
+            if is_valid(path):
+                word.add(path)
     word.save('copyright.docx')
