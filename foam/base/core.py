@@ -29,7 +29,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.10.2'
+    __version__ = '0.11.0'
 
     Self = __qualname__
     parse = Parser.new()

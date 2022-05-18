@@ -66,3 +66,8 @@
 - Add support for multilingual documentation
 - Add optional dependencies for package
 - Publish `ifoam` package on [PyPi](https://pypi.org/project/ifoam) using Poetry
+
+
+## `v0.11`
+
+- pass
