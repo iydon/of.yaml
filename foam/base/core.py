@@ -127,7 +127,10 @@ class Foam:
         - Reference:
             - foamDictionary -disableFunctionEntries -entry application -value system/controlDict
         '''
-        return self['foam']['system', 'controlDict', 'application']
+        for key, value in self['foam']['system', 'controlDict'].items():
+            if key.startswith('application'):
+                return value
+        raise Exception('Application not found')
 
     @f.cached_property
     def number_of_processors(self) -> int:
