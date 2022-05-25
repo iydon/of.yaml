@@ -1,0 +1,369 @@
+---
+openfoam: [2.4.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    epsilon:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: epsilon
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 0.000765
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: inletOutlet
+                inletValue: uniform 0.000765
+                value: uniform 0.000765
+            inlet:
+                type: fixedValue
+                value: uniform 0.000765
+            ring:
+                type: epsilonWallFunction
+                value: uniform 0
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0.00325
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: inletOutlet
+                inletValue: uniform 0.00325
+                value: uniform 0.00325
+            inlet:
+                type: fixedValue
+                value: uniform 0.00325
+            ring:
+                type: kqRWallFunction
+                value: uniform 0
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: calculated
+                value: uniform 0
+            inlet:
+                type: calculated
+                value: uniform 0
+            ring:
+                type: nutkWallFunction
+                value: uniform 0
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    nuTilda:
+        FoamFile:
+            class: volScalarField
+            object: nuTilda
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: inletOutlet
+                inletValue: uniform 0
+                value: uniform 0
+            inlet:
+                type: fixedValue
+                value: uniform 0
+            ring:
+                type: zeroGradient
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: fixedValue
+                value: uniform 0
+            inlet:
+                type: zeroGradient
+            ring:
+                type: zeroGradient
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 -10 0)
+        boundaryField:
+            tunnel:
+                type: slip
+            outlet:
+                type: inletOutlet
+                inletValue: uniform (0 0 0)
+                value: uniform (0 -10 0)
+            inlet:
+                type: fixedValue
+                value: uniform (0 -10 0)
+            ring:
+                type: fixedValue
+                value: uniform (0 0 0)
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+constant:
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: kEpsilon
+        turbulence: on
+        printCoeffs: on
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [0 2 -1 0 0 0 0] 1e-05
+        CrossPowerLawCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            m: m [ 0 0 1 0 0 0 0 ] 1
+            n: n [ 0 0 0 0 0 0 0 ] 1
+        BirdCarreauCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            k: k [ 0 0 1 0 0 0 0 ] 0
+            n: n [ 0 0 0 0 0 0 0 ] 1
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RASModel
+system:
+    baffleDict:
+        FoamFile:
+            class: dictionary
+            object: createBafflesDict
+            <<: *FoamFile
+        internalFacesOnly: true
+        baffles:
+            - baffleFaces:
+              type: faceZone
+              zoneName: plate
+              flip: false
+              patches:
+                - master: &master
+                  name: plate
+                  type: wall
+                - slave: *master
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        applicationClass: pimpleFoam
+        startFrom: latestTime
+        startTime: 0  # TODO
+        stopAt: endTime
+        endTime: 1
+        deltaT: 1
+        writeControl: adjustableRunTime
+        writeInterval: 0.01
+        cycleWrite: 0
+        writeFormat: binary
+        writePrecision: 6
+        writeCompression: uncompressed
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 1
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: Gauss upwind  # Gauss linearUpwind leastSquares
+            # div(phi, U): Gauss linearUpwind grad(U)
+            # div(phi, nuTilda): limitedLinear 1
+            # div(phi, k): limitedLinear 1
+            # div(phi, omega): limitedLinear 1
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited 1
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        myPTolerance: 1e-2
+        myUTolerance: 1e-5
+        myTurbTolerance: 1e-6
+        myRelaxation: 1
+        solvers:
+            (p|pFinal|pcorr):
+                solver: GAMG
+                smoother: GaussSeidel
+                agglomerator: faceAreaPair
+                nCellsInCoarsestLevel: 1500
+                tolerance: $myPTolerance
+                relTol: 0.1
+            (k|kFinal|omega|omegaFinal|epsilon|epsilonFinal|nuTilda|nuTildaFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel
+                # preconditioner: DILU
+                tolerance: $myTurbTolerance
+                relTol: 0.1
+            (U|UFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel
+                # preconditioner: DILU
+                tolerance: $myTurbTolerance
+                relTol: 0.1
+            (U|UFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel
+                # preconditioner: DILU
+                tolerance: $myUTolerance
+                relTol: 0.1
+        PIMPLE:
+            correctPhi: no
+            nOuterCorrectors: 1
+            nCorrectors: 3
+            nNonOrthogonalCorrectors: 1
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            fields:
+                p: $myRelaxation
+            equations:
+                k: $myRelaxation
+                U: $myRelaxation
+                omega: $myRelaxation
+                epsilon: $myRelaxation
+                nuTilda: $myRelaxation
+---
+-
+    name: mesh.geo
+    type: [embed, text]
+    permission: null
+    data: |
+        //Inputs
+        ring_diameter = 0.3;
+        ring_thickness = 0.1;
+        domain_diameter = 10*ring_diameter;
+        domain_length = 20*ring_diameter;
+        ring_gridsize = 0.05*ring_diameter;
+        domain_gridsize = 0.05*domain_diameter;
+
+        Point(1) = {0,0,0,ring_gridsize};
+        Point(2) = {ring_diameter,0,0,ring_gridsize};
+        Point(3) = {ring_diameter+ring_thickness/2,0,0,ring_gridsize};
+        Point(4) = {ring_diameter,ring_thickness/2,0,ring_gridsize};
+        Point(5) = {ring_diameter-ring_thickness/2,0,0,ring_gridsize};
+        Point(6) = {ring_diameter,-ring_thickness/2,0,ring_gridsize};
+
+        Circle(7) = {3,2,4};
+        Circle(8) = {4,2,5};
+        Circle(9) = {5,2,6};
+        Circle(10) = {6,2,3};
+
+        Line Loop(11) = {7,8,9,10};
+
+        Point(12) = {0,-domain_length/2,0,domain_gridsize};
+        Point(13) = {domain_diameter/2,-domain_length/2,0,domain_gridsize};
+        Point(14) = {domain_diameter/2,domain_length/2,0,domain_gridsize};
+        Point(15) = {0,domain_length/2,0,domain_gridsize};
+
+        Line(16) = {1,12};
+        Line(17) = {12,13};
+        Line(18) = {13,14};
+        Line(19) = {14,15};
+        Line(20) = {15,1};
+
+        Line Loop(21) = {16:20};
+
+        Plane Surface(22) = {21,11};
+
+        Rotate {{0,1,0},{0,0,0},2.5*Pi/180.0}
+        {
+            Surface{22};
+        }
+        new_entities[] = Extrude {{0,1,0},{0,0,0},-5*Pi/180.0}
+        {
+            Surface{22};
+            Layers{1};
+            Recombine;
+        };
+
+        Physical Surface("wedge0") = {22};
+        Physical Surface("wedge1") = {new_entities[0]};
+        Physical Surface("outlet") = {new_entities[2]};
+        Physical Surface("tunnel") = {new_entities[3]};
+        Physical Surface("inlet") = {new_entities[4]};
+        Physical Surface("ring") = {new_entities[{5:8}]};
+
+        Physical Volume(1000) = {new_entities[1]};
+-
+    name: constant/polyMesh
+    type: [path, 7z]
+    permission: null
+    data: static/polyMesh.7z
+---
+pipeline:
+    - __app__
