@@ -236,7 +236,9 @@ class Foam:
         foam = self['foam']
         for keys, data in self._extract_files({} if foam is None else foam.data):
             # pre-process FoamFile to avoid duplicate descriptions (not recommended yet)
-            if isinstance(data['FoamFile'], str):
+            if data['FoamFile'] is None:
+                data.pop('FoamFile')
+            elif isinstance(data['FoamFile'], str):
                 data['FoamFile'] = {'class': data['FoamFile']}
             for key, value in [('version', 2.0), ('format', 'ascii'), ('object', keys[-1])]:
                 data['FoamFile'].setdefault(key, value)
