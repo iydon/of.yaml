@@ -70,4 +70,4 @@
 
 ## `v0.11`
 
-- pass
+- Add third-party tutorials ([openfoam_tutorials](https://github.com/openfoamtutorials/openfoam_tutorials))
