@@ -197,6 +197,19 @@ system:
                   name: plate
                   type: wall
                 - slave: *master
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        dictionaryReplacement:
+            boundary:
+                wedge.*:
+                    type: wedge
+                    physicalType: wedge
+                ring:
+                    type: wall
+                    physicalType: wall
     controlDict:
         FoamFile:
             class: dictionary
@@ -359,11 +372,9 @@ system:
         Physical Surface("ring") = {new_entities[{5:8}]};
 
         Physical Volume(1000) = {new_entities[1]};
--
-    name: constant/polyMesh
-    type: [path, 7z]
-    permission: null
-    data: static/polyMesh.7z
 ---
 pipeline:
+    - gmsh mesh.geo -3 -o mesh.msh
+    - gmshToFoam mesh.msh
+    - changeDictionary
     - __app__
