@@ -432,25 +432,25 @@ system:
 
         Rotate {{0,1,0}, {0,0,0}, wedgeAngle/2}
         {
-        Surface{rotorSurface, rotorSurface2, domainSurface};
+            Surface{rotorSurface, rotorSurface2, domainSurface};
         }
         domainEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{domainSurface};
-        Layers{1};
-        Recombine;
+            Surface{domainSurface};
+            Layers{1};
+            Recombine;
         };
         rotorEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{rotorSurface};
-        Layers{1};
-        Recombine;
+            Surface{rotorSurface};
+            Layers{1};
+            Recombine;
         };
         rotorEntities2[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{rotorSurface2};
-        Layers{1};
-        Recombine;
+            Surface{rotorSurface2};
+            Layers{1};
+            Recombine;
         };
 
         Physical Surface("wedge0") = {rotorSurface, rotorSurface2, domainSurface};
@@ -536,25 +536,25 @@ system:
 
         Rotate {{0,1,0}, {0,0,0}, wedgeAngle/2}
         {
-        Surface{rotorSurface, rotorSurface2, domainSurface};
+            Surface{rotorSurface, rotorSurface2, domainSurface};
         }
         domainEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{domainSurface};
-        Layers{1};
-        Recombine;
+            Surface{domainSurface};
+            Layers{1};
+            Recombine;
         };
         rotorEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{rotorSurface};
-        Layers{1};
-        Recombine;
+            Surface{rotorSurface};
+            Layers{1};
+            Recombine;
         };
         rotorEntities2[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
         {
-        Surface{rotorSurface2};
-        Layers{1};
-        Recombine;
+            Surface{rotorSurface2};
+            Layers{1};
+            Recombine;
         };
 
         Physical Surface("wedge0") = {rotorSurface, rotorSurface2, domainSurface};
