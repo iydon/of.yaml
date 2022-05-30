@@ -243,8 +243,9 @@ class Foam:
                 data.pop('FoamFile')
             elif isinstance(data['FoamFile'], str):
                 data['FoamFile'] = {'class': data['FoamFile']}
-            for key, value in [('version', 2.0), ('format', 'ascii'), ('object', keys[-1])]:
-                data['FoamFile'].setdefault(key, value)
+            if 'FoamFile' in data:
+                for key, value in [('version', 2.0), ('format', 'ascii'), ('object', keys[-1])]:
+                    data['FoamFile'].setdefault(key, value)
             # write the parsed text data
             path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -255,7 +256,7 @@ class Foam:
         data: Dict, keys: t.List[str] = [],
     ) -> t.Iterator[t.Tuple[t.List[str], Dict]]:
         if 'FoamFile' in data:
-            yield keys, data
+            yield keys, data.copy()
         else:
             for key, value in data.items():
                 yield from self._extract_files(value, keys+[key])
