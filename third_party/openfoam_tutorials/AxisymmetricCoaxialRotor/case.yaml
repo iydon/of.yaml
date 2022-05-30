@@ -1,0 +1,770 @@
+---
+openfoam: [4.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    k:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: k
+        kInlet: 0.02
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform $kInlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $kInlet
+            outlet:
+                type: inletOutlet
+                inletValue: uniform $kInlet
+                value: uniform $kInlet
+            wedge.*:
+                type: wedge
+            tunnel:
+                type: slip
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            inlet:
+                type: calculated
+                value: uniform 0
+            outlet:
+                type: calculated
+                value: uniform 0
+            wedge.*:
+                type: wedge
+            tunnel:
+                type: slip
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    omega:
+        FoamFile:
+            class: volScalarField
+            object: omega
+            <<: *FoamFile
+        omegaInlet: 10.0
+        dimensions: "[0 0 -1 0 0 0 0]"
+        internalField: uniform $omegaInlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $omegaInlet
+            outlet:
+                type: inletOutlet
+                inletValue: uniform $omegaInlet
+                value: uniform $omegaInlet
+            wedge.*:
+                type: wedge
+            tunnel:
+                type: slip
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            inlet:
+                type: zeroGradient
+                # type: fixedValue
+                # value: uniform 0
+            outlet:
+                type: fixedValue
+                value: uniform 0
+            wedge.*:
+                type: wedge
+            tunnel:
+                type: slip
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        Uinlet: (0 -2 0)
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform $Uinlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $Uinlet
+            outlet:
+                type: pressureInletOutletVelocity
+                value: uniform $Uinlet
+            wedge.*:
+                type: wedge
+            tunnel:
+                type: slip
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+constant:
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: "[0 2 -1 0 0 0 0] 1.5e-05"
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RAS
+        RAS:
+            RASModel: kOmegaSST
+            turbulence: on
+            printCoeffs: on
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        boundary:
+            wedge.*:
+                type: wedge
+                physicalType: wedge
+            tunnel:
+                type: slip
+                physicalType: slip
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: simpleFoam
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 1000
+        deltaT: 1
+        writeControl: timeStep
+        writeInterval: 50
+        purgeWrite: 0
+        writeFormat: binary
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+    fvOptions:
+        FoamFile:
+            class: dictionary
+            object: fvOptions
+            <<: *FoamFile
+        disk:
+            type: rotorDisk
+            active: on
+            rotorDiskCoeffs:
+                selectionMode: cellZone
+                cellZone: rotatingZone
+                fields: (U)  # Names of fields on which to apply source
+                nBlades: 2  # Number of blades
+                tipEffect: 1.0  # Normalised radius above which lift = 0
+                # I modified the source to enable opposite rotation (as in a coax configuration)
+                # Simply flip sign on rpm to get opposite rotation.
+                rpm: 9000
+                rhoRef: 1.18
+                inletFlowType: local  # Inlet flow type specification
+                geometryMode: specified
+                origin: (0 0 0)
+                axis: (0 1 0)
+                refDirection: (1 0 0)  # Reference direction
+                                       # - used as reference for psi angle
+                trimModel: fixedTrim  # fixed || targetForce
+                fixedTrimCoeffs:
+                    theta0: 0
+                    theta1c: 0
+                    theta1s: 0
+                flapCoeffs:
+                    beta0: 0  # Coning angle [deg]
+                    beta1c: 0  # Lateral flapping coeff (cos coeff)
+                    beta2s: 0  # Longitudinal flapping coeff (sin coeff)
+                blade:
+                    data:
+                        - (profile1 (0      30  0.038))
+                        - (profile1 (0.2032 2   0.0125))
+                profiles:
+                    profile1:
+                        type: lookup
+                        data:
+                            - (-25 1.0 0.0)
+                            - (-18 0.21 -1.45)
+                            - (-16 0.165 -1.3)
+                            - (-14 0.125 -1.1)
+                            - (-12 0.092 -0.95)
+                            - (-10 0.07 -0.8)
+                            - (-8 0.05 -0.64)
+                            - (-6 0.04 -0.5)
+                            - (-4 0.028 -0.32)
+                            - (-2 0.022 -0.18)
+                            - (0 0.02 0)
+                            - (2 0.022 0.18)
+                            - (4 0.028 0.32)
+                            - (6 0.04 0.5)
+                            - (8 0.05 0.64)
+                            - (10 0.07 0.8)
+                            - (12 0.092 0.95)
+                            - (14 0.125 1.1)
+                            - (16 0.165 1.3)
+                            - (18 0.21 1.45)
+                            - (25 1.0 0.0)
+        downstreamDisk:
+            type: rotorDisk
+            active: on
+            rotorDiskCoeffs:
+                selectionMode: cellZone
+                cellZone: downstreamRotatingZone
+                fields: (U)  # Names of fields on which to apply source
+                nBlades: 2  # Number of blades
+                tipEffect: 1.0  # Normalised radius above which lift = 0
+                # I modified the source to enable opposite rotation (as in a coax configuration)
+                # Simply flip sign on rpm to get opposite rotation.
+                rpm: -9000
+                rhoRef: 1.18
+                inletFlowType: local  # Inlet flow type specification
+                geometryMode: specified
+                origin: (0 0 0)
+                axis: (0 1 0)
+                refDirection: (1 0 0)  # Reference direction
+                                       # - used as reference for psi angle
+                trimModel: fixedTrim  # fixed || targetForce
+                fixedTrimCoeffs:
+                    theta0: 0
+                    theta1c: 0
+                    theta1s: 0
+                flapCoeffs:
+                    beta0: 0  # Coning angle [deg]
+                    beta1c: 0  # Lateral flapping coeff (cos coeff)
+                    beta2s: 0  # Longitudinal flapping coeff (sin coeff)
+                blade:
+                    data:
+                        - (profile1 (0      30  0.038))
+                        - (profile1 (0.2032 2   0.0125))
+                profiles:
+                    profile1:
+                        type: lookup
+                        data:
+                            - (-25 1.0 0.0)
+                            - (-18 0.21 -1.45)
+                            - (-16 0.165 -1.3)
+                            - (-14 0.125 -1.1)
+                            - (-12 0.092 -0.95)
+                            - (-10 0.07 -0.8)
+                            - (-8 0.05 -0.64)
+                            - (-6 0.04 -0.5)
+                            - (-4 0.028 -0.32)
+                            - (-2 0.022 -0.18)
+                            - (0 0.02 0)
+                            - (2 0.022 0.18)
+                            - (4 0.028 0.32)
+                            - (6 0.04 0.5)
+                            - (8 0.05 0.64)
+                            - (10 0.07 0.8)
+                            - (12 0.092 0.95)
+                            - (14 0.125 1.1)
+                            - (16 0.165 1.3)
+                            - (18 0.21 1.45)
+                            - (25 1.0 0.0)
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: steadyState
+        gradSchemes:
+            default: Gauss linear
+            limited: cellLimited Gauss linear 1
+            grad(U): $limited
+            grad(k): $limited
+            grad(omega): $limited
+        divSchemes:
+            default: none
+            # div(phi, U): bounded Gauss upwind
+            div(phi, U): bounded Gauss linearUpwind unlimited
+            turbulence: bounded Gauss upwind
+            # turbulence: bounded Gauss linearUpwind limited
+            div(phi, k): $turbulence
+            div(phi, omega): $turbulence
+            div(phi, epsilon): $turbulence
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+            div((nuEff*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        wallDist:
+            method: meshWave
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:  # iteration stopping criteria
+            p:
+                solver: GAMG
+                smoother: GaussSeidel
+                tolerance: 1e-6
+                relTol: 0.1
+            U:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-6
+                relTol: 0.1
+            (k|omega|epsilon):
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-6
+                relTol: 0.1
+        SIMPLE:  # global stopping criteria
+            nNonOrthogonalCorrectors: 1
+            consistent: yes
+            residualControl:
+                U: 1e-3
+                p: 1e-3
+                (k|epsilon|omega): 5e-3
+        relaxationFactors:  # stability criteria
+            equations:
+                U: 0.65
+                (k|omega|epsilon): 0.95
+---
+-
+    name: mesh/main.geo
+    type: [embed, text]
+    permission: null
+    data: |
+        //Inputs
+        Geometry.Tolerance = 1e-12;
+
+        rotorRadius = 8 * 0.0254;
+
+        rotorSeparation = 0.75 * (2 * rotorRadius);
+
+        domainDistance = 15 * rotorRadius;
+
+        tipLc = 0.03 * rotorRadius;
+        hubLc = 4*tipLc;
+        farLc = rotorRadius;
+
+        wedgeAngle = 5 * Pi / 180;
+
+        ce = 0;
+
+        // Rotor 1 (upstream)
+        Point(ce++) = {0, rotorSeparation, 0, hubLc}; p = ce;
+        Point(ce++) = {rotorRadius, rotorSeparation, 0, tipLc};
+        Point(ce++) = {rotorRadius, rotorSeparation + tipLc, 0, tipLc};
+        Point(ce++) = {0, rotorSeparation + tipLc, 0, hubLc};
+        p1 = p;
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+        l1 =l;
+
+        Transfinite Line{l + 1, l + 3} = 2;
+        Line Loop(ce++) = {l:l+3}; rotorLoop = ce;
+        Plane Surface(ce++) = {rotorLoop}; rotorSurface = ce;
+        Transfinite Surface{rotorSurface};
+        Recombine Surface{rotorSurface};
+
+        // Rotor 2 (downstream)
+        Point(ce++) = {0, 0, 0, hubLc}; p = ce;
+        Point(ce++) = {rotorRadius, 0, 0, tipLc};
+        Point(ce++) = {rotorRadius, tipLc, 0, tipLc};
+        Point(ce++) = {0, tipLc, 0, hubLc};
+        p2 = p;
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+        l2 =l;
+
+        Transfinite Line{l + 1, l + 3} = 2;
+        Line Loop(ce++) = {l:l+3}; rotorLoop2 = ce;
+        Plane Surface(ce++) = {rotorLoop2}; rotorSurface2 = ce;
+        Transfinite Surface{rotorSurface2};
+        Recombine Surface{rotorSurface2};
+
+        // Domain
+        Point(ce++) = {0, -domainDistance, 0, farLc}; p = ce;
+        Point(ce++) = {domainDistance, -domainDistance, 0, farLc};
+        Point(ce++) = {domainDistance, domainDistance, 0, farLc};
+        Point(ce++) = {0, domainDistance, 0, farLc};
+
+        Line(ce++) = {p2, p}; l = ce;
+        Line(ce++) = {p, p + 1};
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p1 + 3};
+
+        Line(ce++) = {p1, p2 + 3};
+
+        Line Loop(ce++) = {l:l+4, 
+        -(l1+2),-(l1+1),-l1,
+        l+5, 
+        -(l2+2),-(l2+1),-l2}; domainLoop = ce;
+        Plane Surface(ce++) = {domainLoop, rotorLoop, rotorLoop2}; domainSurface = ce;
+        // Recombine Surface{domainSurface};
+
+        Rotate {{0,1,0}, {0,0,0}, wedgeAngle/2}
+        {
+        Surface{rotorSurface, rotorSurface2, domainSurface};
+        }
+        domainEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{domainSurface};
+        Layers{1};
+        Recombine;
+        };
+        rotorEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{rotorSurface};
+        Layers{1};
+        Recombine;
+        };
+        rotorEntities2[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{rotorSurface2};
+        Layers{1};
+        Recombine;
+        };
+
+        Physical Surface("wedge0") = {rotorSurface, rotorSurface2, domainSurface};
+        Physical Surface("wedge1") = {domainEntities[0], rotorEntities[0], rotorEntities2[0]};
+        Physical Surface("inlet") = {domainEntities[4]};
+        Physical Surface("tunnel") = {domainEntities[3]};
+        Physical Surface("outlet") = {domainEntities[2]};
+
+        Physical Volume("rotatingZone") = {rotorEntities[1]};
+        Physical Volume("downstreamRotatingZone") = {rotorEntities2[1]};
+        Physical Volume("domain") = {domainEntities[1]};
+-
+    name: mesh/detached.geo
+    type: [embed, text]
+    permission: null
+    data: |
+        //Inputs
+        Geometry.Tolerance = 1e-12;
+
+        rotorRadius = 8 * 0.0254;
+        hubRadius = 1 * 0.0254;
+
+        rotorSeparation = 0.75 * (2 * rotorRadius);
+
+        domainDistance = 10 * rotorRadius;
+
+        tipLc = 0.01 * rotorRadius;
+        hubLc = tipLc;
+        farLc = rotorRadius;
+
+        wedgeAngle = 5 * Pi / 180;
+
+        ce = 0;
+
+        // Rotor 1 (upstream)
+        Point(ce++) = {hubRadius, rotorSeparation, 0, hubLc}; p = ce;
+        Point(ce++) = {rotorRadius, rotorSeparation, 0, tipLc};
+        Point(ce++) = {rotorRadius, rotorSeparation + tipLc, 0, tipLc};
+        Point(ce++) = {hubRadius, rotorSeparation + tipLc, 0, hubLc};
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+
+        Transfinite Line{l + 1, l + 3} = 2;
+        Line Loop(ce++) = {l:l+3}; rotorLoop = ce;
+        Plane Surface(ce++) = {rotorLoop}; rotorSurface = ce;
+        Transfinite Surface{rotorSurface};
+        Recombine Surface{rotorSurface};
+
+        // Rotor 2 (downstream)
+        Point(ce++) = {hubRadius, 0, 0, hubLc}; p = ce;
+        Point(ce++) = {rotorRadius, 0, 0, tipLc};
+        Point(ce++) = {rotorRadius, tipLc, 0, tipLc};
+        Point(ce++) = {hubRadius, tipLc, 0, hubLc};
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+
+        Transfinite Line{l + 1, l + 3} = 2;
+        Line Loop(ce++) = {l:l+3}; rotorLoop2 = ce;
+        Plane Surface(ce++) = {rotorLoop2}; rotorSurface2 = ce;
+        Transfinite Surface{rotorSurface2};
+        Recombine Surface{rotorSurface2};
+
+        // Domain
+        Point(ce++) = {0, -domainDistance, 0, farLc}; p = ce;
+        Point(ce++) = {domainDistance, -domainDistance, 0, farLc};
+        Point(ce++) = {domainDistance, domainDistance, 0, farLc};
+        Point(ce++) = {0, domainDistance, 0, farLc};
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+
+        Line Loop(ce++) = {l:l+3}; domainLoop = ce;
+        Plane Surface(ce++) = {domainLoop, rotorLoop, rotorLoop2}; domainSurface = ce;
+        // Recombine Surface{rotorSurface};
+
+        Rotate {{0,1,0}, {0,0,0}, wedgeAngle/2}
+        {
+        Surface{rotorSurface, rotorSurface2, domainSurface};
+        }
+        domainEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{domainSurface};
+        Layers{1};
+        Recombine;
+        };
+        rotorEntities[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{rotorSurface};
+        Layers{1};
+        Recombine;
+        };
+        rotorEntities2[] = Extrude {{0,1,0}, {0,0,0}, -wedgeAngle}
+        {
+        Surface{rotorSurface2};
+        Layers{1};
+        Recombine;
+        };
+
+        Physical Surface("wedge0") = {rotorSurface, rotorSurface2, domainSurface};
+        Physical Surface("wedge1") = {domainEntities[0], rotorEntities[0], rotorEntities2[0]};
+        Physical Surface("inlet") = {domainEntities[4]};
+        Physical Surface("tunnel") = {domainEntities[3]};
+        Physical Surface("outlet") = {domainEntities[2]};
+
+        Physical Volume("rotatingZone") = {rotorEntities[1]};
+        Physical Volume("downstreamRotatingZone") = {rotorEntities2[1]};
+        Physical Volume(1000) = {domainEntities[1]};
+-
+    name: rotorDiskSourceTemplates.C
+    type: [embed, text]
+    permission: null
+    data: |
+        /*---------------------------------------------------------------------------*\
+            =========                 |
+            \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+             \\    /   O peration     |
+              \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+               \\/     M anipulation  |
+        -------------------------------------------------------------------------------
+        License
+                This file is part of OpenFOAM.
+
+                OpenFOAM is free software: you can redistribute it and/or modify it
+                under the terms of the GNU General Public License as published by
+                the Free Software Foundation, either version 3 of the License, or
+                (at your option) any later version.
+
+                OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+                ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+                FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+                for more details.
+
+                You should have received a copy of the GNU General Public License
+                along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+        \*---------------------------------------------------------------------------*/
+
+        // This has been modified to allow for opposite rotation, for lift in the same direction.
+        //  To switch rotation directions, flip the sign on rpm.
+        // This has also been modified to include total power output.
+
+        #include "rotorDiskSource.H"
+        #include "volFields.H"
+        #include "unitConversion.H"
+
+        using namespace Foam::constant;
+
+        // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+
+        template<class RhoFieldType>
+        void Foam::fv::rotorDiskSource::calculate (
+                const RhoFieldType& rho,
+                const vectorField& U,
+                const scalarField& thetag,
+                vectorField& force,
+                const bool divideVolume,
+                const bool output
+        ) const {
+            const scalarField& V = mesh_.V();
+
+            // Logging info
+            scalar dragEff = 0.0;
+            scalar powerEff = 0.0;
+            scalar liftEff = 0.0;
+            scalar AOAmin = GREAT;
+            scalar AOAmax = -GREAT;
+
+            forAll(cells_, i) {
+                if (area_[i] > ROOTVSMALL) {
+                    const label celli = cells_[i];
+
+                    const scalar radius = x_[i].x();
+
+                    // Transform velocity into local cylindrical reference frame
+                    vector Uc = cylindrical_->invTransform(U[celli], i);
+
+                    // Transform velocity into local coning system
+                    Uc = R_[i] & Uc;
+
+                    // Set radial component of velocity to zero
+                    Uc.x() = 0.0;
+
+                    // Set blade normal component of velocity (drag direction)
+                    Uc.y() = radius * omega_ - Uc.y();
+
+                    // Determine blade data for this radius
+                    // i2 = index of upper radius bound data point in blade list
+                    scalar twist = 0.0;
+                    scalar chord = 0.0;
+                    label i1 = -1;
+                    label i2 = -1;
+                    scalar invDr = 0.0;
+                    blade_.interpolate(radius, twist, chord, i1, i2, invDr);
+
+                    scalar alphaGeom = thetag[i] + twist;
+                    // Flip geometric angle if blade is spinning in reverse (clockwise)
+                    // if (omega_ < 0) alphaGeom = mathematical::pi - alphaGeom;
+
+                    // Effective angle of attack
+                    scalar inducedAlpha = (omega_ > 0)
+                        ? atan2(-Uc.z(), Uc.y())
+                        : atan2(-Uc.z(), -Uc.y());
+                    scalar alphaEff = alphaGeom - inducedAlpha;
+                    if (alphaEff > mathematical::pi)  alphaEff -= mathematical::twoPi;
+                    if (alphaEff < -mathematical::pi) alphaEff += mathematical::twoPi;
+
+                    AOAmin = min(AOAmin, alphaEff);
+                    AOAmax = max(AOAmax, alphaEff);
+
+                    // Determine profile data for this radius and angle of attack
+                    const label profile1 = blade_.profileID()[i1];
+                    const label profile2 = blade_.profileID()[i2];
+
+                    scalar Cd1 = 0.0;
+                    scalar Cl1 = 0.0;
+                    profiles_[profile1].Cdl(alphaEff, Cd1, Cl1);
+
+                    scalar Cd2 = 0.0;
+                    scalar Cl2 = 0.0;
+                    profiles_[profile2].Cdl(alphaEff, Cd2, Cl2);
+
+                    scalar Cd = invDr*(Cd2 - Cd1) + Cd1;
+                    scalar Cl = invDr*(Cl2 - Cl1) + Cl1;
+
+                    // Apply tip effect for blade lift
+                    scalar tipFactor = neg(radius / rMax_ - tipEffect_);
+
+                    // Calculate forces perpendicular to blade
+                    scalar pDyn = 0.5*rho[celli]*magSqr(Uc);
+
+                    scalar f = pDyn * chord * nBlades_ * area_[i] / radius / mathematical::twoPi;
+                    scalar dragForce = (omega_ > 0) ? (-f * Cd) : (f * Cd);
+                    vector localForce = vector(0.0, dragForce, tipFactor * f * Cl);
+
+                    // Accumulate forces
+                    dragEff   += rhoRef_ * localForce.y();
+                    powerEff  += rhoRef_ * localForce.y() * radius * omega_;
+                    liftEff   += rhoRef_ * localForce.z();
+
+                    // Transform force from local coning system into rotor cylindrical
+                    localForce = invR_[i] & localForce;
+
+                    // Transform force into global Cartesian co-ordinate system
+                    force[celli] = cylindrical_->transform(localForce, i);
+
+                    if (divideVolume) force[celli] /= V[celli];
+                }
+            }
+
+            if (output) {
+                reduce(AOAmin, minOp<scalar>());
+                reduce(AOAmax, maxOp<scalar>());
+                reduce(dragEff, sumOp<scalar>());
+                reduce(liftEff, sumOp<scalar>());
+
+                Info<< type() << " output:" << nl
+                    << "    min/max(AOA)    = " << radToDeg(AOAmin) << ", "
+                    << radToDeg(AOAmax) << nl
+                    << "    Effective drag  = " << dragEff << nl
+                    << "    Effective power = " << powerEff << nl
+                    << "    Effective lift  = " << liftEff << endl;
+            }
+        }
+
+
+        template<class Type>
+        void Foam::fv::rotorDiskSource::writeField (
+                const word& name,
+                const List<Type>& values,
+                const bool writeNow
+        ) const {
+            typedef GeometricField<Type, fvPatchField, volMesh> fieldType;
+
+            if (mesh_.time().writeTime() || writeNow) {
+                tmp<fieldType> tfield (
+                    new fieldType (
+                        IOobject (
+                            name,
+                            mesh_.time().timeName(),
+                            mesh_,
+                            IOobject::NO_READ,
+                            IOobject::NO_WRITE
+                        ),
+                        mesh_,
+                        dimensioned<Type>("zero", dimless, Zero)
+                    )
+                );
+
+                Field<Type>& field = tfield.ref().primitiveFieldRef();
+
+                if (cells_.size() != values.size()) {
+                    FatalErrorInFunction
+                        << abort(FatalError);
+                }
+
+                forAll(cells_, i) {
+                    const label celli = cells_[i];
+                    field[celli] = values[i];
+                }
+
+                tfield().write();
+            }
+        }
+---
+pipeline:
+    - gmsh -3 mesh/main.geo
+    - gmshToFoam mesh/main.msh
+    - changeDictionary
+    - __app__
