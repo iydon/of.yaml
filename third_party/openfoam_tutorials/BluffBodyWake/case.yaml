@@ -464,5 +464,5 @@ pipeline:
     - gmshToFoam mesh.msh
     - changeDictionary
     - foamUpgradeCyclics
-    # - createBaffles -dict system/baffleDict -overwrite  # TODO
+    # - createBaffles -dict system/baffleDict -overwrite  # TODO: Cannot find patchField entry for cyclic baffle_half0
     - __app__

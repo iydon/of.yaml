@@ -176,15 +176,16 @@ system:
             <<: *FoamFile
         internalFacesOnly: true
         baffles:
-            - baffleFaces:
-              type: faceZone
-              zoneName: plate
-              flip: false
-              patches:
-                - master: &master
-                  name: plate
-                  type: wall
-                - slave: *master
+            baffleFaces:
+                type: faceZone
+                zoneName: plate
+                flip: false
+                patches:
+                    master: &master
+                        name: plate
+                        type: wall
+                    slave:
+                        <<: *master
     changeDictionaryDict:
         FoamFile:
             class: dictionary
