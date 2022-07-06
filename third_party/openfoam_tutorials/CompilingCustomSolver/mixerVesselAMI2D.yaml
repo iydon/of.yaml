@@ -1,0 +1,355 @@
+---
+openfoam: [2.3.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    epsilon:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: epsilon
+        dimensions: "[ 0 2 -3 0 0 0 0 ]"
+        internalField: uniform 20
+        boundaryField:
+            rotor:
+                type: epsilonWallFunction
+                value: $internalField
+            stator:
+                type: epsilonWallFunction
+                value: $internalField
+            front:
+                type: empty
+            back:
+                type: empty
+            AMI1:
+                type: cyclicAMI
+                value: $internalField
+            AMI2:
+                type: cyclicAMI
+                value: $internalField
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[ 0 2 -2 0 0 0 0 ]"
+        internalField: uniform 1
+        boundaryField:
+            rotor:
+                type: kqRWallFunction
+                value: uniform 0
+            stator:
+                type: kqRWallFunction
+                value: uniform 0
+            front:
+                type: empty
+            back:
+                type: empty
+            AMI1:
+                type: cyclicAMI
+                value: $internalField
+            AMI2:
+                type: cyclicAMI
+                value: $internalField
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[ 0 2 -1 0 0 0 0 ]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: nutkWallFunction
+                value: uniform 0
+            stator:
+                type: nutkWallFunction
+                value: uniform 0
+            front:
+                type: empty
+            back:
+                type: empty
+            AMI1:
+                type: cyclicAMI
+                value: $internalField
+            AMI2:
+                type: cyclicAMI
+                value: $internalField
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            rotor:
+                type: zeroGradient
+            stator:
+                type: zeroGradient
+            front:
+                type: empty
+            back:
+                type: empty
+            AMI1:
+                type: cyclicAMI
+                value: $internalField
+            AMI2:
+                type: cyclicAMI
+                value: $internalField
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            rotor:
+                type: movingWallVelocity  # fixedValue
+                value: uniform (0 0 0)
+            stator:
+                type: movingWallVelocity  # fixedValue
+                value: uniform (0 0 0)
+            front:
+                type: empty
+            back:
+                type: empty
+            AMI1:
+                type: cyclicAMI
+                value: $internalField
+            AMI2:
+                type: cyclicAMI
+                value: $internalField
+constant:
+    dynamicMeshDict:
+        FoamFile:
+            class: dictionary
+            object: dynamicMeshDict
+            <<: *FoamFile
+        dynamicFvMesh: solidBodyMotionFvMesh
+        motionSolverLibs: ( "libfvMotionSolvers.so" )
+        solidBodyMotionFvMeshCoeffs:
+            cellZone: rotor
+            solidBodyMotionFunction: rotatingMotion
+            rotatingMotionCoeffs:
+                origin: (0 0 0)
+                axis: (0 0 1)
+                omega: 6.2832  # rad/s
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: kEpsilon
+        turbulence: on
+        printCoeffs: on
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [ 0 2 -1 0 0 0 0 ] 1e-05
+        CrossPowerLawCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            m: m [ 0 0 1 0 0 0 0 ] 1
+            n: n [ 0 0 0 0 0 0 0 ] 1
+        BirdCarreauCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            k: k [ 0 0 1 0 0 0 0 ] 0
+            n: n [ 0 0 0 0 0 0 0 ] 1
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: laminar
+system:
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: mySolver
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 1
+        deltaT: 1e-3
+        writeControl: adjustableRunTime
+        writeInterval: 0.1
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+        adjustTimeStep: yes
+        maxCo: 0.5
+    decomposeParDict:
+        FoamFile:
+            class: dictionary
+            object: decomposeParDict
+            <<: *FoamFile
+        #- Force AMI to be on single processor. Can cause imbalance with some
+        #  decomposers.
+        # singleProcessorFaceSets: ((AMI -1))
+        numberOfSubdomains: 4
+        method: scotch
+        distributed: no
+        roots: []
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+            grad(p): Gauss linear
+            grad(U): Gauss linear 1
+        divSchemes:
+            default: none
+            div(phi, U): Gauss linearUpwind grad(U)
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+            interpolate(HbyA): linear
+        snGradSchemes:
+            default: corrected
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            pcorr: &pcorr
+                solver: GAMG
+                smoother: GaussSeidel
+                nPreSweeps: 0
+                nPostSweeps: 2
+                cacheAgglomeration: off
+                agglomerator: faceAreaPair
+                nCellsInCoarsestLevel: 10
+                mergeLevels: 1
+                tolerance: 0.02
+                relTol: 0
+            p: &p
+                tolerance: 1e-06
+                relTol: 0.01
+                <<: *pcorr
+            pFinal:
+                tolerance: 1e-06
+                relTol: 0
+                <<: *p
+            U: &U
+                solver: smoothSolver
+                smoother: GaussSeidel
+                tolerance: 1e-05
+                relTol: 0.01
+            UFinal:
+                tolerance: 1e-06
+                relTol: 0
+                <<: *U
+            cellMotionUx:
+                solver: PCG
+                preconditioner: DIC
+                tolerance: 1e-08
+                relTol: 0
+        PIMPLE:
+            correctPhi: yes
+            nOuterCorrectors: 2
+            nCorrectors: 1
+            nNonOrthogonalCorrectors: 0
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            fields: {}
+            equations:
+                U.*: 1
+    topoSetDict:
+        FoamFile:
+            class: dictionary
+            object: topoSetDict
+            <<: *FoamFile
+        actions:
+            # Get both sides of ami
+            # ~~~~~~~~~~~~~~~~~~~~~
+            # Get all faces in cellSet
+            -
+                name: AMI
+                type: faceSet
+                action: new
+                source: patchToFace
+                sourceInfo:
+                    name: >
+                        "AMI.*"
+---
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        application=`getApplication`
+
+        ./makeMesh
+
+        #runApplication $application
+        runApplication decomposePar
+        runParallel $application 4
+        runApplication reconstructPar
+-
+    name: makeMesh
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        m4 < constant/polyMesh/blockMeshDict.m4 > constant/polyMesh/blockMeshDict
+
+        runApplication blockMesh
+
+        runApplication topoSet
+-
+    name: constant/polyMesh/blockMeshDict.m4
+    type: [path, raw]
+    permission: null
+    data: static/blockMeshDict.m4
+-
+    name: constant/triSurface/projectionSurface.stl
+    type: [path, raw]
+    permission: null
+    data: static/projectionSurface.stl
+---
+pipeline:
+    - ./makeMesh
+    - decomposePar
+    - __app__
+    - reconstructPar  # https://github.com/MicroNanoFlows/OpenFOAM-2.4.0-MNF/issues/8
