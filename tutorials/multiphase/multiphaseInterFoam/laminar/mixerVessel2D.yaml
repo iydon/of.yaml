@@ -115,8 +115,8 @@ constant:
         value: (0 0 0)
     MRFProperties:
         FoamFile:
-            class: MRFProperties
-            object: g
+            class: dictionary
+            object: MRFProperties
             <<: *FoamFile
         MRF1:
             cellZone: rotor
