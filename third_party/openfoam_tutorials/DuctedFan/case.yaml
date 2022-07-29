@@ -1,0 +1,324 @@
+---
+openfoam: [2.4.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    nut:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: nut
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 1.5e-05
+        boundaryField:
+            wedge0:
+                type: wedge
+            baffle:
+                type: cyclic
+            baffleother:
+                type: cyclic
+            wedge1:
+                type: wedge
+            inlet:
+                type: calculated
+                value: uniform 1.5e-05
+            outlet:
+                type: calculated
+                value: uniform 1.5e-05
+            duct:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            tunnel:
+                type: slip
+    nuTilda:
+        FoamFile:
+            class: volScalarField
+            object: nuTilda
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 6e-05
+        boundaryField:
+            wedge0:
+                type: wedge
+            baffle:
+                type: cyclic
+            baffleother:
+                type: cyclic
+            wedge1:
+                type: wedge
+            inlet:
+                type: fixedValue
+                value: uniform 6e-05
+            outlet:
+                type: inletOutlet
+                inletValue: uniform 6e-05
+                value: uniform 6e-05
+            duct:
+                type: fixedValue
+                value: uniform 0
+            tunnel:
+                type: slip
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            wedge0:
+                type: wedge
+            baffle:
+                type: fixedJump
+                patchType: cyclic
+                jump: uniform 800
+                value: uniform 0
+            baffleother:
+                type: fixedJump
+                patchType: cyclic
+                value: uniform 0
+            wedge1:
+                type: wedge
+            inlet:
+                type: zeroGradient
+            outlet:
+                type: fixedValue
+                value: uniform 0
+            duct:
+                type: zeroGradient
+            tunnel:
+                type: zeroGradient
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 -4.23 0)
+        boundaryField:
+            wedge0:
+                type: wedge
+            baffle:
+                type: cyclic
+            baffleother:
+                type: cyclic
+            wedge1:
+                type: wedge
+            inlet:
+                type: fixedValue
+                value: uniform (0 -4.23 0)
+            outlet:
+                type: inletOutlet
+                inletValue: uniform (0 0 0)
+                value: uniform (0 -4.23 0)
+            duct:
+                type: fixedValue
+                value: uniform (0 0 0)
+            tunnel:
+                type: slip
+constant:
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: SpalartAllmaras
+        turbulence: on
+        printCoeffs: on
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [ 0 2 -1 0 0 0 0 ] 1.568e-5
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RASModel
+system:
+    baffleDict:
+        FoamFile:
+            class: dictionary
+            object: createBafflesDict
+            <<: *FoamFile
+        internalFacesOnly: true
+        baffles:
+            baffleFaces:
+                type: faceZone
+                zoneName: baffle
+                flip: false
+                patches:
+                    master:
+                        name: baffle
+                        type: fixedJump
+                        patchType: cyclic
+                        neighbourPatch: baffleother
+                        patchFields:
+                            nut:
+                                type: cyclic
+                            nuTilda:
+                                type: cyclic
+                            p:
+                                type: fixedJump
+                                patchType: cyclic
+                                value: uniform 0
+                                jump: uniform 800
+                            U:
+                                type: cyclic
+                    slave:
+                        name: baffleother
+                        type: fixedJump
+                        patchType: cyclic
+                        neighbourPatch: baffle
+                        patchFields:
+                            nut:
+                                type: cyclic
+                            nuTilda:
+                                type: cyclic
+                            p:
+                                type: fixedJump
+                                patchType: cyclic
+                                value: uniform 0
+                            U:
+                                type: cyclic
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        dictionaryReplacement:
+            boundary:
+                wedge.*:
+                    type: wedge
+                    physicalType: wedge
+                baffle:
+                    type: cyclic
+                    physicalType: cyclic
+                duct:
+                    type: wall
+                    physicalType: wall
+                tunnel:
+                    type: wall
+                    physicalType: wall
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        applicationClass: pimpleFoam
+        startFrom: latestTime
+        startTime: 0
+        endTime: 1
+        stopAt: endTime
+        deltaT: 1
+        writeControl: adjustableRunTime
+        writeInterval: 0.01
+        cycleWrite: 0
+        writeFormat: binary
+        writePrecision: 6
+        writeCompression: uncompressed
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 20
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+            grad(p): Gauss linear
+            grad(U): Gauss linear
+        divSchemes:
+            default: none  # Gauss linearUpwind leastSquares
+            # div(phi, U): Gauss linearUpwind grad(U)
+            div(phi, U): Gauss upwind
+            # div(phi, U): Gauss linearUpwind leastSquares  # upwind  # linearUpwind grad(U)
+            div(phi, nuTilda): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, k): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, omega): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, epsilon): Gauss upwind  # linearUpwind leastSquares  # upwind
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited 1
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        # The following variables must have line numbers of 17-18.
+        myPTolerance: 1e-2
+        myUTolerance: 1e-5
+        myTurbTolerance: 1e-6
+        myRelaxation: 1
+        solvers:
+            (p|pFinal|pcorr):
+                solver: GAMG
+                mergeLevels: 1
+                smoother: GaussSeidel
+                agglomerator: faceAreaPair
+                nCellsInCoarsestLevel: 1500
+                tolerance: $myPTolerance
+                relTol: 0.1
+            (k|kFinal|omega|omegaFinal|epsilon|epsilonFinal|nuTilda|nuTildaFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel  # preconditioner: DILU
+                tolerance: $myTurbTolerance
+                relTol: 0.1
+            (U|UFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel  # preconditioner: DILU
+                tolerance: $myUTolerance
+                relTol: 0.1
+        PIMPLE:
+            correctPhi: no
+            nOuterCorrectors: 1
+            nCorrectors: 3
+            nNonOrthogonalCorrectors: 1
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            fields:
+                p: $myRelaxation
+            equations:
+                k: $myRelaxation
+                U: $myRelaxation
+                omega: $myRelaxation
+                epsilon: $myRelaxation
+                nuTilda: $myRelaxation
+---
+-
+    name: mesh
+    type: [path, raw]
+    permission: null
+    data: mesh
+---
+pipeline:
+    - gmsh mesh/main.geo -3 -o test.msh
+    - gmshToFoam test.msh
+    - changeDictionary
+    - foamUpgradeCyclics
+    # - createBaffles -dict system/baffleDict -overwrite  # TODO: Attempt to cast type genericPatch to type lduInterface
+    - __app__
