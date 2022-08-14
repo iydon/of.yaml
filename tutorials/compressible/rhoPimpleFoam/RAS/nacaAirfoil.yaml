@@ -1,0 +1,349 @@
+---
+openfoam: [7]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    alphat:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: alphat
+        dimensions: "[1 -1 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            INLE1:
+                type: calculated
+                value: uniform 0
+            OUTL2:
+                type: calculated
+                value: uniform 0
+            SYMP3:
+                type: empty
+            WALL10:
+                type: compressible::alphatWallFunction
+                Prt: 0.85
+                value: uniform 0
+    epsilon:
+        FoamFile:
+            class: volScalarField
+            object: epsilon
+            <<: *FoamFile
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 25000
+        boundaryField:
+            INLE1:
+                type: inletOutlet
+                inletValue: uniform 25000
+                value: uniform 25000
+            OUTL2:
+                type: inletOutlet
+                inletValue: uniform 25000
+                value: uniform 25000
+            SYMP3:
+                type: empty
+            WALL10:
+                type: epsilonWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 25000
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 1000
+        boundaryField:
+            INLE1:
+                type: inletOutlet
+                inletValue: uniform 1000
+                value: uniform 1000
+            OUTL2:
+                type: inletOutlet
+                inletValue: uniform 1000
+                value: uniform 1000
+            SYMP3:
+                type: empty
+            WALL10:
+                type: kqRWallFunction
+                value: uniform 1000
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            INLE1:
+                type: calculated
+                value: uniform 0
+            OUTL2:
+                type: calculated
+                value: uniform 0
+            SYMP3:
+                type: empty
+            WALL10:
+                type: nutkWallFunction
+                Cmu: 0.09
+                kappa: 0.41
+                E: 9.8
+                value: uniform 0
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 100000
+        boundaryField:
+            INLE1:
+                type: zeroGradient
+            OUTL2:
+                type: waveTransmissive
+                field: p
+                psi: thermo:psi
+                gamma: 1.3
+                fieldInf: 100000
+                lInf: 1
+                value: uniform 100000
+            SYMP3:
+                type: empty
+            WALL10:
+                type: zeroGradient
+    T:
+        FoamFile:
+            class: volScalarField
+            object: T
+            <<: *FoamFile
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 300
+        boundaryField:
+            INLE1:
+                type: inletOutlet
+                inletValue: uniform 300
+                value: uniform 300
+            OUTL2:
+                type: inletOutlet
+                inletValue: uniform 300
+                value: uniform 300
+            SYMP3:
+                type: empty
+            WALL10:
+                type: zeroGradient
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (600 148.16 0)
+        boundaryField:
+            INLE1:
+                type: supersonicFreestream
+                pInf: 100000
+                TInf: 300
+                UInf: (600 148.16 0)
+                gamma: 1.4
+                value: uniform (600 148.16 0)
+            OUTL2:
+                type: inletOutlet
+                inletValue: uniform (600 148.16 0)
+                value: uniform (600 148.16 0)
+            SYMP3:
+                type: empty
+            WALL10:
+                type: noSlip
+constant:
+    thermophysicalProperties:
+        FoamFile:
+            class: dictionary
+            object: thermophysicalProperties
+            <<: *FoamFile
+        thermoType:
+            type: hePsiThermo
+            mixture: pureMixture
+            transport: const
+            thermo: hConst
+            equationOfState: perfectGas
+            specie: specie
+            energy: sensibleInternalEnergy
+        mixture:
+            specie:
+                molWeight: 28.9
+            thermodynamics:
+                Cp: 1005
+                Hf: 0
+            transport:
+                mu: 1.8e-05
+                Pr: 0.7
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RAS
+        RAS:
+            RASModel: LaunderSharmaKE
+            turbulence: on
+            printCoeffs: on
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        boundary:
+            SYMP3:
+                type: empty
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: rhoPimpleFoam
+        startFrom: latestTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 0.01
+        deltaT: 4e-08
+        writeControl: runTime
+        writeInterval: 2e-04
+        purgeWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+        functions:
+            forces:
+                type: forceCoeffs
+                libs:
+                    - |
+                        "libforces.so"
+                writeControl: timeStep
+                writeInterval: 1
+                patches:
+                    - WALL10
+                log: true
+                rhoInf: 1
+                CofR: (0 0 0)
+                liftDir: (-0.239733 0.970839 0)
+                dragDir: (0.970839 0.239733 0)
+                pitchAxis: (0 0 1)
+                magUInf: 618.022
+                lRef: 1
+                Aref: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: none
+            div(phi, U): Gauss limitedLinearV 1
+            div(phi, e): Gauss limitedLinear 1
+            div(phid, p): Gauss limitedLinear 1
+            div(phi, K): Gauss limitedLinear 1
+            div(phiv, p): Gauss limitedLinear 1
+            div(phi, k): Gauss upwind
+            div(phi, epsilon): Gauss upwind
+            div(((rho*nuEff)*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited corrected 0.5
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            rho.*:
+                solver: diagonal
+            p.*: &p
+                solver: PBiCGStab
+                preconditioner: DILU
+                tolerance: 1e-12
+                relTol: 0
+            (U|e).*:
+                tolerance: 1e-9
+                <<: *p
+            (k|epsilon).*:
+                tolerance: 1e-10
+                <<: *p
+        PIMPLE:
+            nOuterCorrectors: 1
+            nCorrectors: 2
+            nNonOrthogonalCorrectors: 0
+            transonic: yes
+---
+-
+    name: Running_Notes
+    type: [embed, text]
+    permission: null
+    data: |
+        nacaAirfoil
+        ~~~~~~~~~~~
+        * large domain with airfoil section near centre
+        * extremely non-orthogonal, highly skew mesh refined around the airfoil
+        * running at Mach 1.78
+        * limited corrected 0.5 on all laplacianSchemes because the mesh is so poor
+        * run to t = 0.02 with nextWrite; change to stopAt endTime to continue running
+        * deltaT can be increased later in the run to 2e-07
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        # Get application name
+        application=$(getApplication)
+
+        runApplication star3ToFoam prostar/nacaAirfoil
+
+        sed -i -e 's/symmetry\([)]*;\)/empty\1/' constant/polyMesh/boundary
+
+        runApplication $application
+-
+    name: Allclean
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # Run from this directory
+
+        # Source tutorial clean functions
+        . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+        cleanCase
+        rm -f constant/polyMesh/boundary > /dev/null 2>&1
+-
+    name: prostar
+    type: [path, 7z]
+    permission: null
+    data: static/nacaAirfoil-prostar.7z
+---
+pipeline:
+    - star3ToFoam prostar/nacaAirfoil
+    - changeDictionary
+    - __app__
