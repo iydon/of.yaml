@@ -31,7 +31,7 @@
     <a href="https://github.com/iydon/of.yaml"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/iydon/of.yaml">View Demo</a>
+    <a href="https://github.com/iydon/of.yaml-template">View Demo</a>
     ·
     <a href="https://github.com/iydon/of.yaml/issues">Report Bug</a>
     ·
