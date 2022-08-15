@@ -28,7 +28,7 @@
   <p align="center">
     Python Interface to OpenFOAM (Configured Using YAML)
     <br />
-    <a href="https://github.com/iydon/of.yaml"><strong>Explore the docs »</strong></a>
+    <a href="https://ifoam.readthedocs.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/iydon/of.yaml-template">View Demo</a>
