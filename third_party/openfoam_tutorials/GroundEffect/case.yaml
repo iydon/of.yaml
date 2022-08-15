@@ -1,0 +1,277 @@
+---
+openfoam: [2.3.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    U:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volVectorField
+            object: U
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (10 0 0)
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: freestream
+                freestreamValue: $internalField
+            wing:
+                type: fixedValue
+                value: uniform (0 0 0)
+            ground:
+                type: fixedValue
+                value: $internalField
+    epsilon:
+        FoamFile:
+            class: volScalarField
+            object: epsilon
+            <<: *FoamFile
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 0.000765
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: freestream
+                freestreamValue: uniform 0.000765
+            wing:
+                type: epsilonWallFunction
+                value: uniform 0
+            ground:
+                type: epsilonWallFunction
+                value: uniform 0
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0.00325
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: freestream
+                freestreamValue: uniform 0.00325
+            wing:
+                type: kqRWallFunction
+                value: uniform 0
+            ground:
+                type: kqRWallFunction
+                value: uniform 0
+    nuTilda:
+        FoamFile:
+            class: volScalarField
+            object: nuTilda
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: freestream
+                freestreamValue: uniform 0
+            wing:
+                type: zeroGradient
+            ground:
+                type: zeroGradient
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: freestream
+                freestreamValue: uniform 0.14
+            wing:
+                type: nutkWallFunction
+                value: uniform 0
+            ground:
+                type: nutkWallFunction
+                value: uniform 0
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            frontAndBack:
+                type: empty
+            domain_boundary:
+                type: zeroGradient
+            wing:
+                type: zeroGradient
+            ground:
+                type: zeroGradient
+constant:
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: kEpsilon
+        turbulence: on
+        printCoeffs: on
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [ 0 2 -1 0 0 0 0 ] 1e-05
+        CrossPowerLawCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            m: m [ 0 0 1 0 0 0 0 ] 1
+            n: n [ 0 0 0 0 0 0 0 ] 1
+        BirdCarreauCoeffs:
+            nu0: nu0 [ 0 2 -1 0 0 0 0 ] 1e-06
+            nuInf: nuInf [ 0 2 -1 0 0 0 0 ] 1e-06
+            k: k [ 0 0 1 0 0 0 0 ] 0
+            n: n [ 0 0 0 0 0 0 0 ] 1
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RASModel
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        dictionaryReplacement:
+            boundary:
+                frontAndBack:
+                    type: empty
+                    physicalType: empty
+                wing:
+                    type: wall
+                    physicalType: wall
+                ground:
+                    type: wall
+                    physicalType: wall
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        applicationClass: pimpleFoam
+        startFrom: latestTime
+        startTime: 0
+        endTime: 1
+        stopAt: endTime
+        deltaT: 1
+        writeControl: adjustableRunTime
+        writeInterval: 0.01
+        cycleWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: uncompressed
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 5
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: Gauss upwind  # Gauss linearUpwind leastSquares
+            # div(phi, U): Gauss linearUpwind grad(U)
+            # div(phi, nuTilda): limitedLinear 1
+            # div(phi, k): limitedLinear 1
+            # div(phi, omega): limitedLinear 1
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited 1
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        # The following variables must have line numbers of 17-18.
+        myPTolerance: 1e-2
+        myUTolerance: 1e-5
+        myTurbTolerance: 1e-6
+        myRelaxation: 1
+        solvers:
+            (p|pFinal|pcorr):
+                solver: GAMG
+                mergeLevels: 1
+                smoother: GaussSeidel
+                agglomerator: faceAreaPair
+                nCellsInCoarsestLevel: 1500
+                tolerance: $myPTolerance
+                relTol: 0.1
+            (k|kFinal|omega|omegaFinal|epsilon|epsilonFinal|nuTilda|nuTildaFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel
+                # preconditioner: DILU
+                tolerance: $myTurbTolerance
+                relTol: 0.1
+            (U|UFinal):
+                solver: smoothSolver  # PBiCG
+                smoother: GaussSeidel
+                # preconditioner: DILU
+                tolerance: $myUTolerance
+                relTol: 0.1
+        PIMPLE:
+            correctPhi: no
+            nOuterCorrectors: 1
+            nCorrectors: 3
+            nNonOrthogonalCorrectors: 1
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            fields:
+                p: $myRelaxation
+            equations:
+                k: $myRelaxation
+                U: $myRelaxation
+                omega: $myRelaxation
+                epsilon: $myRelaxation
+                nuTilda: $myRelaxation
+---
+-
+    name: mesh
+    type: [path, raw]
+    permission: null
+    data: mesh
+---
+pipeline:
+    - gmsh mesh/main.geo -3 -o test.msh
+    - gmshToFoam test.msh
+    - changeDictionary
+    - __app__
