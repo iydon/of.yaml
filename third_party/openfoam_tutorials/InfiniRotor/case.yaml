@@ -1,0 +1,446 @@
+---
+openfoam: [4.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    U:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volVectorField
+            object: U
+        Uinlet: (0 0 -2)
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform $Uinlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $Uinlet
+            outlet:
+                type: pressureInletOutletVelocity
+                value: uniform $Uinlet
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        kInlet: 0.02
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform $kInlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $kInlet
+            outlet:
+                type: inletOutlet
+                inletValue: uniform $kInlet
+                value: uniform $kInlet
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            inlet:
+                type: calculated
+                value: uniform 0
+            outlet:
+                type: calculated
+                value: uniform 0
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    omega:
+        FoamFile:
+            class: volScalarField
+            object: omega
+            <<: *FoamFile
+        omegaInlet: 10.0
+        dimensions: "[0 0 -1 0 0 0 0]"
+        internalField: uniform $omegaInlet
+        boundaryField:
+            inlet:
+                type: fixedValue
+                value: uniform $omegaInlet
+            outlet:
+                type: inletOutlet
+                inletValue: uniform $omegaInlet
+                value: uniform $omegaInlet
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            inlet:
+              type: zeroGradient
+            outlet:
+              type: fixedValue
+              value: uniform 0
+            "#includeEtc": >
+                "caseDicts/setConstraintTypes"
+constant:
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: "[0 2 -1 0 0 0 0] 1.5e-05"
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RAS
+        RAS:
+            RASModel: kOmegaSST
+            turbulence: on
+            printCoeffs: on
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        boundary:
+          symmetry:
+            type: symmetry
+            physicalType: symmetry
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        application: simpleFoam
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 2000
+        deltaT: 1
+        writeControl: timeStep
+        writeInterval: 50
+        purgeWrite: 0
+        writeFormat: binary
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+    decomposeParDict:
+        FoamFile:
+            class: dictionary
+            object: decomposeParDict
+            <<: *FoamFile
+        numberOfSubdomains: 4
+        method: simple
+        simpleCoeffs:
+            n: (1 1 4)
+            delta: 0.001
+        hierarchicalCoeffs:
+            n: (2 2 1)
+            delta: 0.001
+            order: xyz
+    fvOptions:
+        FoamFile:
+            class: dictionary
+            object: fvOptions
+            <<: *FoamFile
+        disk:
+            type: rotorDisk
+            active: on
+            rotorDiskCoeffs:
+                selectionMode: cellZone
+                cellZone: rotatingZone
+                fields: (U)  # Names of fields on which to apply source
+                nBlades: 2  # Number of blades
+                tipEffect: 1.0  # Normalised radius above which lift = 0
+                # I modified the source to enable opposite rotation (as in a coax configuration)
+                # Simply flip sign on rpm to get opposite rotation.
+                rpm: 9000
+                rhoRef: 1.18
+                inletFlowType: local  # Inlet flow type specification
+                geometryMode: specified
+                origin: (0 0 0)
+                axis: (0 0 1)
+                refDirection: (0 1 0)  # Reference direction
+                                       # - used as reference for psi angle
+                trimModel: fixedTrim  # fixed || targetForce
+                fixedTrimCoeffs:
+                    theta0: 0
+                    theta1c: 0
+                    theta1s: 0
+                flapCoeffs:
+                    beta0: 0  # Coning angle [deg]
+                    beta1c: 0  # Lateral flapping coeff (cos coeff)
+                    beta2s: 0  # Longitudinal flapping coeff (sin coeff)
+                blade:
+                    data:
+                        - (profile1 (0 0 0))
+                        - (profile1 (0.0762 25  0.038))
+                        - (profile1 (0.2032 5   0.0125))
+                profiles:
+                    profile1:
+                        type: lookup
+                        data:
+                            - (-90 1.0 0.0)
+                            - (-25 1.0 0.0)
+                            - (-18 0.21 -1.45)
+                            - (-16 0.165 -1.3)
+                            - (-14 0.125 -1.1)
+                            - (-12 0.092 -0.95)
+                            - (-10 0.07 -0.8)
+                            - (-8 0.05 -0.64)
+                            - (-6 0.04 -0.5)
+                            - (-4 0.028 -0.32)
+                            - (-2 0.022 -0.18)
+                            - (0 0.02 0)
+                            - (2 0.022 0.18)
+                            - (4 0.028 0.32)
+                            - (6 0.04 0.5)
+                            - (8 0.05 0.64)
+                            - (10 0.07 0.8)
+                            - (12 0.092 0.95)
+                            - (14 0.125 1.1)
+                            - (16 0.165 1.3)
+                            - (18 0.21 1.45)
+                            - (25 1.0 0.0)
+                            - (90 1.0 0.0)
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: steadyState
+        gradSchemes:
+            default: Gauss linear
+            limited: cellLimited Gauss linear 1
+            grad(U): $limited
+            grad(k): $limited
+            grad(omega): $limited
+        divSchemes:
+            default: none
+            # div(phi, U): bounded Gauss upwind
+            div(phi, U): bounded Gauss linearUpwind unlimited
+            turbulence: bounded Gauss upwind
+            #  turbulence: bounded Gauss linearUpwind limited
+            div(phi, k): $turbulence
+            div(phi, omega): $turbulence
+            div(phi, epsilon): $turbulence
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+            div((nuEff*dev2(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        wallDist:
+            method: meshWave
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:  # iteration stopping criteria
+            p:
+                solver: GAMG
+                smoother: GaussSeidel
+                tolerance: 1e-9
+                relTol: 0.1
+            U:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-9
+                relTol: 0.1
+            (k|omega|epsilon):
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-9
+                relTol: 0.1
+        SIMPLE:  # global stopping criteria
+            nNonOrthogonalCorrectors: 1
+            consistent: yes
+            residualControl:
+                U: 1e-3
+                p: 1e-3
+                (k|epsilon|omega): 1e-3
+        relaxationFactors:  # stability criteria
+            equations:
+                U: 0.6
+                (k|omega|epsilon): 0.95
+---
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+
+        gmsh -3 mesh/main.geo && \
+        gmshToFoam mesh/main.msh && \
+        changeDictionary && \
+        simpleFoam
+-
+    name: AllrunPar
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+
+        gmsh -3 mesh/main.geo && \
+          gmshToFoam mesh/main.msh && \
+          changeDictionary && \
+          decomposePar && \
+          mpirun -np 4 simpleFoam -parallel && \
+          reconstructPar -latestTime
+-
+    name: Allclean
+    type: [embed, text]
+    permission: 777
+    data: |
+        rm mesh/*.msh log
+        rm -r constant/polyMesh
+        rm -r 1* 2* 3* 4* 5* 6* 7* 8* 9*
+        rm -r proc*
+-
+    name: mesh/main.geo
+    type: [embed, text]
+    permission: null
+    data: |
+        diameter = 16 * 0.0254;
+        separation = 1.2; // normalized by diameter
+
+        rotorLc = 0.02 * diameter;
+        symmetryLc = separation * rotorLc;
+        farDistance = 5.0 * diameter;
+        farLayers = 22;
+        farProgression = 1.2;
+
+        radius = 0.5 * diameter;
+        symmetryRadius = 0.5 * separation * diameter;
+
+        ce = 0;
+
+        Point(ce++) = {0, 0, 0, rotorLc}; c = ce;
+
+        Point(ce++) = {radius, 0, 0, rotorLc}; p = ce;
+        Point(ce++) = {0, radius, 0, rotorLc};
+        Point(ce++) = {-radius, 0, 0, rotorLc};
+        Point(ce++) = {0, -radius, 0, rotorLc};
+
+        Circle(ce++) = {p, c, p + 1}; l = ce;
+        Circle(ce++) = {p + 1, c, p + 2};
+        Circle(ce++) = {p + 2, c, p + 3};
+        Circle(ce++) = {p + 3, c, p};
+
+        Line Loop(ce++) = {l: l + 3}; rotorLoop = ce;
+        Plane Surface(ce++) = rotorLoop; rotorSurface = ce;
+        Recombine Surface{rotorSurface};
+
+        Point(ce++) = {symmetryRadius, symmetryRadius, 0, symmetryLc}; p = ce;
+        Point(ce++) = {-symmetryRadius, symmetryRadius, 0, symmetryLc};
+        Point(ce++) = {-symmetryRadius, -symmetryRadius, 0, symmetryLc};
+        Point(ce++) = {symmetryRadius, -symmetryRadius, 0, symmetryLc};
+
+        Line(ce++) = {p, p + 1}; l = ce;
+        Line(ce++) = {p + 1, p + 2};
+        Line(ce++) = {p + 2, p + 3};
+        Line(ce++) = {p + 3, p};
+
+        Line Loop(ce++) = {l: l + 3}; symmetryLoop = ce;
+        Plane Surface(ce++) = {symmetryLoop, rotorLoop}; symmetrySurface = ce;
+        Recombine Surface{symmetrySurface};
+
+        inlet[] = {};
+        outlet[] = {};
+        symmetry[] = {};
+        domainVolumes[] = {};
+
+        // extrusion data
+        ones[] = {1};
+        layer = 1.0 / ((1.0 - farProgression^farLayers) / (1.0 - farProgression));
+        layers[] = {layer};
+        h = layer;
+        For k In {2:farLayers}
+          ones[] += {1};
+          layer *= farProgression;
+          h += layer;
+          layers[] += {h};
+        EndFor
+        // Bottom layer
+        rotorEntities[] = Extrude {0, 0, -farDistance}
+        {
+          Surface{rotorSurface};
+          Layers{ones[], layers[]};
+          Recombine;
+        };
+        farEntities[] = Extrude {0, 0, -farDistance}
+        {
+          Surface{symmetrySurface};
+          Layers{ones[], layers[]};
+          Recombine;
+        };
+        domainVolumes[] += {rotorEntities[1], farEntities[1]};
+        symmetry[] += {farEntities[{2, 3, 4, 5}]};
+        outlet[] += {rotorEntities[0], farEntities[0]};
+        // Middle layer
+        rotorEntities[] = Extrude {0, 0, rotorLc}
+        {
+          Surface{rotorSurface};
+          Layers{1};
+          Recombine;
+        };
+        farEntities[] = Extrude {0, 0, rotorLc}
+        {
+          Surface{symmetrySurface};
+          Layers{1};
+          Recombine;
+        };
+        Physical Volume("rotatingZone") = {rotorEntities[1]};
+        symmetry[] += {farEntities[{2, 3, 4, 5}]};
+        domainVolumes[] += {farEntities[1]};
+        // Top layer
+        rotorEntities[] = Extrude {0, 0, farDistance}
+        {
+          Surface{rotorEntities[0]};
+          Layers{ones[], layers[]};
+          Recombine;
+        };
+        farEntities[] = Extrude {0, 0, farDistance}
+        {
+          Surface{farEntities[0]};
+          Layers{ones[], layers[]};
+          Recombine;
+        };
+        domainVolumes[] += {rotorEntities[1], farEntities[1]};
+        symmetry[] += {farEntities[{2, 3, 4, 5}]};
+        inlet[] += {rotorEntities[0], farEntities[0]};
+
+        Physical Surface("symmetry") = {symmetry[]};
+        Physical Surface("inlet") = {inlet[]};
+        Physical Surface("outlet") = {outlet[]};
+
+        Physical Volume("domainVolume") = {domainVolumes[]};
+---
+pipeline:
+    - gmsh -3 mesh/main.geo
+    - gmshToFoam mesh/main.msh
+    - changeDictionary
+    - decomposePar
+    - __app__
+    - reconstructPar
