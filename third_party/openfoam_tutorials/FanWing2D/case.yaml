@@ -1,0 +1,540 @@
+---
+openfoam: [2.4.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    include:
+        ami:
+            FoamFile: null
+            ami00:
+                type: cyclicAMI
+                value: $internalField
+            ami01:
+                type: cyclicAMI
+                value: $internalField
+            # ami10:
+            #     type: cyclicAMI
+            #     value: $internalField
+            # ami11:
+            #     type: cyclicAMI
+            #     value: $internalField
+            defaultFaces:
+                type: empty
+    U:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volVectorField
+            object: U
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (18 0 0)
+        boundaryField:
+            shaft0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            singleBlade:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            blades0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            cap0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            baffle:
+                type: fixedValue
+                value: uniform (0 0 0)
+            plate:
+                type: fixedValue
+                value: uniform (0 0 0)
+            casing:
+                type: fixedValue
+                value: uniform (0 0 0)
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: inletOutlet
+                inletValue: uniform (0 0 0)
+                value: $internalField
+            tunnel:
+                type: fixedValue
+                value: uniform (0 0 0)
+            symmetry:
+                type: symmetryPlane
+            "#include": |
+                "include/ami"
+    U~:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (15 0 0)
+        boundaryField:
+            shaft0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            singleBlade:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            blades0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            cap0:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+            baffle:
+                type: fixedValue
+                value: uniform (0 0 0)
+            plate:
+                type: fixedValue
+                value: uniform (0 0 0)
+            casing:
+                type: fixedValue
+                value: uniform (0 0 0)
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: inletOutlet
+                inletValue: uniform (0 0 0)
+                value: $internalField
+            tunnel:
+                type: fixedValue
+                value: uniform (0 0 0)
+            symmetry:
+                type: symmetryPlane
+            "#include": |
+                "include/ami"Z
+    nuTilda:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 6e-5
+        boundaryField:
+            shaft0:
+                type: fixedValue
+                value: uniform 0
+            singleBlade:
+                type: fixedValue
+                value: uniform 0
+            blades0:
+                type: fixedValue
+                value: uniform 0
+            cap0:
+                type: fixedValue
+                value: uniform 0
+            baffle:
+                type: fixedValue
+                value: uniform 0
+            plate:
+                type: fixedValue
+                value: uniform 0
+            casing:
+                type: fixedValue
+                value: uniform 0
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: inletOutlet
+                inletValue: $internalField
+                value: $internalField
+            tunnel:
+                type: fixedValue
+                value: uniform 0
+            symmetry:
+                type: symmetryPlane
+            "#include": |
+                "include/ami"
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 1.5e-5
+        boundaryField:
+            shaft0:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            singleBlade:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            blades0:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            cap0:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            baffle:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            plate:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            casing:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            inlet:
+                type: calculated
+                value: $internalField
+            outlet:
+                type: calculated
+                value: $internalField
+            tunnel:
+                type: nutUSpaldingWallFunction
+                value: uniform 0
+            symmetry:
+                type: symmetryPlane
+            "#include": |
+                "include/ami"
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            shaft0:
+                type: zeroGradient
+            singleBlade:
+                type: zeroGradient
+            blades0:
+                type: zeroGradient
+            cap0:
+                type: zeroGradient
+            baffle:
+                type: zeroGradient
+            plate:
+                type: zeroGradient
+            casing:
+                type: zeroGradient
+            inlet:
+                type: zeroGradient
+            outlet:
+                type: fixedValue
+                value: uniform 0
+            tunnel:
+                type: zeroGradient
+            symmetry:
+                type: symmetryPlane
+            "#include": |
+                "include/ami"
+constant:
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: SpalartAllmaras
+        turbulence: on
+        printCoeffs: on
+    dynamicMeshDict:
+        FoamFile:
+            class: dictionary
+            object: dynamicMeshDict
+            <<: *FoamFile
+        dynamicFvMesh: solidBodyMotionFvMesh
+        motionSolverLibs:
+            - |
+                "libfvMotionSolvers.so"
+        solidBodyMotionFvMeshCoeffs:
+            cellZone: rotorVolume0
+            solidBodyMotionFunction: rotatingMotion
+            rotatingMotionCoeffs:
+                origin: (0 0 0)
+                axis: (0 0 -1)
+                omega: 250  # rad/s
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [ 0 2 -1 0 0 0 0 ] 1.568e-5
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RASModel
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        dictionaryReplacement:
+            boundary:
+                ami00:
+                    type: cyclicAMI
+                    physicalType: cyclicAMI
+                    neighbourPatch: ami01
+                ami01:
+                    type: cyclicAMI
+                    physicalType: cyclicAMI
+                    neighbourPatch: ami00
+                casing:
+                    type: wall
+                    physicalType: wall
+                tunnel:
+                    type: wall
+                    physicalType: wall
+                singleBlade:
+                    type: wall
+                    physicalType: wall
+                blades0:
+                    type: wall
+                    physicalType: wall
+                shaft0:
+                    type: wall
+                    physicalType: wall
+                defaultFaces:
+                    type: empty
+                    physicalType: empty
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        applicationClass: pimpleDyMFoam
+        startFrom: latestTime
+        startTime: 0
+        endTime: 4
+        stopAt: endTime
+        deltaT: 1
+        writeControl: adjustableRunTime
+        writeInterval: 0.001
+        cycleWrite: 0
+        writeFormat: ascii
+        writePrecision: 6
+        writeCompression: uncompressed
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 1
+        maxDeltaT: 1
+        libs:
+            - |
+                "libforces.so"
+        functions:
+            rotor0:
+                patches: (blades0 singleBlade shaft0 cap0)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            blades0:
+                patches: (blades0 singleBlade)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            shaft0:
+                patches: (shaft0)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            cap0:
+                patches: (cap0)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            singleBlade:
+                patches: (singleBlade)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+                # Total: stuff
+            total:
+                patches: (casing blades0 shaft0 cap0 singleBlade plate baffle)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            stator:
+                patches: (casing plate baffle)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            baffle:
+                patches: (baffle)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+            plate:
+                patches: (plate)
+                CofR: (0 0 0)  # Origin for moment calculations
+                outputControl: timeStep
+                outputInterval: 5
+                type: forces
+                functionObjectLibs:
+                    - |
+                        "libforces.so"
+                pName: p
+                UName: U
+                rhoName: rhoInf
+                rhoInf: 1.225
+                log: true
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+            grad(p): Gauss linear
+            grad(U): Gauss linear
+        divSchemes:
+            default: none  # Gauss linearUpwind leastSquares
+            # div(phi, U): Gauss linearUpwind grad(U)
+            div(phi, U): Gauss upwind
+            # div(phi, U): Gauss linearUpwind leastSquares  # upwind  # linearUpwind grad(U)
+            div(phi, nuTilda): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, k): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, omega): Gauss upwind  # linearUpwind leastSquares  # upwind  # limitedLinear 1
+            div(phi, epsilon): Gauss upwind  # linearUpwind leastSquares  # upwind
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited 1
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: corrected
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        myPTolerance: 1e-4
+        myTolerance: 1e-10
+        myRelaxation: 1
+        solvers:
+            (p|pFinal|pcorr):
+                solver: GAMG
+                mergeLevels: 1
+                smoother: GaussSeidel
+                agglomerator: faceAreaPair
+                nCellsInCoarsestLevel: 1500
+                tolerance: $myPTolerance
+                relTol: 0
+            (U|UFinal|k|kFinal|omega|omegaFinal|epsilon|epsilonFinal|nuTilda|nuTildaFinal):  # epsilon|R
+               solver: smoothSolver  # PBiCG
+               smoother: GaussSeidel
+               # preconditioner: DILU
+               tolerance: $myTolerance
+               relTol: 0
+        PIMPLE:
+            correctPhi: no
+            nOuterCorrectors: 1
+            nCorrectors: 3
+            nNonOrthogonalCorrectors: 1
+            pRefCell: 0
+            pRefValue: 0
+        relaxationFactors:
+            fields:
+                p: $myRelaxation
+            equations:
+                k: $myRelaxation
+                U: $myRelaxation
+                omega: $myRelaxation
+                epsilon: $myRelaxation
+                nuTilda: $myRelaxation
+---
+-
+    name: mesh
+    type: [path, raw]
+    permission: null
+    data: mesh
+---
+pipeline:
+    - gmsh mesh/main.geo -3 -o test.msh
+    - gmshToFoam test.msh
+    - changeDictionary
+    - __app__
