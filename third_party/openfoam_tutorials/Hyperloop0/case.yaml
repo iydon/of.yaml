@@ -1,0 +1,198 @@
+---
+openfoam: [2.3.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+"0":
+    T:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: T
+        dimensions: "[0 0 0 1 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            tunnel:
+                type: fixedValue
+                value: $internalField
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: zeroGradient
+            vehicle:
+                # type: zeroGradient
+                type: fixedValue
+                value: $internalField
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0.99 0 0)
+        boundaryField:
+            tunnel:
+                type: fixedValue
+                value: $internalField
+            vehicle:
+                type: fixedValue
+                value: uniform (0 0 0)
+            outlet:
+                type: zeroGradient
+            inlet:
+                type: fixedValue
+                value: $internalField
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[1 -1 -2 0 0 0 0]"
+        internalField: uniform 1
+        boundaryField:
+            tunnel:
+                type: zeroGradient
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: zeroGradient
+            vehicle:
+                type: zeroGradient
+            wedge0:
+                type: wedge
+            wedge1:
+                type: wedge
+constant:
+    thermophysicalProperties:
+        FoamFile:
+            class: dictionary
+            object: thermophysicalProperties
+            <<: *FoamFile
+        thermoType:
+            type: hePsiThermo
+            mixture: pureMixture
+            transport: const
+            thermo: hConst
+            equationOfState: perfectGas
+            specie: specie
+            energy: sensibleInternalEnergy
+        mixture:
+            specie:
+                nMoles: 1
+                molWeight: 28.96
+            thermodynamics:
+                Cp: 1004.5
+                Hf: 2.544e+06
+            transport:
+                mu: 0
+                Pr: 1
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: laminar
+system:
+    changeDictionaryDict:
+        FoamFile:
+            class: dictionary
+            object: changeDictionaryDict
+            <<: *FoamFile
+        dictionaryReplacement:
+            boundary:
+                wedge0:
+                    type: wedge
+                    physicalType: wedge
+                wedge1:
+                    type: wedge
+                    physicalType: wedge
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        applicationClass: rhoCentralFoam
+        startFrom: latestTime
+        startTime: 0
+        endTime: 0.05
+        stopAt: endTime
+        deltaT: 1e-7
+        writeControl: adjustableRunTime
+        writeInterval: 0.0001
+        cycleWrite: 0
+        writeFormat: binary
+        writePrecision: 6
+        writeCompression: uncompressed
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: yes
+        adjustTimeStep: yes
+        maxCo: 1
+        maxDeltaT: 1
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        fluxScheme: Kurganov
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+        divSchemes:
+            default: none
+            div(tauMC): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear corrected
+        interpolationSchemes:
+            default: linear
+            reconstruct(rho): vanLeer
+            reconstruct(U): vanLeerV
+            reconstruct(T): vanLeer
+        snGradSchemes:
+            default: corrected
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            (rho|rhoU|rhoE):
+                solver: diagonal
+            U: &U
+                solver: smoothSolver
+                smoother: GaussSeidel
+                nSweeps: 2
+                tolerance: 1e-09
+                relTol: 0.01
+            h:
+                tolerance: 1e-10
+                relTol: 0
+                <<: *U
+---
+-
+    name: mesh
+    type: [path, raw]
+    permission: 777
+    data: mesh
+---
+pipeline:
+    - gmsh mesh/main.geo -3 -o test.msh
+    - gmshToFoam test.msh
+    - changeDictionary
+    - __app__
