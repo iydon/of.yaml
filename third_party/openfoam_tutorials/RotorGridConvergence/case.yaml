@@ -352,7 +352,7 @@ system:
 -
     name: mesh/main.geo
     type: [embed, text]
-    permission: 777
+    permission: null
     data: |
         //Inputs
         Geometry.Tolerance = 1e-12;

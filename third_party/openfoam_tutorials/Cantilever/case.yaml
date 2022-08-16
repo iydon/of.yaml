@@ -70,9 +70,9 @@ constant:
             class: dictionary
             object: thermalProperties
             <<: *FoamFile
-        # I think these are for Aluminum 6061, but not sure -- 
+        # I think these are for Aluminum 6061, but not sure --
         #  you should double check if you need it.
-        # But anyways I do not think they are needed for our 
+        # But anyways I do not think they are needed for our
         #  tutorial case.
         C:  # Specific Heat, J/kg/K
             type: uniform
@@ -194,13 +194,13 @@ system:
         Point(ce++) = {-thickness,fixed_length,0,coarse_grid_size}; fixed_top_left = ce;
         Point(ce++) = {-thickness-fillet_radius,thickness/2,0,fine_grid_size}; fillet_top_bottom = ce;
         Point(ce++) = {-thickness,thickness/2+fillet_radius,0,fine_grid_size}; fillet_top_top = ce;
-        Point(ce++) = {-thickness-fillet_radius,thickness/2+fillet_radius,0,fine_grid_size}; 
+        Point(ce++) = {-thickness-fillet_radius,thickness/2+fillet_radius,0,fine_grid_size};
         fillet_top_center = ce;
         Point(ce++) = {-free_length,thickness/2,0,coarse_grid_size}; free_top = ce;
         Point(ce++) = {-free_length,-thickness/2,0,coarse_grid_size}; free_bottom = ce;
         Point(ce++) = {-thickness-fillet_radius,-thickness/2,0,fine_grid_size}; fillet_bottom_top = ce;
         Point(ce++) = {-thickness,-thickness/2-fillet_radius,0,fine_grid_size}; fillet_bottom_bottom = ce;
-        Point(ce++) = {-thickness-fillet_radius,-thickness/2-fillet_radius,0,fine_grid_size}; 
+        Point(ce++) = {-thickness-fillet_radius,-thickness/2-fillet_radius,0,fine_grid_size};
         fillet_bottom_center = ce;
         Point(ce++) = {0,-fixed_length,0,coarse_grid_size}; fixed_bottom_right = ce;
         Point(ce++) = {-thickness,-fixed_length,0,coarse_grid_size}; fixed_bottom_left = ce;
@@ -239,7 +239,7 @@ system:
         free_leg_volume = tip_area * (free_length - thickness);
         fixed_leg_volume = tip_area * (fixed_length - thickness);
         corner_volume = tip_area * thickness;
-        bracket_volume = free_leg_volume + fixed_leg_volume + corner_volume; 
+        bracket_volume = free_leg_volume + fixed_leg_volume + corner_volume;
         Printf("Approx. Bracket Weight: %f g", 1e3 * density * bracket_volume);
         Printf("Load Surface Area: %e sq. m.", tip_area);
         I = ( cell_depth * thickness^3 ) / 12;
@@ -253,7 +253,7 @@ system:
         Printf("Analytical Max Stress at Cantilever Distance: %f MPa", sigma / 1e6 );
 ---
 pipeline:
-    - gmsh mesh/cantilever.geo -3 -o cantilever.msh  
+    - gmsh mesh/cantilever.geo -3 -o cantilever.msh
     - gmshToFoam cantilever.msh
     - changeDictionary
     - __app__

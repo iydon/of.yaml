@@ -24,7 +24,7 @@ ups[]={pts2[1],pts2[0],pts1[0],pts0[0]};
 
 blines[]={};
 For kk In {0:#pp[]-2}
-	Line(ce++)={pp[kk],pp[(kk+1)%#pp[]]};blines[]+=ce;
+    Line(ce++)={pp[kk],pp[(kk+1)%#pp[]]};blines[]+=ce;
 EndFor
 olines[]={};
 Line(ce++)={ups[0],pp[0]};olines[]+=ce;

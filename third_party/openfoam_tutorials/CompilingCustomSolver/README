@@ -9,17 +9,17 @@ The tutorial case upon which we will try our new solver comes from the pimpleDyM
 
 OUTLINE:
 -Rename the following files with your new solver name:
-	-Solver folder
-	-Solver main source file (.C)
-	-Application and Source description in the main source file comment header
-	-Change names in 'Make/files'
+    -Solver folder
+    -Solver main source file (.C)
+    -Application and Source description in the main source file comment header
+    -Change names in 'Make/files'
 -Run 'sudo bash' to become super user. This is necessary because you might get permissions errors when trying to create your new solver executable in $(FOAM_APPBIN) as specified in 'Make/files'.
 -Run 'wclean' and 'wmake' in main directory of your new solver.
 -Run 'exit' to leave 'sudo bash'.
 -Run 'mySolver -help' to show that your new compiled custom solver is recognized!
 -Run the tutorial case 'mixerVesselAMI2D' to show that your new solver works! The modifications:
-	-In controlDict, change 'application pimpleDyMFoam' to 'application mySolver'
-	-In controlDict, change 'endTime 5' to 'endTime 1' for a shorter run time.
+    -In controlDict, change 'application pimpleDyMFoam' to 'application mySolver'
+    -In controlDict, change 'endTime 5' to 'endTime 1' for a shorter run time.
 
 NOTE: we have copied various '.H' files into the main directory of this tutorial because the specification of the includes in 'Make/options' are such that these headers need to be in the directory above the solver main directory (via '-I..'). You can of course change this, but this is how it is in the default pimpleDyMFoam solver included in $FOAM_SOLVERS.
 

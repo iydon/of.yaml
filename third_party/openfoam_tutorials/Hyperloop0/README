@@ -3,7 +3,7 @@ Hyperloop Drag Simulation (No Compressor) in OpenFOAM
 All code can be found at: https://github.com/lordvon/OpenFOAM_Tutorials/tree/master/Hyperloop0
 
 DESCRIPTION:
-Here we will perform a simple 2D axisymmetric simulation of a transonic Hyperloop vehicle. Notice that the real Hyperloop (as described in the technical paper available on the SpaceX website) has a compressor at the front of the vehicle to power the air skis and reduce drag. This is not captured here, but could be modeled by a pressure jump actuator disk.  
+Here we will perform a simple 2D axisymmetric simulation of a transonic Hyperloop vehicle. Notice that the real Hyperloop (as described in the technical paper available on the SpaceX website) has a compressor at the front of the vehicle to power the air skis and reduce drag. This is not captured here, but could be modeled by a pressure jump actuator disk.
 
 OUTLINE:
 -Create wedge mesh in Gmsh.

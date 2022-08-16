@@ -118,9 +118,9 @@ system:
             object: changeDictionaryDict
             <<: *FoamFile
         boundary:
-          symmetry:
-            type: symmetry
-            physicalType: symmetry
+            symmetry:
+                type: symmetry
+                physicalType: symmetry
     controlDict:
         FoamFile:
             class: dictionary

@@ -26,34 +26,34 @@ bladeTes[]={};
 bladeLes[]={};
 bladeK1s[]={};
 bladeK2s[]={};
-Point(ce++)={cr-gap,0,0,bladels};						bladeTes[]+=ce;
+Point(ce++)={cr-gap,0,0,bladels};bladeTes[]+=ce;
 angle=180-bladePitch;Call prepTrig;
-Point(ce++)={cr-gap+bladeChord*cs,bladeChord*sn,0,bladels};			bladeLes[]+=ce;
-Point(ce++)={cr-gap+bladeChord/2*cs-k1*sn,bladeChord/2*sn+k1*cs,0,bladels};	bladeK1s[]+=ce;
-Point(ce++)={cr-gap+bladeChord/2*cs-k2*sn,bladeChord/2*sn+k2*cs,0,bladels};	bladeK2s[]+=ce;
+Point(ce++)={cr-gap+bladeChord*cs,bladeChord*sn,0,bladels};bladeLes[]+=ce;
+Point(ce++)={cr-gap+bladeChord/2*cs-k1*sn,bladeChord/2*sn+k1*cs,0,bladels};bladeK1s[]+=ce;
+Point(ce++)={cr-gap+bladeChord/2*cs-k2*sn,bladeChord/2*sn+k2*cs,0,bladels};bladeK2s[]+=ce;
 For k In {0:bladeCount-1}
-	Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeTes[0]};}}
-	ce++;
-	bladeTes[]+=ce;
-	Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeLes[0]};}}
-	ce++;
-	bladeLes[]+=ce;
-	Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeK1s[0]};}}
-	ce++;
-	bladeK1s[]+=ce;
-	Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeK2s[0]};}}
-	ce++;
-	bladeK2s[]+=ce;
+    Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeTes[0]};}}
+    ce++;
+    bladeTes[]+=ce;
+    Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeLes[0]};}}
+    ce++;
+    bladeLes[]+=ce;
+    Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeK1s[0]};}}
+    ce++;
+    bladeK1s[]+=ce;
+    Rotate {{0,0,1},{0,0,0},2*Pi/bladeCount*k} {Duplicata{Point{bladeK2s[0]};}}
+    ce++;
+    bladeK2s[]+=ce;
 EndFor
 
 //Lines
 bladeLoops[]={};
 For k In {0:bladeCount-1}
-	bladeLines[]={};
-	Circle(ce++)={bladeTes[k],bladeK1s[k],bladeLes[k]};bladeLines[]+=ce;
-	Circle(ce++)={bladeLes[k],bladeK2s[k],bladeTes[k]};bladeLines[]+=ce;
-	Line Loop(ce++)=bladeLines[];
-	bladeLoops[]+=ce;
+    bladeLines[]={};
+    Circle(ce++)={bladeTes[k],bladeK1s[k],bladeLes[k]};bladeLines[]+=ce;
+    Circle(ce++)={bladeLes[k],bladeK2s[k],bladeTes[k]};bladeLines[]+=ce;
+    Line Loop(ce++)=bladeLines[];
+    bladeLoops[]+=ce;
 EndFor
 
 surfacesPerBlade=2;
@@ -61,8 +61,8 @@ surfacesPerBlade=2;
 //Rotor Interface
 rotorInterfaceLines[]={};
 For k In {0:3}
-	Circle(ce++)={interfacePoints[k],origin1,interfacePoints[(k+1)%4]};
-	rotorInterfaceLines[]+=ce;
+    Circle(ce++)={interfacePoints[k],origin1,interfacePoints[(k+1)%4]};
+    rotorInterfaceLines[]+=ce;
 EndFor
 Line Loop(ce++)=rotorInterfaceLines[];
 rotorInterfaceLoop=ce;
@@ -70,8 +70,8 @@ rotorInterfaceLoop=ce;
 //Shaft
 shaftLines[]={};
 For k In {0:3}
-	Circle(ce++)={shaftPoints[k],origin1,shaftPoints[(k+1)%4]};
-	shaftLines[]+=ce;
+    Circle(ce++)={shaftPoints[k],origin1,shaftPoints[(k+1)%4]};
+    shaftLines[]+=ce;
 EndFor
 Line Loop(ce++)=shaftLines[];
 shaftLoop=ce;

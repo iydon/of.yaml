@@ -384,9 +384,9 @@ system:
 
         Line(ce++) = {p1, p2 + 3};
 
-        Line Loop(ce++) = {l:l+4, 
+        Line Loop(ce++) = {l:l+4,
         -(l1+2),-(l1+1),-l1,
-        l+5, 
+        l+5,
         -(l2+2),-(l2+1),-l2}; domainLoop = ce;
         Plane Surface(ce++) = {domainLoop, rotorLoop, rotorLoop2}; domainSurface = ce;
         // Recombine Surface{domainSurface};
@@ -500,9 +500,9 @@ system:
 
         Line(ce++) = {p1, p2 + 3};
 
-        Line Loop(ce++) = {l3:l3+4, 
+        Line Loop(ce++) = {l3:l3+4,
         -(l1+2),-(l1+1),-l1,
-        l3+5, 
+        l3+5,
         -(l2+2),-(l2+1),-l2}; auraLoop = ce;
         Plane Surface(ce++) = {auraLoop, rotorLoop, rotorLoop2}; auraSurface = ce;
 
@@ -518,7 +518,7 @@ system:
         Line(ce++) = {p + 2, p + 3};
         Line(ce++) = {p + 3, p3 + 3};
 
-        Line Loop(ce++) = {l:l+4, 
+        Line Loop(ce++) = {l:l+4,
         -(l3+3), -(l3+2), -(l3+1)}; domainLoop = ce;
         Plane Surface(ce++) = {domainLoop, auraLoop}; domainSurface = ce;
 
@@ -551,9 +551,9 @@ system:
             Recombine;
         };
 
-        Physical Surface("wedge0") = {rotorSurface, rotorSurface2, 
+        Physical Surface("wedge0") = {rotorSurface, rotorSurface2,
                                     auraSurface, domainSurface};
-        Physical Surface("wedge1") = {domainEntities[0], auraEntities[0], 
+        Physical Surface("wedge1") = {domainEntities[0], auraEntities[0],
                                     rotorEntities[0], rotorEntities2[0]};
         Physical Surface("inlet") = {domainEntities[4]};
         Physical Surface("tunnel") = {domainEntities[3]};

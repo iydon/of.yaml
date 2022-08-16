@@ -236,7 +236,7 @@ system:
     data: mesh
 ---
 pipeline:
-    - gmsh mesh/mesh.geo -3 -o test.msh  
+    - gmsh mesh/mesh.geo -3 -o test.msh
     - gmshToFoam test.msh
     - changeDictionary
     - decomposePar

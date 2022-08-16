@@ -59,7 +59,7 @@ system:
         Recombine Surface{10};
 
         //Now make 3D by extrusion.
-        newEntities[] = 
+        newEntities[] =
         Extrude { 0,0,1 }
         {
             Surface{10};

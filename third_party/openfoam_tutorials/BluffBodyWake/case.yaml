@@ -233,7 +233,7 @@ system:
             object: controlDict
             <<: *FoamFile
         application: pimpleFoam
-        startFrom: latestTime 
+        startFrom: latestTime
         startTime: 0
         stopAt: endTime
         endTime: 5
@@ -327,7 +327,7 @@ system:
             correctPhi: yes
             # nOuterCorrectors = 1, => PISO (set relaxations to 1).
             nOuterCorrectors: 1
-            # Sufficient nCorrectors is necessary for stability and convergence! 
+            # Sufficient nCorrectors is necessary for stability and convergence!
             nCorrectors: 5
             nNonOrthogonalCorrectors: 1
             pRefCell: 0
@@ -370,7 +370,7 @@ system:
             // the outline of the rectangle is output from this function.
             // In: top_left_corner[] = {}; lc = ; W = ; H = ;
             pts[] = {};
-            Point(ce++) = {top_left_corner[0], top_left_corner[1], 0, lc}; 
+            Point(ce++) = {top_left_corner[0], top_left_corner[1], 0, lc};
             pts[]+=ce;
             Point(ce++) = {top_left_corner[0], top_left_corner[1]-H, 0, lc};
             pts[]+=ce;
@@ -430,7 +430,7 @@ system:
         main_surface = ce;
 
         cell_depth = 0.1;
-        new_entities[] = 
+        new_entities[] =
         Extrude{0,0,cell_depth}
         {
             Surface{main_surface};
@@ -442,7 +442,7 @@ system:
         fan_surface = ce;
 
         cell_depth = 0.1;
-        new_entities2[] = 
+        new_entities2[] =
         Extrude{0,0,cell_depth}
         {
             Surface{fan_surface};
@@ -454,7 +454,7 @@ system:
         Physical Surface("baffle") = {new_entities[10]};
         Physical Surface("inlet") = {new_entities[2]};
         Physical Surface("outlet") = {new_entities[4]};
-        Physical Surface("front_and_back") = {main_surface, new_entities[0], 
+        Physical Surface("front_and_back") = {main_surface, new_entities[0],
         new_entities2[0], fan_surface};
         Physical Surface("tunnel") = {new_entities[{3,5}]};
         Physical Volume("volume") = {new_entities[1], new_entities2[1]};

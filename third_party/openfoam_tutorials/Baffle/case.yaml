@@ -355,7 +355,7 @@ system:
         inner_surface=ce;
 
         //Extrudes.
-        outer_entities[] = 
+        outer_entities[] =
         Extrude { 0,0,celldepth }
         {
             Surface{outer_surface};
@@ -363,7 +363,7 @@ system:
             Recombine;
         };
 
-        inner_entities[] = 
+        inner_entities[] =
         Extrude { 0,0,celldepth }
         {
             Surface{inner_surface};

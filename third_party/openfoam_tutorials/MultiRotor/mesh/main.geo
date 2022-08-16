@@ -65,13 +65,13 @@ For k In {2:farLayers}
   layers[] += {h};
 EndFor
 // Bottom layer
-rotorEntities[] = Extrude {0, 0, -farDistance} 
+rotorEntities[] = Extrude {0, 0, -farDistance}
 {
   Surface{rotorSurface};
   Layers{ones[], layers[]};
   Recombine;
 };
-farEntities[] = Extrude {0, 0, -farDistance} 
+farEntities[] = Extrude {0, 0, -farDistance}
 {
   Surface{farSurface};
   Layers{ones[], layers[]};
@@ -82,13 +82,13 @@ symmetry[] += {farEntities[{2, 4, 5, 6}]};
 slip[] += {farEntities[3]};
 outlet[] += {rotorEntities[0], farEntities[0]};
 // Middle layer
-rotorEntities[] = Extrude {0, 0, rotorLc} 
+rotorEntities[] = Extrude {0, 0, rotorLc}
 {
   Surface{rotorSurface};
   Layers{1};
   Recombine;
 };
-farEntities[] = Extrude {0, 0, rotorLc} 
+farEntities[] = Extrude {0, 0, rotorLc}
 {
   Surface{farSurface};
   Layers{1};
@@ -99,13 +99,13 @@ symmetry[] += {farEntities[{2, 4, 5, 6}]};
 slip[] += {farEntities[3]};
 domainVolumes[] += {farEntities[1]};
 // Top layer
-rotorEntities[] = Extrude {0, 0, farDistance} 
+rotorEntities[] = Extrude {0, 0, farDistance}
 {
   Surface{rotorEntities[0]};
   Layers{ones[], layers[]};
   Recombine;
 };
-farEntities[] = Extrude {0, 0, farDistance} 
+farEntities[] = Extrude {0, 0, farDistance}
 {
   Surface{farEntities[0]};
   Layers{ones[], layers[]};
@@ -116,8 +116,8 @@ symmetry[] += {farEntities[{2, 4, 5, 6}]};
 slip[] += {farEntities[3]};
 inlet[] += {rotorEntities[0], farEntities[0]};
 
-Physical Surface("tunnel") = {slip[]}; 
-Physical Surface("symmetry") = {symmetry[]}; 
+Physical Surface("tunnel") = {slip[]};
+Physical Surface("symmetry") = {symmetry[]};
 Physical Surface("inlet") = {inlet[]};
 Physical Surface("outlet") = {outlet[]};
 

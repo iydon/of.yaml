@@ -364,7 +364,7 @@ system:
 -
     name: mesh.geo
     type: [embed, text]
-    permission: 777
+    permission: null
     data: |
         //Inputs
         vehicle_diameter = 0.198;
@@ -410,7 +410,7 @@ system:
         // Return
 
         // p1 = t1;
-        // p2 = t2;   
+        // p2 = t2;
         // Call direction;
         // c1[] = Boundary{Point{t1};};
         // Point(ce++) = {};
@@ -446,9 +446,9 @@ system:
 
         Plane Surface(ce++) = ce-1;surf=ce;
 
-        // Point(ce++) = {-shock_grid_line_distance, 0.001, 0, vehicle_gridsize}; 
+        // Point(ce++) = {-shock_grid_line_distance, 0.001, 0, vehicle_gridsize};
         // spt1 = ce;
-        // Point(ce++) = {-shock_grid_line_distance, shock_grid_line_length, 0, 
+        // Point(ce++) = {-shock_grid_line_distance, shock_grid_line_length, 0,
         //     vehicle_gridsize}; spt2 = ce;
         // Line(ce++) = {spt1, spt2}; sln = ce;
         // Point{spt2} In Surface{surf};
@@ -474,7 +474,7 @@ system:
         Physical Volume("volume") = {new_entities[1]};
 ---
 pipeline:
-    - gmsh mesh.geo -3 -o test.msh 
+    - gmsh mesh.geo -3 -o test.msh
     - gmshToFoam test.msh
     - changeDictionary
     - __app__

@@ -102,28 +102,28 @@ PACKAGE CONTENTS
 CLASSES
     builtins.object
         foam.base.core.Foam
-    
+
     class Foam(builtins.object)
      |  Foam(data: List[Dict[str, Any]], root: Union[str, pathlib.Path]) -> None
-     |  
+     |
      |  Convert multiple dictionary type data to OpenFOAM test case
-     |  
+     |
      |  Example:
      |      >>> foam = Foam.from_file('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
      |      >>> foam['foam']['system', 'controlDict', 'endTime'] = 700
      |      >>> foam.save('airFoil2D')
      |      >>> foam.cmd.all_run()
-     |  
+     |
      |  Methods defined here:
-     |  
+     |
      |  __getitem__(self, key: str) -> Union[ForwardRef('Data'), NoneType]
-     |  
+     |
      |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path]) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
-     |  
+     |
      |  __repr__(self) -> str
      |      Return repr(self).
-     |  
+     |
      |  application = <functools.cached_property object>
      |  environ = <functools.cached_property object>
      |  fields = <functools.cached_property object>
@@ -131,51 +131,51 @@ CLASSES
      |  number_of_processors = <functools.cached_property object>
      |  pipeline = <functools.cached_property object>
      |  reset(self) -> 'Foam'
-     |  
+     |
      |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> 'Foam'
      |      Persist case to hard disk
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
-     |  
+     |
      |  as_placeholder() -> 'Foam' from builtins.type
-     |  
+     |
      |  from_file(path: Union[str, pathlib.Path]) -> 'Foam' from builtins.type
      |      Supported format: json, yaml
-     |  
+     |
      |  from_json(text: str, root: Union[str, pathlib.Path]) -> 'Foam' from builtins.type
-     |  
+     |
      |  from_yaml(text: str, root: Union[str, pathlib.Path]) -> 'Foam' from builtins.type
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
-     |  
+     |
      |  cmd
      |      `app.command.Command`
-     |  
+     |
      |  info
      |      `app.information.Information`
-     |  
+     |
      |  meta
      |      Meta information
-     |  
+     |
      |  post
      |      `app.postprocess.PostProcess`
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Data descriptors defined here:
-     |  
+     |
      |  __dict__
      |      dictionary for instance variables (if defined)
-     |  
+     |
      |  __weakref__
      |      list of weak references to the object (if defined)
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Data and other attributes defined here:
-     |  
+     |
      |  Self = 'Foam'
-     |  
+     |
      |  parse = <foam.base.parse.Parser object>
 
 DATA

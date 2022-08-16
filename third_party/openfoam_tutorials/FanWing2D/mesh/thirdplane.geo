@@ -26,19 +26,19 @@ tmp[]=Boundary{Surface{newbase};};
 periphery3[]=tmp[{4:10}];
 ubs[]=surf[{0:3}];
 For nn In {0:3}
-	tmp[]=Boundary{Surface{surf[nn]};};
-	ubc[nn]=tmp[1];
-	uboundlines3[nn]=tmp[2];
+    tmp[]=Boundary{Surface{surf[nn]};};
+    ubc[nn]=tmp[1];
+    uboundlines3[nn]=tmp[2];
 EndFor
 /*
 l=wtBoundDim[2]-span;
 c=extCells;
 For nnn In {0:8}
-	p=extProgression;
-	b=capSurfaces[5+nnn];
-	Call myExtrusion;
-	tunnelSurfaces[]+=newbase;
-	statorVolumes[]+=vol;
+    p=extProgression;
+    b=capSurfaces[5+nnn];
+    Call myExtrusion;
+    tunnelSurfaces[]+=newbase;
+    statorVolumes[]+=vol;
 EndFor
 
 b=nearSurface;

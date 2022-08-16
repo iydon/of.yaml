@@ -258,7 +258,7 @@ system:
 -
     name: mesh/main.geo
     type: [embed, text]
-    permission: 777
+    permission: null
     data: |
         //Inputs (units are metric)
         cylinder_radius = 0.1;
@@ -333,35 +333,35 @@ system:
 
         Plane Surface(40) = {39,30};
 
-        new_entities1[] = 
+        new_entities1[] =
         Extrude{0,0,cell_depth}
         {
             Surface{26};
             Layers{1};
             Recombine;
         };
-        new_entities2[] = 
+        new_entities2[] =
         Extrude{0,0,cell_depth}
         {
             Surface{27};
             Layers{1};
             Recombine;
         };
-        new_entities3[] = 
+        new_entities3[] =
         Extrude{0,0,cell_depth}
         {
             Surface{28};
             Layers{1};
             Recombine;
         };
-        new_entities4[] = 
+        new_entities4[] =
         Extrude{0,0,cell_depth}
         {
             Surface{29};
             Layers{1};
             Recombine;
         };
-        new_entities5[] = 
+        new_entities5[] =
         Extrude{0,0,cell_depth}
         {
             Surface{40};

@@ -14,7 +14,7 @@ lipAngles[0]=20*dtr;
 outlipspan=10*dtr;
 lipAngles[1]=lipAngles[0]+outlipspan;
 plateAngle[]={50*dtr,80*dtr};//rad, {disk location, corner location}
-plateGridAdapt=0.5;//non-dimensional length of point along the top plate line for grid reasons. 
+plateGridAdapt=0.5;//non-dimensional length of point along the top plate line for grid reasons.
 plateSpline1[]={0.02*cr,1.05*cr};
 plateSpline2[]={1.1*cr,0.1*cr};
 
@@ -25,12 +25,12 @@ uBoundAdaptAdjustments[]={0.0*cr,0.0*cr};//added to {uBoundAdapt[1],uBoundAdapt[
 
 
 ept=0.007;//m, end plate thickness
-epx[]={-cr/3,	-cr/3,	
-	0.8*cr,	1.2*cr,
-	2.0*cr,		1.6*cr,	0*cr};
-epy[]={-cr/2,	-cr/3,	
-	0.3*cr,	0.3*cr,
-	-0.4*cr,	-0.9*cr,-0.75*cr};
+epx[]={-cr/3,-cr/3,
+    0.8*cr,1.2*cr,
+    2.0*cr,1.6*cr,0*cr};
+epy[]={-cr/2,-cr/3,
+    0.3*cr,0.3*cr,
+    -0.4*cr,-0.9*cr,-0.75*cr};
 plateDim[]={0.5*uBoundDim[0],0.5*uBoundDim[1]};
 outerplatels=cr/7;
 

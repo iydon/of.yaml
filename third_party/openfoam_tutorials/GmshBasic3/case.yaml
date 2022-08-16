@@ -293,7 +293,7 @@ system:
 
         Recombine Surface{10};
 
-        newEntities[] = 
+        newEntities[] =
         Extrude{0,0,depth}
         {
             Surface{10};

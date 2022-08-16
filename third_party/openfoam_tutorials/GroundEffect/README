@@ -3,7 +3,7 @@ Ground Effect Vehicle Airfoil Simulation in OpenFOAM
 All code can be found at: https://github.com/lordvon/OpenFOAM_Tutorials/tree/master/GroundEffect
 
 DESCRIPTION:
-Here we will be doing a simple 2D simulation of a ground effect vehicle airfoil. This is simply an airfoil that is some small multiple of its chord above the ground. 
+Here we will be doing a simple 2D simulation of a ground effect vehicle airfoil. This is simply an airfoil that is some small multiple of its chord above the ground.
 
 OUTLINE:
 -Go over mesh.

@@ -64,7 +64,7 @@ Line(ce++) = {p + 1, p + 2};
 Line(ce++) = {p + 2, p + 3};
 Line(ce++) = {p + 3, p3 + 3};
 
-Line Loop(ce++) = {l:l+4, 
+Line Loop(ce++) = {l:l+4,
   -(l3+3), -(l3+2), -(l3+1)}; domainLoop = ce;
 Plane Surface(ce++) = {domainLoop, auraLoop}; domainSurface = ce;
 

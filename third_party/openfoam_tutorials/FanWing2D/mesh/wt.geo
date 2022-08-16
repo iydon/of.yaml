@@ -20,7 +20,7 @@ Point(ce++)={wtBoundDim[0]/2,uBoundCenter[1]+uBoundDim[1]/2+backAdjustment[0],z}
 
 peripheralLines[]={};
 For nnn In {0:#pp[]-1}
-	Line(ce++)={pp[nnn],pp[(nnn+1)%(#pp[])]};peripheralLines[]+=ce;
+    Line(ce++)={pp[nnn],pp[(nnn+1)%(#pp[])]};peripheralLines[]+=ce;
 EndFor
 outwardLines[]={};
 Line(ce++)={p[0],pp[1]};outwardLines[]+=ce;//0
@@ -33,7 +33,7 @@ Line(ce++)={p[3],pp[10]};outwardLines[]+=ce;
 Line(ce++)={p[0],pp[11]};outwardLines[]+=ce;
 
 For nnn In {0:3}
-	Transfinite Line{outwardLines[{nnn*2,nnn*2+1}]}=outwardCells[nnn]+1 Using Progression outwardProgressions[nnn];
+    Transfinite Line{outwardLines[{nnn*2,nnn*2+1}]}=outwardCells[nnn]+1 Using Progression outwardProgressions[nnn];
 EndFor
 Transfinite Line{peripheralLines[1]}=middleCells[1]+1;
 Transfinite Line{peripheralLines[4]}=middleCells[0]+1;

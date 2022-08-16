@@ -60,15 +60,15 @@ tmp[]=Boundary{Surface{newbase};};
 periphery2[]=tmp[{4:9}];
 ubs[]=surf[{0:3}];
 For nn In {0:3}
-	tmp[]=Boundary{Surface{surf[nn]};};
-	ubc[nn]=tmp[3];
-	uboundlines2[nn]=tmp[2];
+    tmp[]=Boundary{Surface{surf[nn]};};
+    ubc[nn]=tmp[3];
+    uboundlines2[nn]=tmp[2];
 EndFor
 p2[]={};
 tmp[]=Boundary{Surface{nearSurface};};
 For nn In {0:3}
-	tmp2[]=Boundary{Line{tmp[nn]};};
-	p2[]+=tmp2[0];
+    tmp2[]=Boundary{Line{tmp[nn]};};
+    p2[]+=tmp2[0];
 EndFor
 //tmp[]=p2[];
 //Call pt;

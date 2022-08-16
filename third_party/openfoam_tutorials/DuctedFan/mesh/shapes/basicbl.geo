@@ -62,12 +62,12 @@ Point(ce++)={innerx+BLL,start,0};pts[]+=ce;//8
 
 //foo[]=Point{cp};
 //Rotate {{0, 0, 1}, {foo[0],foo[1],0}, EA} {
-//	Point{op,pts[6]};
+//    Point{op,pts[6]};
 //}
 
 tangentlines[]={};
 For kk In {0:#pts[]-4}
-	Line(ce++)={pts[kk],pts[(kk+1)%(#pts[])]};tangentlines[]+=ce;
+    Line(ce++)={pts[kk],pts[(kk+1)%(#pts[])]};tangentlines[]+=ce;
 EndFor
 
 Circle(ce++)={pts[6],cp,pts[7]};tangentlines[]+=ce;

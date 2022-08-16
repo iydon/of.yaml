@@ -42,13 +42,13 @@ Plane Surface(ce++) = ce-1;surf=ce;
 
 Rotate {{1,0,0},{0,0,0},2.5*Pi/180.0}
 {
-	Surface{surf};
+    Surface{surf};
 }
 new_entities[] = Extrude {{1,0,0},{0,0,0},-5*Pi/180.0}
 {
-	Surface{surf};
-	Layers{1};
-	Recombine;
+    Surface{surf};
+    Layers{1};
+    Recombine;
 };
 
 Physical Surface("vehicle") = {new_entities[{2:4}]};

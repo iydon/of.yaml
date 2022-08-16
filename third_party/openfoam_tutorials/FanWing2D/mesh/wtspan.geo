@@ -11,8 +11,8 @@ farsurfaces2[]=farsurfaces[];
 
 pplines[]={};
 For k In {0:#pp1[]-1}
-	Line(ce++)={pp1[k],pp2[k]};pplines[]+=ce;
-	//Line(ce++)={pp2[k],pp3[k]};
+    Line(ce++)={pp1[k],pp2[k]};pplines[]+=ce;
+    //Line(ce++)={pp2[k],pp3[k]};
 EndFor
 Transfinite Line{pplines[]}=spanCells+1;
 

@@ -15,7 +15,7 @@ farsurfaces3[]=farsurfaces[];
 
 pplines[]={};
 For k In {0:#pp2[]-1}
-	Line(ce++)={pp2[k],pp3[k]};pplines[]+=ce;
+    Line(ce++)={pp2[k],pp3[k]};pplines[]+=ce;
 EndFor
 Transfinite Line{pplines[]}=extCells+1;
 

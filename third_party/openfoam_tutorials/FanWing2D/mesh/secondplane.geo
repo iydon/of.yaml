@@ -18,15 +18,15 @@ tmp[]=Boundary{Surface{newbase};};
 periphery3[]=tmp[{4:10}];
 ubs[]=surf[{0:3}];
 For nn In {0:3}
-	tmp[]=Boundary{Surface{surf[nn]};};
-	ubc[nn]=tmp[3];
-	uboundlines3[nn]=tmp[2];
+    tmp[]=Boundary{Surface{surf[nn]};};
+    ubc[nn]=tmp[3];
+    uboundlines3[nn]=tmp[2];
 EndFor
 p3[]={};
 tmp[]=Boundary{Surface{nearSurface};};
 For nn In {0:3}
-	tmp2[]=Boundary{Line{tmp[nn]};};
-	p3[]+=tmp2[0];
+    tmp2[]=Boundary{Line{tmp[nn]};};
+    p3[]+=tmp2[0];
 EndFor
 */
 
@@ -261,9 +261,9 @@ Recombine Surface{topHSurface2};
 surf[]={cornerAdaptSurface,jetPlates[],surfaceSJet,surfaceSAft,topHSurface2};
 Call TV;
 statorVolumes[]+=ce;
-//	Surface Loop(ce++)=surf[];
-//	Volume(ce++)=ce-1;
-//	Transfinite Volume{ce};//={27,28,40073,50116,3,15,13,10};
+// Surface Loop(ce++)=surf[];
+// Volume(ce++)=ce-1;
+// Transfinite Volume{ce};//={27,28,40073,50116,3,15,13,10};
 //tmp[]=surf[];
 //Call pt;
 

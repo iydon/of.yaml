@@ -437,9 +437,9 @@ system:
 
         Line(ce++) = {p1, p2 + 3};
 
-        Line Loop(ce++) = {l:l+4, 
+        Line Loop(ce++) = {l:l+4,
         -(l1+2),-(l1+1),-l1,
-        l+5, 
+        l+5,
         -(l2+2),-(l2+1),-l2}; domainLoop = ce;
         Plane Surface(ce++) = {domainLoop, rotorLoop, rotorLoop2}; domainSurface = ce;
         // Recombine Surface{domainSurface};

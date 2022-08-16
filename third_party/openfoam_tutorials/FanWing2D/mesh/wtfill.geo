@@ -16,10 +16,10 @@ ubs[]
 
 peripheralSurfaces[]={};
 For k In {0:11}
-	lines[]={peripheralLines1[k],pplines[k],peripheralLines2[k],pplines[(k+1)%12]};
-	Call autoLineLoop;
-	Call PSS;
-	peripheralSurfaces[]+=ce;
+    lines[]={peripheralLines1[k],pplines[k],peripheralLines2[k],pplines[(k+1)%12]};
+    Call autoLineLoop;
+    Call PSS;
+    peripheralSurfaces[]+=ce;
 EndFor
 
 //Printf("Debug");

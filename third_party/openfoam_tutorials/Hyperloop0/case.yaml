@@ -188,7 +188,7 @@ system:
 -
     name: mesh
     type: [path, raw]
-    permission: 777
+    permission: null
     data: mesh
 ---
 pipeline:

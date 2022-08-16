@@ -49,11 +49,11 @@ p=extProgression;
 c=extCells;
 ubs3[]={};
 For kk In {0:3}
-	b=surfs[kk];
-	Call myExtrusion;
-	statorVolumes[]+=vol;
-	tunnelSurfaces[]+=newbase;
-	ubs3[]+=surf[3];
+    b=surfs[kk];
+    Call myExtrusion;
+    statorVolumes[]+=vol;
+    tunnelSurfaces[]+=newbase;
+    ubs3[]+=surf[3];
 EndFor
 b=surfs[4];
 Call myExtrusion;
@@ -62,14 +62,14 @@ tunnelSurfaces[]+=newbase;
 ubc3[]={};
 uboundlines3[]={};
 For kk In {0:3}
-	tmp[]=Boundary{Surface{ubs3[kk]};};
-	ubc3[]+=tmp[1];
-	uboundlines3[]+=tmp[2];
+    tmp[]=Boundary{Surface{ubs3[kk]};};
+    ubc3[]+=tmp[1];
+    uboundlines3[]+=tmp[2];
 EndFor
 p3={};
 For kk In {0:3}
-	tmp[]=Boundary{Line{ubc3[kk]};};
-	p3[]+=tmp[1];	
+    tmp[]=Boundary{Line{ubc3[kk]};};
+    p3[]+=tmp[1];
 EndFor
 //tmp[]=uboundlines3[];
 //Call pt;
@@ -88,67 +88,67 @@ last=#periphery2[]-1;
 //reverse
 copy[]=periphery2[];
 For k In {0:last}
-	periphery2[k]=copy[last-k];
+    periphery2[k]=copy[last-k];
 EndFor
 //points
 pts[]={};
 For k In {0:last}
-	tmp[]=Boundary{Line{periphery2[(k+last)%(#periphery2[])]};};
-	pts[k]=tmp[1];
+    tmp[]=Boundary{Line{periphery2[(k+last)%(#periphery2[])]};};
+    pts[k]=tmp[1];
 EndFor
 //tmp[]=pts[];
 //Call pt;
 
 epp[]={};
 For k In {0:#epx[]-1}
-	Point(ce++)={epx[k],epy[k],span+ept,platels};epp[]+=ce;
+    Point(ce++)={epx[k],epy[k],span+ept,platels};epp[]+=ce;
 EndFor
 epl[]={};
 For k In {1:#epp[]}
-	Line(ce++)={epp[k-1],epp[k%#epp[]]};epl[]+=ce;
+    Line(ce++)={epp[k-1],epp[k%#epp[]]};epl[]+=ce;
 EndFor
 
 epl2[]={};
 For k In {0:6}
-	Line(ce++)={epp[k],pts[k]};epl2[]+=ce;
+    Line(ce++)={epp[k],pts[k]};epl2[]+=ce;
 EndFor
 For nn In {0:last}
-	lines[]={epl2[nn],periphery2[(nn+last)%(last+1)],epl2[(nn+1)%(last+1)],epl[nn]};
-	Call autoLineLoop;
-	//	Plane Surface(ce++)=ce-1;
-	Call RSU;
-	capSurfaces[]+=ce;
-	//Printf("%g %g %g %g",ll[0],ll[1],ll[2],ll[3]);
-	//Printf("Current ce: %g",ce);
-		l=wtBoundDim[2]-span;
-		c=extCells;
-		p=extProgression;
-		b=ce;
-		Call myExtrusion;
-		tunnelSurfaces[]+=newbase;
-		statorVolumes[]+=vol;
+    lines[]={epl2[nn],periphery2[(nn+last)%(last+1)],epl2[(nn+1)%(last+1)],epl[nn]};
+    Call autoLineLoop;
+    // Plane Surface(ce++)=ce-1;
+    Call RSU;
+    capSurfaces[]+=ce;
+    //Printf("%g %g %g %g",ll[0],ll[1],ll[2],ll[3]);
+    //Printf("Current ce: %g",ce);
+        l=wtBoundDim[2]-span;
+        c=extCells;
+        p=extProgression;
+        b=ce;
+        Call myExtrusion;
+        tunnelSurfaces[]+=newbase;
+        statorVolumes[]+=vol;
 EndFor
 Line Loop(ce++)=epl[];
-//	Plane Surface(ce++)=ce-1;
+// Plane Surface(ce++)=ce-1;
 Call PSU;
 capSurfaces[]+=ce;
-	l=wtBoundDim[2]-span;
-	c=extCells;
-	p=extProgression;
-	b=ce;
-	Call myExtrusion;
-	tunnelSurfaces[]+=newbase;
-	statorVolumes[]+=vol;
-	
+    l=wtBoundDim[2]-span;
+    c=extCells;
+    p=extProgression;
+    b=ce;
+    Call myExtrusion;
+    tunnelSurfaces[]+=newbase;
+    statorVolumes[]+=vol;
+
 
 /*
 epp[]={};
 For k In {0:#epx[]-1}
-	Point(ce++)={epx[k],epy[k],span+ept,platels};epp[]+=ce;
+    Point(ce++)={epx[k],epy[k],span+ept,platels};epp[]+=ce;
 EndFor
 epl[]={};
 For k In {1:#epp[]}
-	Line(ce++)={epp[k-1],epp[k%#epp[]]};epl[]+=ce;
+    Line(ce++)={epp[k-1],epp[k%#epp[]]};epl[]+=ce;
 EndFor
 epl2[]={};
 Line(ce++)={epp[0],outlips[1]};epl2[]+=ce;

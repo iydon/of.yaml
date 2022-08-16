@@ -5,8 +5,7 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-FoamFile
-{
+FoamFile {
     version     2.0;
     format      ascii;
     class       dictionary;
@@ -46,13 +45,11 @@ method          manual;
 // method          multiLevel;
 // method          structured;  // does 2D decomposition of structured mesh
 
-multiLevelCoeffs
-{
+multiLevelCoeffs {
     // Decomposition methods to apply in turn. This is like hierarchical but
     // fully general - every method can be used at every level.
 
-    level0
-    {
+    level0 {
         numberOfSubdomains  64;
         //method simple;
         //simpleCoeffs
@@ -62,8 +59,7 @@ multiLevelCoeffs
         //}
         method scotch;
     }
-    level1
-    {
+    level1 {
         numberOfSubdomains  4;
         method scotch;
     }
@@ -71,21 +67,18 @@ multiLevelCoeffs
 
 // Desired output
 
-simpleCoeffs
-{
+simpleCoeffs {
     n           (2 1 1);
     delta       0.001;
 }
 
-hierarchicalCoeffs
-{
+hierarchicalCoeffs {
     n           (1 2 1);
     delta       0.001;
     order       xyz;
 }
 
-metisCoeffs
-{
+metisCoeffs {
     method recursive;
  /*
     processorWeights
@@ -98,8 +91,7 @@ metisCoeffs
   */
 }
 
-scotchCoeffs
-{
+scotchCoeffs {
     //processorWeights
     //(
     //    1
@@ -111,13 +103,11 @@ scotchCoeffs
     //strategy "b";
 }
 
-manualCoeffs
-{
+manualCoeffs {
     dataFile    "manualDecomposition";
 }
 
-structuredCoeffs
-{
+structuredCoeffs {
     // Patches to do 2D decomposition on. Structured mesh only; cells have
     // to be in 'columns' on top of patches.
     patches     (movingWall);
@@ -135,5 +125,3 @@ structuredCoeffs
 //    "/tmp"
 //    "/tmp"
 //);
-
-// ************************************************************************* //

@@ -14,19 +14,19 @@ ce = 0;
 Include "NACA2412.geo";
 points[] ={};
 For k In {0:airfoil_points-1}
-	Point(ce++) = {
-		airfoil_chord*airfoil_x[k],
-		airfoil_chord*airfoil_y[k],
-		0,
-		airfoil_gridsize};
-	If(k < airfoil_points-te_omit)
-		points[] += ce;
-	EndIf
+    Point(ce++) = {
+        airfoil_chord*airfoil_x[k],
+        airfoil_chord*airfoil_y[k],
+        0,
+        airfoil_gridsize};
+    If(k < airfoil_points-te_omit)
+        points[] += ce;
+    EndIf
 EndFor
 
 Rotate{ {0,0,1}, {0,0,0}, -angle_of_attack }
 {
-	Point{points[]};
+    Point{points[]};
 }
 
 BSpline(ce++) = points[];spline_id = ce;
@@ -74,12 +74,12 @@ Line Loop(ce++) = {spline_id,te_line}; spline_loop = ce;
 
 Plane Surface(ce++) = {boundary_loop, spline_loop}; extrude_surface = ce;
 
-new_entities[] = 
+new_entities[] =
 Extrude{0,0,cell_depth}
 {
-	Surface{extrude_surface};
-	Layers{1};
-	Recombine;
+    Surface{extrude_surface};
+    Layers{1};
+    Recombine;
 };
 
 Physical Surface("frontAndBack") = {extrude_surface,new_entities[0]};

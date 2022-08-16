@@ -8,7 +8,7 @@ Here we will make a simple cube mesh  by extrusion from a 2D sqaure mesh. Then w
 OUTLINE:
 Make a 2D square mesh.
 Extrude the 2D mesh to create a 3D mesh.
-Define the volume and surfaces so that OpenFOAM can recognize them. 
+Define the volume and surfaces so that OpenFOAM can recognize them.
 Create the mesh by exporting it to a file with the command line.
 Convert the mesh with the command-line OpenFOAM mesh conversion utility.
 

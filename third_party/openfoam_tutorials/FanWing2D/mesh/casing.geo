@@ -45,13 +45,13 @@ periphery[]+=ce;
 //periphery[]+=ce;
 /*
 If(#ssx[]>2)
-	For nn In {1:#ssx[]-2}
-		Point(ce++)={ssx[nn],ssy[nn],0};sps[]+=ce;
-	EndFor
+    For nn In {1:#ssx[]-2}
+        Point(ce++)={ssx[nn],ssy[nn],0};sps[]+=ce;
+    EndFor
 EndIf
 */
 //If(#ssx[]==3)
-//	Point(ce++)={ssx[1],ssy[1],0};sps[]+=ce;
+//    Point(ce++)={ssx[1],ssy[1],0};sps[]+=ce;
 //EndIf
 //Point(ce++)={ssx[#ssx[]-1],ssy[#ssx[]-1],0,sls[1]};sps[]+=ce;topCorner=ce;
 //BSpline(ce++)={sps[]};baffleLine=ce;

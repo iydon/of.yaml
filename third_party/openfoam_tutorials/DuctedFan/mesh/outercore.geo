@@ -37,8 +37,8 @@ vlines[]={coreline,coreline1,coreline2,coreline3,coreline4};
 
 pts[]={};
 For kk In {0:#vlines[]-1}
-	ids[]=Boundary{Line{vlines[kk]};};
-	pts[]+=ids[1];
+    ids[]=Boundary{Line{vlines[kk]};};
+    pts[]+=ids[1];
 EndFor
 ids[]=Boundary{Line{vlines[4]};};
 pts[]+=ids[0];
@@ -133,7 +133,7 @@ ids2[]=Boundary{Line{coreline};};
 Line(ce++)={ids[0],ids2[1]};lines[]+=ce;
 //Line(ce++)={pts[0],pts[1]};lines[]+=ce;
 lines[]+=coreline;
-Line(ce++)={ids2[0],ids[1]};lines[]+=ce;	connector1=ce;
+Line(ce++)={ids2[0],ids[1]};lines[]+=ce;connector1=ce;
 
 Transfinite Line{lines[{1,3}]}=ICC;
 //Transfinite Line{lines[2]}=RCC Using Progression RP;
@@ -146,7 +146,7 @@ oc1=ce;//outer core 1.
 //Above-disk section.
 ids[]=Boundary{Line{usline1};};
 ids2[]=Boundary{Line{coreline1};};
-Line(ce++)={ids[0],ids2[0]};			connector2=ce;
+Line(ce++)={ids[0],ids2[0]};connector2=ce;
 
 Transfinite Line{connector2}=ICC;
 
@@ -158,7 +158,7 @@ oc2=ce;
 //Disk section.
 ids[]=Boundary{Line{usline2};};
 ids2[]=Boundary{Line{coreline2};};
-Line(ce++)={ids[0],ids2[0]};			connector3=ce;
+Line(ce++)={ids[0],ids2[0]};connector3=ce;
 
 Transfinite Line{connector3}=ICC;
 
@@ -170,7 +170,7 @@ oc3=ce;
 //Below-disk section.
 ids[]=Boundary{Line{usline3};};
 ids2[]=Boundary{Line{coreline3};};
-Line(ce++)={ids[0],ids2[0]};			connector4=ce;
+Line(ce++)={ids[0],ids2[0]};connector4=ce;
 
 Transfinite Line{connector4}=ICC;
 
@@ -182,7 +182,7 @@ oc4=ce;
 //Bottom freestream.
 ids[]=Boundary{Line{usline4};};
 ids2[]=Boundary{Line{coreline4};};
-Line(ce++)={ids[1],ids2[0]};			connector5=ce;
+Line(ce++)={ids[1],ids2[0]};connector5=ce;
 
 Transfinite Line{connector5}=ICC;
 
