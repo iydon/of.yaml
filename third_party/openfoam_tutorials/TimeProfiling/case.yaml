@@ -1,0 +1,670 @@
+---
+openfoam: [2.3.x]
+version: 0.11.0
+order:
+    - meta
+    - foam
+    - static
+    - other
+---
+0.org:
+    epsilon:
+        FoamFile: &FoamFile
+            version: 2.0
+            format: ascii
+            class: volScalarField
+            object: epsilon
+        dimensions: "[0 2 -3 0 0 0 0]"
+        internalField: uniform 0.0495
+        boundaryField:
+            # Set patchGroups for constraint patches
+            "#include": |
+                "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: inletOutlet
+                inletValue: $internalField
+                value: $internalField
+            wall:
+                type: epsilonWallFunction
+                value: $internalField
+    k:
+        FoamFile:
+            class: volScalarField
+            object: k
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0.06
+        boundaryField:
+            # Set patchGroups for constraint patches
+            "#include": |
+                "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+            inlet:
+                type: fixedValue
+                value: $internalField
+            outlet:
+                type: inletOutlet
+                inletValue: $internalField
+                value: $internalField
+            wall:
+                type: kqRWallFunction
+                value: $internalField
+    nut:
+        FoamFile:
+            class: volScalarField
+            object: nut
+            <<: *FoamFile
+        dimensions: "[0 2 -1 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            # Set patchGroups for constraint patches
+            "#include": |
+                "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+            inlet:
+                type: calculated
+                value: uniform 0
+            outlet:
+                type: calculated
+                value: uniform 0
+            wall:
+                type: nutkWallFunction
+                value: uniform 0
+    p:
+        FoamFile:
+            class: volScalarField
+            object: p
+            <<: *FoamFile
+        dimensions: "[0 2 -2 0 0 0 0]"
+        internalField: uniform 0
+        boundaryField:
+            # Set patchGroups for constraint patches
+            "#include": |
+                "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+            inlet:
+                type: zeroGradient
+            outlet:
+                type: fixedValue
+                value: uniform 0
+            wall:
+                type: zeroGradient
+    U:
+        FoamFile:
+            class: volVectorField
+            object: U
+            <<: *FoamFile
+        dimensions: "[0 1 -1 0 0 0 0]"
+        internalField: uniform (0 0 0)
+        boundaryField:
+            # Set patchGroups for constraint patches
+            "#include": |
+                "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes"
+            inlet:
+                type: fixedValue
+                value: uniform (0 -5 0)
+            outlet:
+                type: inletOutlet
+                inletValue: uniform (0 0 0)
+                value: uniform (0 0 0)
+            outerCylinder:
+                type: fixedValue
+                value: uniform (0 0 0)
+            propeller.*:
+                type: movingWallVelocity
+                value: uniform (0 0 0)
+constant:
+    dynamicMeshDict:
+        FoamFile:
+            class: dictionary
+            object: dynamicMeshDict
+            <<: *FoamFile
+        dynamicFvMesh: solidBodyMotionFvMesh
+        motionSolverLibs:
+            - |
+                "libfvMotionSolvers.so"
+        solidBodyMotionFvMeshCoeffs:
+            cellZone: innerCylinderSmall
+            solidBodyMotionFunction: rotatingMotion
+            rotatingMotionCoeffs:
+                origin: (0 0 0)
+                axis: (0 1 0)
+                omega: 158  # rad/s
+    RASProperties:
+        FoamFile:
+            class: dictionary
+            object: RASProperties
+            <<: *FoamFile
+        RASModel: kEpsilon
+        turbulence: on
+        printCoeffs: on
+    transportProperties:
+        FoamFile:
+            class: dictionary
+            object: transportProperties
+            <<: *FoamFile
+        transportModel: Newtonian
+        nu: nu [ 0 2 -1 0 0 0 0 ] 1e-6
+    turbulenceProperties:
+        FoamFile:
+            class: dictionary
+            object: turbulenceProperties
+            <<: *FoamFile
+        simulationType: RASModel
+    polyMesh:
+        blockMeshDict:
+            FoamFile:
+                class: dictionary
+                object: blockMeshDict
+                <<: *FoamFile
+            convertToMeters: 1
+            vertices:
+                - (-0.3 -0.81 -0.3)
+                - ( 0.3 -0.81 -0.3)
+                - ( 0.3  0.21 -0.3)
+                - (-0.3  0.21 -0.3)
+                - (-0.3 -0.81  0.3)
+                - ( 0.3 -0.81  0.3)
+                - ( 0.3  0.21  0.3)
+                - (-0.3  0.21  0.3)
+            blocks:
+                - hex (0 1 2 3 4 5 6 7) (12 20 12) simpleGrading (1 1 1)
+            edges: []
+            boundary:
+                - walls:
+                  type: wall
+                  faces:
+                    - (2 6 5 1)
+                    - (0 3 2 1)
+                    - (0 4 7 3)
+                    - (4 5 6 7)
+                - inlet:
+                  type: patch
+                  faces:
+                    - (3 7 6 2)
+                - outlet:
+                  type: patch
+                  faces:
+                    - (1 5 4 0)
+        boundary:
+            FoamFile:
+                class: dictionary
+                object: boundary
+                <<: *FoamFile
+            "9":
+                - inlet:
+                  type: patch
+                  nFaces: 652
+                  startFace: 1576984
+                - outlet:
+                  type: patch
+                  nFaces: 112
+                  startFace: 1577636
+                - outerCylinder:
+                  type: wall
+                  inGroups: 1(wall)
+                  nFaces: 640
+                  startFace: 1577748
+                - propellerTip:
+                  type: wall
+                  inGroups: 1(wall)
+                  nFaces: 21703
+                  startFace: 1578388
+                - propellerStem1:
+                  type: wall
+                  inGroups: 1(wall)
+                  nFaces: 192
+                  startFace: 1600091
+                - propellerStem2:
+                  type: wall
+                  inGroups: 1(wall)
+                  nFaces: 576
+                  startFace: 1600283
+                - propellerStem3:
+                  type: wall
+                  inGroups: 1(wall)
+                  nFaces: 1536
+                  startFace: 1600859
+                - AMI1:
+                  type: cyclicAMI
+                  inGroups: 1(cyclicAMI)
+                  nFaces: 18496
+                  startFace: 1602395
+                  matchTolerance: 0.0001
+                  transform: noOrdering
+                  neighbourPatch: AMI2
+                - AMI2:
+                  type: cyclicAMI
+                  inGroups: 1(cyclicAMI)
+                  nFaces: 18720
+                  startFace: 1620891
+                  matchTolerance: 0.0001
+                  transform: noOrdering
+                  neighbourPatch: AMI1
+system:
+    controlDict:
+        FoamFile:
+            class: dictionary
+            object: controlDict
+            <<: *FoamFile
+        libs:
+            - |
+                "libincompressibleTurbulenceModel.so"
+            - |
+                "libincompressibleRASModels.so"
+        application: pimpleDyMFoamTimed
+        startFrom: startTime
+        startTime: 0
+        stopAt: endTime
+        endTime: 0.001
+        deltaT: 1e-5
+        writeControl: adjustableRunTime
+        writeInterval: 0.001
+        # For testing with moveDynamicMesh
+        # deltaT: 0.01
+        # writeControl: timeStep
+        # writeInterval: 1
+        purgeWrite: 0
+        writeFormat: binary
+        writePrecision: 6
+        writeCompression: off
+        timeFormat: general
+        timePrecision: 6
+        runTimeModifiable: true
+        adjustTimeStep: yes
+        maxCo: 2
+        functions: |
+            {
+                #include "readFields"
+                #include "Q"
+                #include "surfaces"
+                #include "forces"
+            }
+    createInletOutletSets.topoSetDict:
+        FoamFile:
+            class: dictionary
+            object: topoSetDict
+            <<: *FoamFile
+        actions:
+            -
+                name: boundaryFaces
+                type: faceSet
+                action: new
+                source: patchToFace
+                sourceInfo:
+                    name: outerCylinder
+            -
+                name: outletFaces
+                type: faceSet
+                action: new
+                source: faceToFace
+                sourceInfo:
+                    set: boundaryFaces
+            -
+                name: inletFaces
+                type: faceSet
+                action: new
+                source: faceToFace
+                sourceInfo:
+                    set: boundaryFaces
+            -
+                name: outletFaces
+                type: faceSet
+                action: subset
+                source: normalToFace
+                sourceInfo:
+                    normal: (0 -1 0)  # Vector
+                    cos: 0.3  # Tolerance (max cos of angle)
+            -
+                name: inletFaces
+                type: faceSet
+                action: subset
+                source: normalToFace
+                sourceInfo:
+                    normal: (0 1 0)  # Vector
+                    cos: 0.3  # Tolerance (max cos of angle)
+    createPatchDict:
+        FoamFile:
+            class: dictionary
+            object: createPatchDict
+            <<: *FoamFile
+        # Do a synchronisation of coupled points after creation of any patches.
+        # Note: this does not work with points that are on multiple coupled patches
+        #       with transformations (i.e. cyclics).
+        pointSync: false
+        # Patches to create.
+        patches:
+            -
+                #- Master side patch
+                name: AMI1
+                patchInfo:
+                    type: cyclicAMI
+                    matchTolerance: 0.0001
+                    neighbourPatch: AMI2
+                    transform: noOrdering
+                constructFrom: patches
+                patches:
+                    - innerCylinderSmall
+            -
+                #- Slave side patch
+                name: AMI2
+                patchInfo:
+                    type: cyclicAMI
+                    matchTolerance: 0.0001
+                    neighbourPatch: AMI1
+                    transform: noOrdering
+                constructFrom: patches
+                patches:
+                    - innerCylinderSmall_slave
+            -
+                name: inlet
+                patchInfo:
+                    type: patch
+                constructFrom: set
+                set: inletFaces
+            -
+                name: outlet
+                patchInfo:
+                    type: patch
+                constructFrom: set
+                set: outletFaces
+    decomposeParDict:
+        FoamFile:
+            class: dictionary
+            object: decomposeParDict
+            <<: *FoamFile
+        numberOfSubdomains: 4
+        method: hierarchical
+        hierarchicalCoeffs:
+            n: (1 4 1)
+            delta: 0.001
+            order: xyz
+    fvSchemes:
+        FoamFile:
+            class: dictionary
+            object: fvSchemes
+            <<: *FoamFile
+        ddtSchemes:
+            default: Euler
+        gradSchemes:
+            default: Gauss linear
+            grad(p): Gauss linear
+            grad(U): cellLimited Gauss linear 1
+        divSchemes:
+            default: none
+            # div(phi, U): Gauss upwind
+            div(phi, U): Gauss linearUpwind grad(U)
+            div(phi, k): Gauss upwind
+            div(phi, epsilon): Gauss upwind
+            div((nuEff*dev(T(grad(U))))): Gauss linear
+        laplacianSchemes:
+            default: Gauss linear limited corrected 0.33
+        interpolationSchemes:
+            default: linear
+        snGradSchemes:
+            default: limited corrected 0.33
+        fluxRequired:
+            default: no
+            pcorr: ''
+            p: ''
+    fvSolution:
+        FoamFile:
+            class: dictionary
+            object: fvSolution
+            <<: *FoamFile
+        solvers:
+            pcorr: &pcorr
+                solver: GAMG
+                tolerance: 1e-2
+                relTol: 0
+                smoother: DICGaussSeidel
+                cacheAgglomeration: no
+                nCellsInCoarsestLevel: 10
+                agglomerator: faceAreaPair
+                mergeLevels: 1
+                maxIter: 50
+            p: &p
+                tolerance: 1e-5
+                relTol: 0.01
+                <<: *pcorr
+            pFinal:
+                tolerance: 1e-6
+                relTol: 0
+                <<: *p
+            (U|k|epsilon):
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-6
+                relTol: 0.1
+            (U|k|epsilon)Final:
+                solver: smoothSolver
+                smoother: symGaussSeidel
+                tolerance: 1e-6
+                relTol: 0
+        PIMPLE:
+            correctPhi: no
+            nOuterCorrectors: 2
+            nCorrectors: 1
+            nNonOrthogonalCorrectors: 0
+        relaxationFactors:
+            (U|k|epsilon).*: 1
+        cache:
+            grad(U): ''
+    surfaceFeatureExtractDict:
+        FoamFile:
+            class: dictionary
+            object: surfaceFeatureExtractDict
+            <<: *FoamFile
+        # innerCylinder.obj:
+        #     "#include": |
+        #         "surfaceFeatureExtractDictDefaults"
+        innerCylinderSmall.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+        outerCylinder.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+        propellerStem1.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+        propellerStem2.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+        propellerStem3.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+        propellerTip.obj:
+            "#include": |
+                "surfaceFeatureExtractDictDefaults"
+    forces:
+        FoamFile: null
+        forces:
+            type: forces
+            functionObjectLibs:
+                - |
+                    "libforces.so"
+            outputControl: timeStep
+            timeInterval: 1
+            log: yes
+            patches:
+                - |
+                    "propeller.*"
+            pName: p
+            UName: U
+            rhoName: rhoInf  # Indicates incompressible
+            log: true
+            rhoInf: 1  # Redundant for incompressible
+            CofR: (0 0 0)  # Rotation around centre line of propeller
+            pitchAxis: (0 1 0)
+    Q:
+        FoamFile: null
+        # Calculate Q (from U)
+        Q:
+            # Where to load it from
+            functionObjectLibs:
+                - |
+                    "libutilityFunctionObjects.so"
+            type: Q
+            # Output every
+            outputControl: outputTime
+    readFields:
+        FoamFile: null
+        # Make sure all fields for functionObjects are loaded. Prevents any
+        # problems running with execFlowFunctionObjects.
+        readFields:
+            # Where to load it from (if not already in solver)
+            functionObjectLibs:
+                - |
+                    "libfieldFunctionObjects.so"
+            type: readFields
+            fields: (p U k)
+    surfaceFeatureExtractDictDefaults:
+        FoamFile: null
+        # How to obtain raw features (extractFromFile || extractFromSurface)
+        extractionMethod: extractFromSurface
+        extractFromSurfaceCoeffs:
+            # Mark edges whose adjacent surface normals are at an angle less
+            # than includedAngle as features
+            # - 0  : selects no edges
+            # - 180: selects all edges
+            includedAngle: 150
+        trimFeatures:
+            # Remove features with fewer than the specified number of edges
+            minElem: 10
+    surfaces:
+        FoamFile: null
+        surfaces:
+            type: surfaces
+            functionObjectLibs:
+                - |
+                    "libsampling.so"
+            outputControl: outputTime
+            surfaceFormat: vtk
+            fields: (p U Q)
+            interpolationScheme: cellPoint
+            surfaces:
+                - zNormal:
+                  type: cuttingPlane
+                  planeType: pointAndNormal
+                  pointAndNormalDict:
+                    basePoint: (0 0 0)
+                    normalVector: (0 0 1)
+                  interpolate: true
+                - isoQ:
+                  type: isoSurface
+                  isoField: Q
+                  isoValue: 1000
+                  interpolate: true
+                - propeller:
+                  type: patch
+                  patches:
+                    - |
+                        "propeller.*"
+                  interpolate: true
+---
+-
+    name: Allrun.pre
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        # copy propeller surface from resources directory
+        cp $FOAM_TUTORIALS/resources/geometry/propellerTip.obj.gz constant/triSurface/
+
+
+        # - meshing
+
+        runApplication blockMesh
+
+        runApplication surfaceFeatureExtract
+
+        runApplication snappyHexMesh -overwrite
+
+        runApplication renumberMesh -overwrite
+
+        # force removal of fields generated by snappy
+        \rm -rf 0
+
+        # - generate face/cell sets and zones
+        runApplication topoSet -dict system/createInletOutletSets.topoSetDict
+
+        # - create the inlet/outlet and AMI patches
+        runApplication createPatch -overwrite
+
+        # - test by running moveDynamicMes
+        #runApplication moveDynamicMesh -checkAMI
+
+        # - set the initial fields
+        cp -rf 0.org 0
+-
+    name: Allrun
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # run from this directory
+
+        # Source tutorial run functions
+        . $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+        ./Allrun.pre
+
+        runApplication decomposePar
+
+        runParallel `getApplication` 4
+
+        runApplication reconstructPar
+-
+    name: Allclean
+    type: [embed, text]
+    permission: 777
+    data: |
+        #!/bin/sh
+        cd ${0%/*} || exit 1    # run from this directory
+
+        # Source tutorial clean functions
+        . $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+        # remove surface
+        \rm -f constant/triSurface/propellerTip.obj.gz > /dev/null 2>&1
+
+        cleanCase
+
+        \rm -rf 0 > /dev/null 2>&1
+        \rm -rf constant/extendedFeatureEdgeMesh > /dev/null 2>&1
+        \rm -f constant/triSurface/*.eMesh* > /dev/null 2>&1
+-
+    name: constant/triSurface
+    type: [path, 7z]
+    permission: null
+    data: static/triSurface.7z
+-
+    name: system/snappyHexMeshDict
+    type: [path, raw]
+    permission: null
+    data: static/snappyHexMeshDict
+---
+pipeline:
+    -
+        command: cp $FOAM_TUTORIALS/resources/geometry/propellerTip.obj.gz constant/triSurface/
+        suffix: '.1'
+    - blockMesh
+    - surfaceFeatureExtract
+    - snappyHexMesh -overwrite
+    - renumberMesh -overwrite
+    -
+        command: rm -rf 0
+        suffix: '.1'
+    - topoSet -dict system/createInletOutletSets.topoSetDict
+    - createPatch -overwrite
+    -
+        command: cp -rf 0.org 0
+        suffix: '.2'
+    - decomposePar -force
+    - __app__
+    - reconstructPar
