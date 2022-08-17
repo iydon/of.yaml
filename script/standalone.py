@@ -5,7 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, lib
+from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, compat, lib
 
 
 class show:
@@ -50,6 +50,7 @@ class show:
 
 
 p.Path('foam.py').write_text(show.code(f'''
+import _thread
 import collections
 import functools
 import gc
@@ -61,6 +62,7 @@ import re
 import shlex
 import shutil
 import subprocess
+import sys
 import types
 import typing
 import warnings
@@ -75,6 +77,18 @@ p = pathlib
 s = subprocess
 t = typing
 w = warnings
+
+_NOT_FOUND = object()
+
+{show.submodule('compat', compat.cached_property, compat.singledispatchmethod)}
+
+for obj, name in [
+    (f, 'cached_property'),
+    (f, 'singledispatchmethod'),
+]:
+    if not hasattr(obj, name):
+        setattr(obj, name, getattr(compat, name))
+
 
 {show.source(lib.__class__)}
 

@@ -8,6 +8,7 @@ import json
 import os
 import pathlib as p
 import shutil
+import sys
 import typing as t
 import warnings as w
 
@@ -29,7 +30,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.11.0'
+    __version__ = '0.11.2'
 
     Self = __qualname__
     parse = Parser.new()
@@ -222,7 +223,8 @@ class Foam:
                 in_ = self._root / static['data']
                 if static['type'][1] == 'raw':
                     if in_.is_dir():
-                        shutil.copytree(in_, out, dirs_exist_ok=True)
+                        kwargs = {'dirs_exist_ok': True} if sys.version_info >= (3, 8) else {}
+                        shutil.copytree(in_, out, **kwargs)
                     elif in_.is_file():
                         shutil.copyfile(in_, out)
                     else:
