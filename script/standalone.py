@@ -5,7 +5,8 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, compat, lib
+from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, lib
+from foam.compat import functools
 
 
 class show:
@@ -80,14 +81,15 @@ w = warnings
 
 _NOT_FOUND = object()
 
-{show.submodule('compat', compat.cached_property, compat.singledispatchmethod)}
+class compat(types.ModuleType):
+{show._indent(show.submodule('functools', functools.cached_property, functools.singledispatchmethod))}
 
 for obj, name in [
     (f, 'cached_property'),
     (f, 'singledispatchmethod'),
 ]:
     if not hasattr(obj, name):
-        setattr(obj, name, getattr(compat, name))
+        setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
 
 
 {show.source(lib.__class__)}

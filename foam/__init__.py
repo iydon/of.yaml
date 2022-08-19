@@ -3,8 +3,8 @@ __all__ = ['app', 'Foam']
 
 import functools as f
 
-from . import app
-from .base import Foam, compat
+from . import app, compat
+from .base import Foam
 
 
 __doc__ = Foam.__doc__
@@ -15,4 +15,4 @@ for obj, name in [
     (f, 'singledispatchmethod'),
 ]:
     if not hasattr(obj, name):
-        setattr(obj, name, getattr(compat, name))
+        setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
