@@ -15,17 +15,20 @@ List = t.List[Dict]
 Path = t.Union[str, p.Path]
 
 
-def Array(*dimensions: int) -> t.Union['np.number', 'np.ndarray']:
-    assert dimensions and all(d>=0 for d in dimensions)
+class Array:
+    def __class_getitem__(cls, dimensions: int) -> type:
+        if not isinstance(dimensions, t.Iterable):
+            dimensions = (dimensions, )
+        assert dimensions and all(d>=0 for d in dimensions)
 
-    if t.TYPE_CHECKING:
-        dimensions = set(dimensions)
-        if dimensions == {0}:
-            return lib['numpy'].number
+        if t.TYPE_CHECKING:
+            dimensions = set(dimensions)
+            if dimensions == {0}:
+                return lib['numpy'].number
+            else:
+                return lib['numpy'].ndarray
         else:
-            return lib['numpy'].ndarray
-    else:
-        return t.Any
+            return t.Any
 
 
 class Data:

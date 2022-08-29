@@ -51,7 +51,7 @@ class PostProcess:
         self._vtks = list(VTK.from_foam(self._foam, **kwargs))
         return self._vtks
 
-    def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array(1, 2)]:
+    def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array[1, 2]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             ans[time] = vtk.centroid(key, structured)
@@ -60,7 +60,7 @@ class PostProcess:
     def centroids(
         self,
         keys: t.Optional[t.Set[str]] = None, structured: bool = False,
-    ) -> t.Dict[str, t.Dict[float, Array(1, 2)]]:
+    ) -> t.Dict[str, t.Dict[float, Array[1, 2]]]:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self._foam.fields)
@@ -70,7 +70,7 @@ class PostProcess:
         self,
         location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[str, t.Dict[float, Array(0, 1)]]:
+    ) -> t.Dict[str, t.Dict[float, Array[0, 1]]]:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
@@ -78,7 +78,7 @@ class PostProcess:
         self,
         *locations: t.Tuple[float, float, float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, t.Dict[float, Array(0, 1)]]]:
+    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, t.Dict[float, Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -160,45 +160,45 @@ class VTK:
             yield cls.from_file(path, foam=foam, **kwargs)
 
     @property
-    def points(self) -> Array(2):
+    def points(self) -> Array[2]:
         assert self._points is not None
 
         return self._points
 
     @property
-    def cells(self) -> Array(2):
+    def cells(self) -> Array[2]:
         assert self._cells is not None
 
         return self._cells
 
     @property
-    def point_fields(self) -> t.Dict[str, Array(1, 2)]:
+    def point_fields(self) -> t.Dict[str, Array[1, 2]]:
         assert self._point_fields is not None
 
         return self._point_fields
 
     @property
-    def cell_fields(self) -> t.Dict[str, Array(1, 2)]:
+    def cell_fields(self) -> t.Dict[str, Array[1, 2]]:
         assert self._cell_fields is not None
 
         return self._cell_fields
 
     @property
-    def x(self) -> Array(1):
+    def x(self) -> Array[1]:
         return self.points[:, 0]
 
     @property
-    def y(self) -> Array(1):
+    def y(self) -> Array[1]:
         return self.points[:, 1]
 
     @property
-    def z(self) -> Array(1):
+    def z(self) -> Array[1]:
         return self.points[:, 2]
 
     def keys(self) -> None:
         raise NotImplementedError
 
-    def centroid(self, key: str, structured: bool = False) -> Array(1, 2):
+    def centroid(self, key: str, structured: bool = False) -> Array[1, 2]:
         if structured:
             coords = self._points
             field = self._point_fields[key]
@@ -216,20 +216,20 @@ class VTK:
     def centroids(
         self,
         keys: t.Optional[t.Set[str]] = None, structured: bool = False,
-    ) -> t.Dict[str, Array(1, 2)]:
+    ) -> t.Dict[str, Array[1, 2]]:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self._foam.fields)
         }
 
-    def centroid_with_args(self, *keys: str, structured: bool = False) -> t.Dict[str, Array(1, 2)]:
+    def centroid_with_args(self, *keys: str, structured: bool = False) -> t.Dict[str, Array[1, 2]]:
         return self.centroids(set(keys), structured=structured)
 
     def probe(
         self,
         location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[str, Array(0, 1)]:
+    ) -> t.Dict[str, Array[0, 1]]:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
@@ -237,7 +237,7 @@ class VTK:
         self,
         *locations: t.Tuple[float, float, float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, Array(0, 1)]]:
+    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, Array[0, 1]]]:
         '''
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
@@ -257,5 +257,5 @@ class VTK:
             }
         return ans
 
-    def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> Array(1, 2):
+    def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
         return lib['vtk_to_numpy'](array)
