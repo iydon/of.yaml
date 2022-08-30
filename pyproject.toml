@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ifoam"
 packages = [{ include = "foam" }]
-version = "0.11.2"
+version = "0.11.3"
 description = "Python Interface to OpenFOAM (Configured Using YAML)"
 authors = ["Iydon Liang <liangiydon@gmail.com>"]
 keywords = ["OpenFOAM", "YAML"]
@@ -22,6 +22,12 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/iydon/of.yaml/issues"
+Changes = "https://github.com/iydon/of.yaml/blob/main/CHANGELOG.md"
+Documentation = "https://ifoam.readthedocs.io"
+"Example Project" = "https://github.com/iydon/of.yaml-template"
 
 [tool.poetry.dependencies]
 python = ">=3.7"
