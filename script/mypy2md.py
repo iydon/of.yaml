@@ -18,7 +18,7 @@ if __name__ == '__main__':
         re.compile(r'Name "t\.Self" is not defined'),
         re.compile(r'Skipping analyzing "[a-zA-Z0-9_\.]+": module is installed, but missing library stubs or py\.typed marker')
     ]
-    is_remote = False
+    is_remote = True
 
     prefix = f'https://github.com/iydon/of.yaml/blob/{hash}/' if is_remote else ''
     lines = c.defaultdict(list)

@@ -71,4 +71,5 @@
 ## `v0.11`
 
 - Add third-party tutorials ([openfoam_tutorials](https://github.com/openfoamtutorials/openfoam_tutorials))
+- Add [mypy](https://github.com/python/mypy) support for static types
 - Compatible with python3.7
