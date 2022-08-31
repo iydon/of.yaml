@@ -16,18 +16,16 @@ if t.TYPE_CHECKING:
 class Information:
     '''OpenFOAM information wrapper'''
 
-    Self = __qualname__
-
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
         self._cmd = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> Self:
+    def from_foam(cls, foam: Foam) -> t.Self:
         return cls(foam)
 
     @classmethod
-    def from_nothing(cls) -> Self:
+    def from_nothing(cls) -> t.Self:
         return cls(Foam.as_placeholder())
 
     @property

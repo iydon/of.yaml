@@ -16,19 +16,17 @@ from ...base import Foam
 class Command:
     '''OpenFOAM command wrapper'''
 
-    Self = __qualname__
-
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> Self:
+    def from_foam(cls, foam: Foam) -> t.Self:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         return cls.from_foam_without_asserting(foam)
 
     @classmethod
-    def from_foam_without_asserting(cls, foam: Foam) -> Self:
+    def from_foam_without_asserting(cls, foam: Foam) -> t.Self:
         return cls(foam)
 
     @property

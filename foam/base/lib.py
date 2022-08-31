@@ -7,8 +7,6 @@ import warnings as w
 
 
 class Lib:
-    Self = __qualname__
-
     def __init__(self) -> None:
         self._cache = {}
 
@@ -30,10 +28,10 @@ class Lib:
         raise KeyError(key)
 
     @classmethod
-    def new(cls) -> Self:
+    def new(cls) -> t.Self:
         return cls()
 
-    def reset(self) -> Self:
+    def reset(self) -> t.Self:
         self._cache.clear()
         return self
 

@@ -13,15 +13,13 @@ if t.TYPE_CHECKING:
 class PostProcess:
     '''OpenFOAM post-processing'''
 
-    Self = __qualname__
-
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
         self._vtks = None
         self._logs = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> Self:
+    def from_foam(cls, foam: Foam) -> t.Self:
         return cls(foam)
 
     @property
@@ -94,8 +92,6 @@ class PostProcess:
 class VTK:
     '''OpenFOAM VTK post-processing'''
 
-    Self = __qualname__
-
     def __init__(
         self,
         reader: 'vtk.vtkIOLegacy.vtkDataReader',
@@ -129,7 +125,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs) -> Self:
+    def from_file(cls, path: Path, **kwargs) -> t.Self:
         assert lib['vtk'] is not None, 'pip install ifoam[vtk]'  # TODO: improve error message
 
         reader = lib['vtk'].vtkGenericDataObjectReader()
@@ -145,7 +141,7 @@ class VTK:
         cls,
         foam: Foam, options: str = '', overwrite: bool = False,
         **kwargs,
-    ) -> t.Iterator[Self]:
+    ) -> t.Iterator[t.Self]:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         for name in ['writeCellCentres', 'writeCellVolumes']:

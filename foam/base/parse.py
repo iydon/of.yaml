@@ -10,10 +10,8 @@ from .type import Dict
 class Parser:
     '''OpenFOAM YAML parser'''
 
-    Self = __qualname__
-
     @classmethod
-    def new(cls) -> Self:
+    def new(cls) -> t.Self:
         return cls()
 
     def data(self, data: Dict) -> t.Iterator[str]:

@@ -32,7 +32,6 @@ class Foam:
 
     __version__ = '0.11.3'
 
-    Self = __qualname__
     parse = Parser.new()
 
     def __init__(self, data: List, root: Path) -> None:
@@ -64,7 +63,7 @@ class Foam:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod
-    def from_file(cls, path: Path) -> Self:
+    def from_file(cls, path: Path) -> t.Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
         for suffixes, method in [
@@ -76,17 +75,17 @@ class Foam:
         raise Exception(f'Suffix "{path.suffix}" not supported')
 
     @classmethod
-    def from_json(cls, text: str, root: Path) -> Self:
+    def from_json(cls, text: str, root: Path) -> t.Self:
         data = json.loads(text)
         return cls(data, root)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path) -> Self:
+    def from_yaml(cls, text: str, root: Path) -> t.Self:
         data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
         return cls(data, root)
 
     @classmethod
-    def as_placeholder(cls) -> Self:
+    def as_placeholder(cls) -> t.Self:
         return cls([{}], '')
 
     @property
@@ -181,7 +180,7 @@ class Foam:
             count = min(count, len(grids)-grids.count('1'))
         return count
 
-    def save(self, dest: Path, paraview: bool = True) -> Self:
+    def save(self, dest: Path, paraview: bool = True) -> t.Self:
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)
         self._dest.mkdir(parents=True, exist_ok=True)
@@ -191,7 +190,7 @@ class Foam:
             self._write(self._dest/'paraview.foam', '')
         return self
 
-    def reset(self) -> Self:
+    def reset(self) -> t.Self:
         self._dest = self._cmd = self._info = self._post = None
         for obj in gc.get_objects():
             if isinstance(obj, f._lru_cache_wrapper):

@@ -84,9 +84,13 @@ _NOT_FOUND = object()
 class compat(types.ModuleType):
 {show._indent(show.submodule('functools', functools.cached_property, functools.singledispatchmethod))}
 
+    class typing(types.ModuleType):
+        Self = t.TypeVar('Self')
+
 for obj, name in [
     (f, 'cached_property'),
     (f, 'singledispatchmethod'),
+    (t, 'Self'),
 ]:
     if not hasattr(obj, name):
         setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
