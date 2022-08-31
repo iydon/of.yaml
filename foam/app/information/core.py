@@ -18,7 +18,7 @@ class Information:
 
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
-        self._cmd = None
+        self._cmd: t.Optional['Command'] = None
 
     @classmethod
     def from_foam(cls, foam: Foam) -> t.Self:

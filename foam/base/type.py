@@ -1,29 +1,29 @@
-__all__ = ['Array', 'Dict', 'List', 'Path', 'Data', 'Version']
+__all__ = ['Array', 'CachedLib', 'Dict', 'Keys', 'List', 'Path', 'Data', 'Version']
 
 
 import pathlib as p
+import types
 import typing as t
 
-from .lib import lib
 
-if t.TYPE_CHECKING:
-    import numpy as np
-
-
+CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
+Keys = t.Tuple[t.Any, ...]
 List = t.List[Dict]
 Path = t.Union[str, p.Path]
 
 
 class Array:
-    def __class_getitem__(cls, dimensions: int) -> type:
-        if not isinstance(dimensions, t.Iterable):
+    def __class_getitem__(cls, dimensions: t.Union[int, t.Tuple[int, ...]]) -> type:
+        from .lib import lib
+
+        if not isinstance(dimensions, tuple):
             dimensions = (dimensions, )
-        assert dimensions and all(d>=0 for d in dimensions)
+        assert all(isinstance(d, int) and d>=0 for d in dimensions)
 
         if t.TYPE_CHECKING:
-            dimensions = set(dimensions)
-            if dimensions == {0}:
+            dimensions_ = set(dimensions)
+            if dimensions_ == {0}:
                 return lib['numpy'].number
             else:
                 return lib['numpy'].ndarray
@@ -78,12 +78,20 @@ class Data:
         return self._data
 
     def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
-        return self._data.get(key, default)
+        if isinstance(self._data, dict):
+            return self._data.get(key, default)
+        elif isinstance(self._data, list):
+            try:
+                return self._data[key]
+            except (IndexError, TypeError):
+                return default
+        else:
+            raise
 
-    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[t.Tuple[t.Any, ...], t.Any]]:
+    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys, t.Any]]:
         yield from self._items(self._data, with_list=with_list)
 
-    def _items(self, data: t.Any, with_list: bool = False, keys: t.Tuple[t.Any, ...] = ()) -> None:
+    def _items(self, data: t.Any, with_list: bool = False, keys: Keys = ()) -> t.Iterator[t.Tuple[Keys, t.Any]]:
         if isinstance(data, dict):
             for key, value in data.items():
                 yield from self._items(value, with_list, keys+(key, ))

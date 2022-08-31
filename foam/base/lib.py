@@ -5,12 +5,18 @@ import types
 import typing as t
 import warnings as w
 
+from .type import CachedLib
+
 
 class Lib:
     def __init__(self) -> None:
-        self._cache = {}
+        self._cache: t.Dict[str, CachedLib] = {}
 
-    def __getitem__(self, key: str) -> t.Optional[t.Union[types.ModuleType, object, t.Callable]]:
+    def __class_getitem__(self, key: str) -> t.Optional[CachedLib]:
+        # TODO
+        raise NotImplementedError
+
+    def __getitem__(self, key: str) -> t.Optional[CachedLib]:
         if key in self._cache:
             return self._cache[key]
         for prefix in {'mod', 'cls', 'func'}:

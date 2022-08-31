@@ -15,8 +15,8 @@ class PostProcess:
 
     def __init__(self, foam: Foam) -> None:
         self._foam = foam
-        self._vtks = None
-        self._logs = None
+        self._vtks: t.Optional[t.List['VTK']] = None
+        self._logs: t.Optional[t.Dict[str, t.Any]] = None
 
     @classmethod
     def from_foam(cls, foam: Foam) -> t.Self:
@@ -69,8 +69,8 @@ class PostProcess:
         location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, t.Dict[float, Array[0, 1]]]:
-        location = tuple(map(float, location))
-        return self.probes(location, keys=keys, point=point, func=func)[location]
+        location_ = tuple(map(float, location))
+        return self.probes(location_, keys=keys, point=point, func=func)[location_]
 
     def probes(
         self,
@@ -226,8 +226,8 @@ class VTK:
         location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, Array[0, 1]]:
-        location = tuple(map(float, location))
-        return self.probes(location, keys=keys, point=point, func=func)[location]
+        location_ = tuple(map(float, location))
+        return self.probes(location_, keys=keys, point=point, func=func)[location_]
 
     def probes(
         self,

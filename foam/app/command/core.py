@@ -95,7 +95,7 @@ class Command:
             ' '.join(args) if unsafe else args,
             cwd=self._foam._dest, shell=unsafe, stdout=s.PIPE,
         )
-        codes = [None] * len(commands)
+        codes: t.List[int] = [-1] * len(commands)
         for ith, command in enumerate(commands):
             if isinstance(command, str):
                 command_now, suffix_now, overwrite_now, exception_now, parallel_now = \

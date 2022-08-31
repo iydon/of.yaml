@@ -5,7 +5,7 @@ import textwrap
 import typing as t
 
 from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, Data, Dict, List, Path, Version, lib
+from foam.base import Foam, Parser, Array, CachedLib, Data, Dict, Keys, List, Path, Version, lib
 from foam.compat import functools
 
 
@@ -69,7 +69,6 @@ import typing
 import warnings
 
 if typing.TYPE_CHECKING:
-    import numpy as np
     import vtkmodules as vtk
 
 c = collections
@@ -78,6 +77,12 @@ p = pathlib
 s = subprocess
 t = typing
 w = warnings
+
+CachedLib = {repr(CachedLib).replace('module', 'types.ModuleType')}
+{Dict = !r}
+{Keys = !r}
+{List = !r}
+{Path = !r}
 
 _NOT_FOUND = object()
 
@@ -99,10 +104,6 @@ for obj, name in [
 {show.source(lib.__class__)}
 
 lib = Lib.new()
-
-{Dict = !r}
-{List = !r}
-{Path = !r}
 
 {show.source(Array)}
 

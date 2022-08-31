@@ -37,11 +37,11 @@ class Foam:
     def __init__(self, data: List, root: Path) -> None:
         self._list = data
         self._root = p.Path(root)
-        self._dest = None
+        self._dest: t.Optional[p.Path] = None
 
-        self._cmd = None
-        self._info = None
-        self._post = None
+        self._cmd: t.Optional['Command'] = None
+        self._info: t.Optional['Information'] = None
+        self._post: t.Optional['PostProcess'] = None
 
         openfoam = set(map(str, self.meta.get('openfoam', [])))
         if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
@@ -167,15 +167,15 @@ class Foam:
         system = self['foam']['system']
         block_mesh = system.get('blockMeshDict', None)
         if block_mesh is None:
-            return  # unknown ndim
+            return None  # unknown ndim
         count = 3
         for block in block_mesh['blocks']:
             start = block.find(')')
             if start < 0:
-                return
+                return None
             begin, end = block.find('(', start+1), block.find(')', start+1)
             if begin < 0 or end < 0:
-                return
+                return None
             grids = block[begin+1: end].split()
             count = min(count, len(grids)-grids.count('1'))
         return count
