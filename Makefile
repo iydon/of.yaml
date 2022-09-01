@@ -2,7 +2,7 @@ POETRY = poetry
 PYTHON = $(POETRY) run python
 
 
-.PHONY: help demo dependencies shell test standalone preview docs uncache publish copyright
+.PHONY: help demo dependencies shell test standalone preview docs uncache publish copyright mypy
 
 help:                  ## Print the usage
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
