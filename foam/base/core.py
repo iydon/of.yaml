@@ -30,11 +30,11 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.11.4'
+    __version__ = '0.11.5'
 
     parse = Parser.new()
 
-    def __init__(self, data: List, root: Path) -> None:
+    def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data
         self._root = p.Path(root)
         self._dest: t.Optional[p.Path] = None
@@ -43,15 +43,16 @@ class Foam:
         self._info: t.Optional['Information'] = None
         self._post: t.Optional['PostProcess'] = None
 
-        openfoam = set(map(str, self.meta.get('openfoam', [])))
-        if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
-            w.warn(f'OpenFOAM version mismatch: {root}')
-        version = self._parse(self.__version__)
-        current = self._parse(str(self.meta.get('version', '0.0.0')))
-        if (version.major, version.minor) < (current.major, current.minor):
-            w.warn('Forward compatibility is not yet guaranteed')
-        elif (version.major, version.minor) > (current.major, current.minor):
-            w.warn('Backward compatibility is not yet guaranteed')
+        if warn:
+            openfoam = set(map(str, self.meta.get('openfoam', [])))
+            if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
+                w.warn(f'OpenFOAM version mismatch: {root}')
+            version = self._parse(self.__version__)
+            current = self._parse(str(self.meta.get('version', '0.0.0')))
+            if (version.major, version.minor) < (current.major, current.minor):
+                w.warn('Forward compatibility is not yet guaranteed')
+            elif (version.major, version.minor) > (current.major, current.minor):
+                w.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional['Data']:
         try:
@@ -163,7 +164,7 @@ class Foam:
 
     @f.cached_property
     def ndim(self) -> t.Optional[int]:
-        # TODO: verify that the method is reliable
+        # TODO: verify that this method is reliable
         system = self['foam']['system']
         block_mesh = system.get('blockMeshDict', None)
         if block_mesh is None:
@@ -204,6 +205,7 @@ class Foam:
             path.chmod(int(str(permission), base=8))
 
     def _save_static(self) -> None:
+        # TODO: add to parse sub-module
         for static in self['static'] or []:
             # TODO: rewritten as match statement when updated to 3.10
             out = self._path(static['name'])  # self._dest is not None
@@ -218,6 +220,8 @@ class Foam:
 
                     with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
                         z.extractall(path=out.parent)
+                else:
+                    raise Exception(f'Unknown types "{static["type"]}"')
             elif static['type'][0] == 'path':
                 in_ = self._root / static['data']
                 if static['type'][1] == 'raw':
@@ -233,6 +237,17 @@ class Foam:
 
                     with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
                         z.extractall(path=out.parent)
+                elif static['type'][1] == 'foam':
+                    data = Data({})
+                    path = self._root / static['data']
+                    data[static['name'].split('/')] = {  # p.Path(static['name']).parts
+                        'json': lambda path: json.loads(path.read_text()),
+                        'yaml': lambda path: lib['yaml'].load(path.read_text(), Loader=lib['SafeLoader']),
+                    }[static['type'][2]](path)
+                    self.__class__([{'order': ['meta', 'foam']}, data._data], path.parent, warn=False) \
+                        .save(self._dest, paraview=False)
+                else:
+                    raise Exception(f'Unknown types "{static["type"]}"')
             else:
                 raise Exception(f'Unknown types "{static["type"]}"')
 

@@ -72,4 +72,5 @@
 
 - Add third-party tutorials ([openfoam_tutorials](https://github.com/openfoamtutorials/openfoam_tutorials))
 - Add [mypy](https://github.com/python/mypy) support for static types
+- Add the ability to parse additional Foam files
 - Compatible with python3.7
