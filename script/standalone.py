@@ -4,9 +4,7 @@ import re
 import textwrap
 import typing as t
 
-from foam.app import command, information, postprocess
-from foam.base import Foam, Parser, Array, CachedLib, Data, Dict, Keys, List, Path, Version, lib
-from foam.compat import functools
+from foam import app, base, compat
 
 
 class show:
@@ -78,16 +76,16 @@ s = subprocess
 t = typing
 w = warnings
 
-CachedLib = {repr(CachedLib).replace('module', 'types.ModuleType')}
-{Dict = !r}
-{Keys = !r}
-{List = !r}
-{Path = !r}
+CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
+Dict = {base.type.Dict}
+Keys = {base.type.Keys}
+List = {base.type.List}
+Path = {base.type.Path}
 
 _NOT_FOUND = object()
 
 class compat(types.ModuleType):
-{show._indent(show.submodule('functools', functools.cached_property, functools.singledispatchmethod))}
+{show._indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
 
     class typing(types.ModuleType):
         Self = t.TypeVar('Self')
@@ -101,36 +99,37 @@ for obj, name in [
         setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
 
 
-{show.source(lib.__class__)}
+{show.source(base.lib.lib.__class__)}
 
 lib = Lib.default()
 
-{show.source(Array)}
+{show.source(base.type.Array)}
 
-{show.source(Data)}
+{show.source(base.type.Data)}
 
-{show.source(Version)}
+{show.source(base.type.Version)}
 
-{show.source(command.adapter.Default)}
-{show.source(command.adapter.AppBase)}
-{show.source(command.adapter.AppByTimeI)}
-{show.source(command.adapter.AppByTimeII)}
-{show.source(command.adapter.AppByIterationI)}
-{show.source(command.adapter.AppByIterationII)}
-{show.source(command.adapter.AppByProcessor)}
+{show.source(app.command.adapter.Default)}
+{show.source(app.command.adapter.AppBase)}
+{show.source(app.command.adapter.AppByTimeI)}
+{show.source(app.command.adapter.AppByTimeII)}
+{show.source(app.command.adapter.AppByIterationI)}
+{show.source(app.command.adapter.AppByIterationII)}
+{show.source(app.command.adapter.AppByProcessor)}
 
-Apps = {{}} if lib['tqdm'] is None else {show.apps(command.adapter.Apps)}
+Apps = {{}} if lib['tqdm'] is None else {show.apps(app.command.adapter.Apps)}
 
-{show.source(command.Command)}
+{show.source(base.parse.register)}
+{show.source(base.parse.Static)}
+{show.source(base.parse.YAML)}
+{show.source(base.parse.Parser)}
 
-{show.source(Parser)}
-
-{show.submodule('app', command.Command, information.Information, postprocess.PostProcess, postprocess.VTK)}
+{show.submodule('app', app.command.core.Command, app.information.core.Information, app.postprocess.core.PostProcess, app.postprocess.core.VTK)}
 
 Command = app.Command
 Information = app.Information
 PostProcess = app.PostProcess
 VTK = app.VTK
 
-{show.source(Foam)}
+{show.source(base.core.Foam)}
 '''))
