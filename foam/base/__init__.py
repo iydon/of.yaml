@@ -1,7 +1,4 @@
-__all__ = ['Foam', 'Array', 'CachedLib', 'Data', 'Dict', 'Keys', 'List', 'Parser', 'Path', 'Version', 'lib']
+__all__ = ['core', 'lib', 'parse', 'type']
 
 
-from .core import Foam
-from .lib import lib
-from .parse import Parser
-from .type import Array, CachedLib, Data, Dict, Keys, List, Path, Version
+from . import core, lib, parse, type

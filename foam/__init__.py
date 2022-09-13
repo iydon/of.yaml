@@ -17,7 +17,7 @@ for obj, name in [
 
 
 from . import app
-from .base import Foam
+from .base.core import Foam
 
 
 __doc__ = Foam.__doc__

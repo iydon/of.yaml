@@ -7,10 +7,11 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base import Foam, Path
+from ...base.core import Foam
+from ...base.type import Path
 
 if t.TYPE_CHECKING:
-    from ..command import Command
+    from ..command.core import Command
 
 
 class Information:
@@ -31,7 +32,7 @@ class Information:
     @property
     def cmd(self) -> 'Command':
         '''Command without asserting (no need to call `Foam::save` method first)'''
-        from ..command import Command
+        from ..command.core import Command
 
         if self._cmd is None:
             self._cmd = Command.from_foam_without_asserting(self._foam)

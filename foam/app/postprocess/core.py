@@ -4,7 +4,9 @@ __all__ = ['PostProcess', 'VTK']
 import typing as t
 import warnings as w
 
-from ...base import Foam, Array, Path, lib
+from ...base.core import Foam
+from ...base.lib import lib
+from ...base.type import Array, Path
 
 if t.TYPE_CHECKING:
     import vtkmodules as vtk

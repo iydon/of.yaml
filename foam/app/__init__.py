@@ -1,6 +1,4 @@
-__all__ = ['Command', 'Information', 'PostProcess']
+__all__ = ['command', 'information', 'postprocess']
 
 
-from .command import Command
-from .information import Information
-from .postprocess import PostProcess
+from . import command, information, postprocess

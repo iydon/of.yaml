@@ -1,4 +1,4 @@
-__all__ = ['Command']
+__all__ = ['adapter', 'core']
 
 
-from .core import Command
+from . import adapter, core

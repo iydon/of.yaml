@@ -4,7 +4,8 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-from ...base import Foam, lib
+from ...base.core import Foam
+from ...base.lib import lib
 
 
 class Default:

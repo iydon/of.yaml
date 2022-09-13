@@ -14,7 +14,9 @@ from .parse import Parser
 from .type import Dict, List, Path, Data, Version
 
 if t.TYPE_CHECKING:
-    from ..app import Command, Information, PostProcess
+    from ..app.command.core import Command
+    from ..app.information.core import Information
+    from ..app.postprocess.core import PostProcess
 
 
 class Foam:
@@ -100,7 +102,7 @@ class Foam:
     @property
     def cmd(self) -> 'Command':
         '''`app.command.Command`'''
-        from ..app import Command
+        from ..app.command.core import Command
 
         if self._cmd is None:
             self._cmd = Command.from_foam(self)
@@ -109,7 +111,7 @@ class Foam:
     @property
     def info(self) -> 'Information':
         '''`app.information.Information`'''
-        from ..app import Information
+        from ..app.information.core import Information
 
         if self._info is None:
             self._info = Information.from_foam(self)
@@ -118,7 +120,7 @@ class Foam:
     @property
     def post(self) -> 'PostProcess':
         '''`app.postprocess.PostProcess`'''
-        from ..app import PostProcess
+        from ..app.postprocess.core import PostProcess
 
         if self._post is None:
             self._post = PostProcess.from_foam(self)

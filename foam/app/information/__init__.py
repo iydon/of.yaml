@@ -1,4 +1,4 @@
-__all__ = ['Information']
+__all__ = ['core']
 
 
-from .core import Information
+from . import core
