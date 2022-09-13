@@ -74,3 +74,4 @@
 - Add [mypy](https://github.com/python/mypy) support for static types
 - Add the ability to parse additional Foam files
 - Compatible with python3.7
+- Update program architecture (`Foam::_save_static`)

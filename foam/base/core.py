@@ -3,12 +3,9 @@ __all__ = ['Foam']
 
 import functools as f
 import gc
-import io
 import json
 import os
 import pathlib as p
-import shutil
-import sys
 import typing as t
 import warnings as w
 
@@ -30,15 +27,14 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.11.5'
-
-    parse = Parser.new()
+    __version__ = '0.11.6'
 
     def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data
         self._root = p.Path(root)
         self._dest: t.Optional[p.Path] = None
 
+        self._parser: t.Optional[Parser] = None
         self._cmd: t.Optional['Command'] = None
         self._info: t.Optional['Information'] = None
         self._post: t.Optional['PostProcess'] = None
@@ -64,7 +60,7 @@ class Foam:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod
-    def from_file(cls, path: Path) -> t.Self:
+    def from_file(cls, path: Path, **kwargs: t.Any) -> t.Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
         for suffixes, method in [
@@ -72,18 +68,18 @@ class Foam:
             ({'.yaml', '.yml'}, cls.from_yaml),
         ]:
             if path.suffix in suffixes:
-                return method(path.read_text('utf-8'), path.parent)
+                return method(path.read_text('utf-8'), path.parent, **kwargs)
         raise Exception(f'Suffix "{path.suffix}" not supported')
 
     @classmethod
-    def from_json(cls, text: str, root: Path) -> t.Self:
+    def from_json(cls, text: str, root: Path, **kwargs: t.Any) -> t.Self:
         data = json.loads(text)
-        return cls(data, root)
+        return cls(data, root, **kwargs)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path) -> t.Self:
+    def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> t.Self:
         data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
-        return cls(data, root)
+        return cls(data, root, **kwargs)
 
     @classmethod
     def as_placeholder(cls) -> t.Self:
@@ -93,6 +89,13 @@ class Foam:
     def meta(self) -> Dict:
         '''Meta information'''
         return self._list[0]
+
+    @property
+    def parser(self) -> Parser:
+        '''All parsers'''
+        if self._parser is None:
+            self._parser = Parser.from_foam(self)
+        return self._parser
 
     @property
     def cmd(self) -> 'Command':
@@ -207,49 +210,7 @@ class Foam:
     def _save_static(self) -> None:
         # TODO: add to parse sub-module
         for static in self['static'] or []:
-            # TODO: rewritten as match statement when updated to 3.10
-            out = self._path(static['name'])  # self._dest is not None
-            out.parent.mkdir(parents=True, exist_ok=True)
-            if static['type'][0] == 'embed':
-                if static['type'][1] == 'text':
-                    self._write(out, static['data'], static.get('permission', None))
-                elif static['type'][1] == 'binary':
-                    out.write_bytes(static['data'])
-                elif static['type'][1] == '7z':
-                    assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
-
-                    with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
-                        z.extractall(path=out.parent)
-                else:
-                    raise Exception(f'Unknown types "{static["type"]}"')
-            elif static['type'][0] == 'path':
-                in_ = self._root / static['data']
-                if static['type'][1] == 'raw':
-                    if in_.is_dir():
-                        kwargs = {'dirs_exist_ok': True} if sys.version_info >= (3, 8) else {}
-                        shutil.copytree(in_, out, **kwargs)
-                    elif in_.is_file():
-                        shutil.copyfile(in_, out)
-                    else:
-                        raise Exception('Target is neither a file nor a directory')
-                elif static['type'][1] == '7z':
-                    assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
-
-                    with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
-                        z.extractall(path=out.parent)
-                elif static['type'][1] == 'foam':
-                    data = Data({})
-                    path = self._root / static['data']
-                    data[static['name'].split('/')] = {  # p.Path(static['name']).parts
-                        'json': lambda path: json.loads(path.read_text()),
-                        'yaml': lambda path: lib['yaml'].load(path.read_text(), Loader=lib['SafeLoader']),
-                    }[static['type'][2]](path)
-                    self.__class__([{'order': ['meta', 'foam']}, data._data], path.parent, warn=False) \
-                        .save(self._dest, paraview=False)
-                else:
-                    raise Exception(f'Unknown types "{static["type"]}"')
-            else:
-                raise Exception(f'Unknown types "{static["type"]}"')
+            self.parser.static[tuple(static['type'])](static)
 
     def _save_foam(self) -> None:
         foam = self['foam']
@@ -265,7 +226,7 @@ class Foam:
             # write the parsed text data
             path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._write(path, '\n'.join(self.parse.data(data)))
+            self._write(path, '\n'.join(self.parser.yaml.data(data)))
 
     def _extract_files(
         self,

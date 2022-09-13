@@ -1,4 +1,4 @@
-__all__ = ['Foam', 'Parser', 'Array', 'CachedLib', 'Data', 'Dict', 'Keys', 'List', 'Path', 'Version', 'lib']
+__all__ = ['Foam', 'Array', 'CachedLib', 'Data', 'Dict', 'Keys', 'List', 'Parser', 'Path', 'Version', 'lib']
 
 
 from .core import Foam

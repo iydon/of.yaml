@@ -102,14 +102,14 @@ class Information:
             if path.suffix in {'.yaml', '.yml'}:
                 # try-except or try-except-else?
                 try:
-                    foam = Foam.from_file(path)
-                except:  # TODO: catch ConstructorError only
-                    continue
-                for keys, _ in foam['foam'].items(with_list=False):
-                    hashed_keys = tuple(map(hashing, keys))
-                    if hashed_keys[-length:] == hashed_targets:
-                        record[foam['foam'][keys]].add(path.absolute().as_posix())
-                        break
+                    foam = Foam.from_file(path, warn=False)
+                    for keys, _ in foam['foam'].items(with_list=False):
+                        hashed_keys = tuple(map(hashing, keys))
+                        if hashed_keys[-length:] == hashed_targets:
+                            record[foam['foam'][keys]].add(path.absolute().as_posix())
+                            break
+                except:  # TODO: catch specific exceptions only
+                    pass
         return dict(record)
 
     def commands(self, foam_only: bool = True) -> t.Set[str]:
