@@ -123,7 +123,7 @@ class YAML:
     _instance = None
 
     @classmethod
-    def new(cls) -> t.Self:
+    def default(cls) -> t.Self:
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -187,4 +187,4 @@ class Parser:
 
     @classmethod
     def from_foam(cls, foam: 'Foam') -> t.Self:
-        return cls(Static.from_foam(foam), YAML.new())
+        return cls(Static.from_foam(foam), YAML.default())

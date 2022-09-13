@@ -103,7 +103,7 @@ for obj, name in [
 
 {show.source(lib.__class__)}
 
-lib = Lib.new()
+lib = Lib.default()
 
 {show.source(Array)}
 

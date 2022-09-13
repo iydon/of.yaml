@@ -35,7 +35,7 @@ class Word:
         font.size = Pt(font_size)
 
     @classmethod
-    def new(cls, *args, **kwargs) -> Self:
+    def from_config(cls, *args, **kwargs) -> Self:
         return cls(*args, **kwargs)
 
     @property
@@ -97,7 +97,7 @@ class Word:
 if __name__ == '__main__':
     is_valid = lambda path: 'type: [embed, 7z]' not in path.read_text()
 
-    word = Word.new(root='.', style='friendly', page_break=False, font_size=7)
+    word = Word.from_config(root='.', style='friendly', page_break=False, font_size=7)
     word.add(word.root/'pyproject.toml')
     word.add(word.root/'foam.py')
     for path in (word.root/'foam').rglob('*.py'):

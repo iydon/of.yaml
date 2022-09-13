@@ -34,7 +34,7 @@ class Lib:
         raise KeyError(key)
 
     @classmethod
-    def new(cls) -> t.Self:
+    def default(cls) -> t.Self:
         return cls()
 
     def reset(self) -> t.Self:
@@ -93,4 +93,4 @@ class Lib:
         return vtk_to_numpy
 
 
-lib = Lib.new()
+lib = Lib.default()
