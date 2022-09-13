@@ -1,0 +1,3 @@
+[submodule "extra/template"]
+	path = extra/template
+	url = https://github.com/iydon/of.yaml-template
