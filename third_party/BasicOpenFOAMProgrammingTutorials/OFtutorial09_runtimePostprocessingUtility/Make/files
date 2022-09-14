@@ -1,3 +1,0 @@
-pipeCalc.C
-
-LIB = $(FOAM_USER_LIBBIN)/libpipeCalc

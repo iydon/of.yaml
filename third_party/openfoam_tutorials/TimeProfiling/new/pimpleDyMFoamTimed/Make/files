@@ -1,3 +1,0 @@
-pimpleDyMFoamTimed.C
-
-EXE = $(FOAM_APPBIN)/pimpleDyMFoamTimed

@@ -1,3 +1,0 @@
-ofTutorial13.C
-
-EXE = $(FOAM_USER_APPBIN)/ofTutorial13

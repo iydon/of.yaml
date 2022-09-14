@@ -1,3 +1,0 @@
-OFtutorial5.C
-
-EXE = $(FOAM_USER_APPBIN)/ofTutorial5

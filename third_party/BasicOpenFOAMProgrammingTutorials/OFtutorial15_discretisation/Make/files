@@ -1,3 +1,0 @@
-OFtutorial15.C
-
-LIB = $(FOAM_USER_LIBBIN)/libofTutorial15
