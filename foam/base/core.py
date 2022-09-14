@@ -23,9 +23,9 @@ class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case
 
     Example:
-        >>> foam = Foam.from_file('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
-        >>> foam['foam']['system', 'controlDict', 'endTime'] = 700
-        >>> foam.save('airFoil2D')
+        >>> foam = Foam.from_demo('cavity')
+        >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
+        >>> foam.save('cavity')
         >>> foam.cmd.all_run()
     '''
 
@@ -74,11 +74,13 @@ class Foam:
     def from_demo(cls, name: str = 'cavity') -> t.Self:
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
+        path = p.Path(__file__).parents[1] / 'demo' / version / name
         try:
-            self = cls.from_file(p.Path(__file__).parents[1]/f'demo/{version}/{name}', warn=False)
+            self = cls.from_file(path, warn=False)
         except FileNotFoundError:
             raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.list_demos()}')
         else:
+            print(f'Foam.from_file(\'{path.as_posix()}\', warn=False)')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__
             return self
