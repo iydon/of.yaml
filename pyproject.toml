@@ -27,7 +27,8 @@ classifiers = [
 "Bug Tracker" = "https://github.com/iydon/of.yaml/issues"
 Changes = "https://github.com/iydon/of.yaml/blob/main/CHANGELOG.md"
 Documentation = "https://ifoam.readthedocs.io"
-"Example Project" = "https://github.com/iydon/of.yaml-template"
+"Template Project" = "https://github.com/iydon/of.yaml-template"
+"Tutorial Project" = "https://github.com/iydon/of.yaml-tutorial"
 
 [tool.poetry.dependencies]
 python = ">=3.7"
