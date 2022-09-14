@@ -1,3 +1,6 @@
 [submodule "extra/template"]
 	path = extra/template
 	url = https://github.com/iydon/of.yaml-template
+[submodule "extra/tutorial"]
+	path = extra/tutorial
+	url = https://github.com/iydon/of.yaml-tutorial
