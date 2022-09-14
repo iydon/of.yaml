@@ -62,6 +62,32 @@ class Foam:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod
+    def list_demos(cls) -> t.List[str]:
+        root = p.Path(__file__).parents[1] / 'demo' / os.environ['WM_PROJECT_VERSION']
+        return sorted(
+            path.stem
+            for path in root.iterdir()
+            if path.suffix == '.yaml'
+        )
+
+    @classmethod
+    def from_demo(cls, name: str = 'cavity') -> t.Self:
+        version = os.environ['WM_PROJECT_VERSION']
+        name = name if name.endswith('.yaml') else f'{name}.yaml'
+        try:
+            self = cls.from_file(p.Path(__file__).parents[1]/f'demo/{version}/{name}', warn=False)
+        except FileNotFoundError:
+            raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.list_demos()}')
+        else:
+            self.meta.setdefault('openfoam', []).append(version)
+            self.meta['version'] = cls.__version__
+            return self
+
+    @classmethod
+    def from_demos(cls) -> t.List[t.Self]:
+        return list(map(cls.from_demo, cls.list_demos()))
+
+    @classmethod
     def from_file(cls, path: Path, **kwargs: t.Any) -> t.Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
@@ -85,7 +111,7 @@ class Foam:
 
     @classmethod
     def as_placeholder(cls) -> t.Self:
-        return cls([{}], '')
+        return cls([{}], '', warn=False)
 
     @property
     def meta(self) -> Dict:
