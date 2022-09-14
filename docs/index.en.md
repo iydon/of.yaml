@@ -28,10 +28,10 @@
   <p align="center">
     Python Interface to OpenFOAM (Configured Using YAML)
     <br />
-    <a href="https://github.com/iydon/of.yaml"><strong>Explore the docs »</strong></a>
+    <a href="https://ifoam.readthedocs.io"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/iydon/of.yaml">View Demo</a>
+    View <a href="https://github.com/iydon/of.yaml-template">Demo</a>/<a href="https://github.com/iydon/of.yaml-tutorial">Tutorial</a>
     ·
     <a href="https://github.com/iydon/of.yaml/issues">Report Bug</a>
     ·
@@ -85,7 +85,7 @@ Iydon Liang - [@iydon](https://github.com/iydon) - liangiydon_AT_gmail.com
 [forks-url]: https://github.com/iydon/of.yaml/network/members
 [stars-shield]: https://img.shields.io/github/stars/iydon/of.yaml.svg?style=for-the-badge
 [stars-url]: https://github.com/iydon/of.yaml/stargazers
-[issues-shield]: https://img.shields.io/github/issues/iydon/of.yaml.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues-closed/iydon/of.yaml.svg?style=for-the-badge
 [issues-url]: https://github.com/iydon/of.yaml/issues
 [license-shield]: https://img.shields.io/github/license/iydon/of.yaml.svg?style=for-the-badge
 [license-url]: https://github.com/iydon/of.yaml/blob/master/LICENSE.txt

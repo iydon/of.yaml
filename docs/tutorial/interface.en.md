@@ -7,7 +7,7 @@ In [1]: from foam import Foam
 
 In [2]: # core
 
-In [3]: foam = Foam.from_file('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
+In [3]: foam = Foam.from_file('extra/tutorial/tutorials/7/incompressible/simpleFoam/airFoil2D.yaml')
 
 In [4]: foam.meta
 Out[4]:
@@ -40,7 +40,7 @@ Out[6]:
  'runTimeModifiable': True}
 
 In [7]: foam.save('airFoil2D')
-Out[7]: <Foam @ ".../tutorials/incompressible/simpleFoam">
+Out[7]: <Foam @ ".../extra/tutorial/tutorials/7/incompressible/simpleFoam">
 
 In [8]: # info
 
@@ -54,7 +54,7 @@ In [11]: print(set(foam.info.search_yaml(*targets)))
 
 In [12]: codes = foam.cmd.all_run()
     ...: assert all(code==0 for code in codes)
-Running simpleFoam on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D using 1 processes if in parallel
+Running simpleFoam on .../of.yaml/airFoil2D using 1 processes if in parallel
  86%|████████████████████████████████████████████████████▎        | 313.0/365.0 [00:09<00:01, 32.95it/s]
 
 In [14]: # vtks
@@ -62,11 +62,11 @@ In [14]: # vtks
 In [15]: for time, vtk in zip(foam.cmd.times, foam.post.vtks):
     ...:     print(time, vtk.centroid('p'))
     ...:
-Running postProcess on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D using 1 processes if in parallel
+Running postProcess on .../of.yaml/airFoil2D using 1 processes if in parallel
  86%|███████████████████████████████████████████████████▍        | 313.0/365.0 [00:02<00:00, 137.61it/s]
- Running postProcess on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D using 1 processes if in parallel
+ Running postProcess on .../of.yaml/airFoil2D using 1 processes if in parallel
  86%|███████████████████████████████████████████████████▍        | 313.0/365.0 [00:01<00:00, 166.93it/s]
- Running foamToVTK on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D using 1 processes if in parallel
+ Running foamToVTK on .../of.yaml/airFoil2D using 1 processes if in parallel
  86%|████████████████████████████████████████████████████▎        | 313.0/365.0 [00:03<00:00, 87.20it/s]
   0.0 [nan nan nan]
  50.0 [-1.4844278e+02 -1.3489431e+03  2.5000008e-02]
@@ -80,6 +80,110 @@ Running postProcess on /mnt/d/Desktop/GitHub/of.yaml/airFoil2D using 1 processes
 
 
 
-## Todo...
+## [pydoc](https://docs.python.org/3/library/pydoc.html) Documentation
+```
+Help on package foam:
 
-Perhaps next in this tutorial we can talk about the architecture of the interface library, the features that are expected to be added in the future, etc.
+NAME
+    foam - Convert multiple dictionary type data to OpenFOAM test case
+
+DESCRIPTION
+    Example:
+        >>> foam = Foam.from_demo('cavity')
+        >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
+        >>> foam.save('cavity')
+        >>> foam.cmd.all_run()
+
+PACKAGE CONTENTS
+    __main__
+    app (package)
+    base (package)
+    compat (package)
+
+CLASSES
+    builtins.object
+        foam.base.core.Foam
+    
+    class Foam(builtins.object)
+     |  Foam(data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
+     |  
+     |  Convert multiple dictionary type data to OpenFOAM test case
+     |  
+     |  Example:
+     |      >>> foam = Foam.from_demo('cavity')
+     |      >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
+     |      >>> foam.save('cavity')
+     |      >>> foam.cmd.all_run()
+     |  
+     |  Methods defined here:
+     |  
+     |  __getitem__(self, key: str) -> Union[ForwardRef('Data'), NoneType]
+     |  
+     |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |  
+     |  application = <functools.cached_property object>
+     |  environ = <functools.cached_property object>
+     |  fields = <functools.cached_property object>
+     |  ndim = <functools.cached_property object>
+     |  number_of_processors = <functools.cached_property object>
+     |  pipeline = <functools.cached_property object>
+     |  reset(self) -> ~Self
+     |  
+     |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> ~Self
+     |      Persist case to hard disk
+     |  
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |  
+     |  as_placeholder() -> ~Self from builtins.type
+     |  
+     |  from_demo(name: str = 'cavity') -> ~Self from builtins.type
+     |  
+     |  from_demos() -> List[~Self] from builtins.type
+     |  
+     |  from_file(path: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
+     |      Supported format: json, yaml
+     |  
+     |  from_json(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
+     |  
+     |  from_yaml(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
+     |  
+     |  list_demos() -> List[str] from builtins.type
+     |  
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |  
+     |  cmd
+     |      `app.command.Command`
+     |  
+     |  info
+     |      `app.information.Information`
+     |  
+     |  meta
+     |      Meta information
+     |  
+     |  parser
+     |      All parsers
+     |  
+     |  post
+     |      `app.postprocess.PostProcess`
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+DATA
+    __all__ = ['app', 'Foam']
+
+VERSION
+    0.11.7
+```

@@ -1,7 +1,7 @@
 ## 先决条件（Prerequisites）
 
-- **[OpenFOAM](https://github.com/OpenFOAM)** 支持的操作系统；
-- **[Python](https://www.python.org/downloads/)** 3.8 或更高版本。
+- 支持 **[OpenFOAM](https://github.com/OpenFOAM)** 的操作系统；
+- **[Python](https://www.python.org/downloads/)** 3.7 或更高版本。
 
 
 

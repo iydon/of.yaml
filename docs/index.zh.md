@@ -28,10 +28,10 @@
   <p align="center">
     OpenFOAM 的 Python 接口（采用 YAML 配置）
     <br />
-    <a href="https://github.com/iydon/of.yaml"><strong>探索文档 »</strong></a>
+    <a href="https://ifoam.readthedocs.io"><strong>探索文档 »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/iydon/of.yaml">查看演示</a>
+    查看<a href="https://github.com/iydon/of.yaml-template">演示</a>/<a href="https://github.com/iydon/of.yaml-tutorial">案例</a>
     ·
     <a href="https://github.com/iydon/of.yaml/issues">报告错误</a>
     ·
@@ -85,7 +85,7 @@
 [forks-url]: https://github.com/iydon/of.yaml/network/members
 [stars-shield]: https://img.shields.io/github/stars/iydon/of.yaml.svg?style=for-the-badge
 [stars-url]: https://github.com/iydon/of.yaml/stargazers
-[issues-shield]: https://img.shields.io/github/issues/iydon/of.yaml.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues-closed/iydon/of.yaml.svg?style=for-the-badge
 [issues-url]: https://github.com/iydon/of.yaml/issues
 [license-shield]: https://img.shields.io/github/license/iydon/of.yaml.svg?style=for-the-badge
 [license-url]: https://github.com/iydon/of.yaml/blob/master/LICENSE.txt
