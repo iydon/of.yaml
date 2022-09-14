@@ -104,10 +104,10 @@ if __name__ == '__main__':
         word.add(path)
     for path in (word.root/'script').rglob('*.py'):
         word.add(path)
-    for path in (word.root/'tutorials').rglob('*.yaml'):
+    for path in (word.root/'extra/tutorial/tutorials').rglob('*.yaml'):
         if is_valid(path):
             word.add(path)
-    for path in (word.root/'third_party').rglob('*'):
+    for path in (word.root/'extra/tutorial/third_party').rglob('*'):
         if path.is_file() and path.suffix in {'.C', '.H', '.yaml', '.sh'}:
             if is_valid(path):
                 word.add(path)

@@ -7,7 +7,7 @@ import subprocess
 import textwrap
 import typing as t
 
-from foam import __version__
+import foam
 
 
 Path = t.Union[str, p.Path]
@@ -15,7 +15,7 @@ Path = t.Union[str, p.Path]
 
 class Case:
     Self = __qualname__
-    version = __version__
+    version = foam.__version__
     keys = [('0', ), ('constant', ), ('system', )]
 
     def __init__(self, path: Path, threshold: int) -> None:
@@ -48,7 +48,8 @@ class Case:
         solver = '/'.join(self._target.parts[index-1:index+1])
         cp = subprocess.run(f'find $FOAM_APP -name {self._target.parts[index]}', capture_output=True, shell=True)
         path = p.Path(cp.stdout.decode().strip()).relative_to(self._root).as_posix()
-        return f'| [{self._target.name}]({target}) | [{self._origin.name}]({url}) | {version} | [{solver}](https://github.com/OpenFOAM/OpenFOAM-{version}/tree/master/{path}) |'
+        print('OpenFOAM = ', version)
+        return f'| [{self._target.name}]({target}) | [{self._origin.name}]({url}) | [{solver}](https://github.com/OpenFOAM/OpenFOAM-{version}/tree/master/{path}) |'
 
     def _categorize(self) -> t.Tuple[t.Dict[t.Tuple[str, ...], str], ...]:
         foam, static, todos = {}, {}, {}
@@ -77,7 +78,7 @@ class Case:
     def _part_meta(self) -> str:
         return f'''
             openfoam: [{os.environ['WM_PROJECT_VERSION']}]
-            version: {__version__}
+            version: {foam.__version__}
             order:
                 - meta
                 - foam

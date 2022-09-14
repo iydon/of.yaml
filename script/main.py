@@ -2,8 +2,8 @@ from foam import Foam
 
 
 # core
-foam = Foam.from_file('tutorials/incompressible/simpleFoam/airFoil2D.yaml')
-foam.save('airFoil2D')
+foam = Foam.from_demo('cavity')
+foam.save('cavity')
 # info
 targets = ('fvSchemes', 'divSchemes', 'div(rhoPhi, U)')
 print(foam.info.search(*targets))

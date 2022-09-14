@@ -18,8 +18,8 @@ shell:                 ## Activate the virtual environment
 
 test:                  ## Run unit tests
 	for version in 7 ; do \
-		$(PYTHON) -m foam conv tutorials --directory test --version $$version --exist-ok ; \
-		$(PYTHON) -m foam test           --directory test --version $$version ; \
+		$(PYTHON) -m foam conv extra/tutorial/tutorials/$$version --directory test --version $$version --exist-ok ; \
+		$(PYTHON) -m foam test                                    --directory test --version $$version ; \
 	done
 
 standalone:            ## Convert Python package into a single file

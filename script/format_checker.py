@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     fc = FormatChecker(
         root='.',
-        prefixes={'.git', '.vscode'},
+        prefixes={'.git', '.mypy_cache', '.vscode'},
         suffixes={'.7z', '.dat', '.gz', '.mp4', '.pdf', '.png', '.whl'},
     )
     asyncio.run(fc.check_with(func=print))

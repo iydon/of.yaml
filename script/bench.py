@@ -26,7 +26,8 @@ repeat = 7
 n_time = 19
 
 bench = {}
-for path in p.Path('tutorials').rglob('*.yaml'):
+root = p.Path('extra', 'tutorial', 'tutorials', os.environ['WM_PROJECT_VERSION'])
+for path in root.rglob('*.yaml'):
     foam = Foam.from_file(path).save(f'case/{path.stem}')
     control = foam['foam']['system', 'controlDict']
     if control['startFrom']=='startTime' and control['stopAt']=='endTime' and is_valid(foam, 4):

@@ -101,9 +101,9 @@ Running the demo code in the virtual environment results in the following output
 ```sh
 $ python demo.py
 
-Foam.from_file('/mnt/d/Desktop/GitHub/of.yaml/foam/demo/7/cavity.yaml', warn=False)
-Running blockMesh on /mnt/d/Desktop/GitHub/of.yaml/cavity using 1 processes if in parallel
-Running icoFoam on /mnt/d/Desktop/GitHub/of.yaml/cavity using 1 processes if in parallel
+Foam.from_file('.../of.yaml/foam/demo/7/cavity.yaml', warn=False)
+Running blockMesh on .../of.yaml/cavity using 1 processes if in parallel
+Running icoFoam on .../of.yaml/cavity using 1 processes if in parallel
 100%|█████████████████████████████████████| 1.0/1.0 [00:02<00:00,  2.24s/it]
 ```
 
