@@ -7,6 +7,7 @@ import json
 import os
 import pathlib as p
 import typing as t
+import urllib
 import warnings as w
 
 from .lib import lib
@@ -29,7 +30,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.11.7'
+    __version__ = '0.11.8'
 
     def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data
@@ -90,16 +91,41 @@ class Foam:
         return list(map(cls.from_demo, cls.list_demos()))
 
     @classmethod
+    def from_remote_file(cls, url: str, **kwargs: t.Any) -> t.Self:
+        with urllib.request.urlopen(url) as f:
+            text = f.read()
+        split_url = urllib.parse.urlsplit(url)
+        path = p.Path(split_url.path)
+        self = cls.from_text(text, '.', path.suffix, **kwargs)
+        self.parser.url.set_split_url(split_url)
+        for old in self['static'] or []:
+            types = tuple(old.get('type', []))
+            old.update(self.parser.url[types](old.copy()))
+        return self
+
+    @classmethod
     def from_file(cls, path: Path, **kwargs: t.Any) -> t.Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
-        for suffixes, method in [
+        return cls.from_text_via_suffix(path.read_text(), path.parent, path.suffix, **kwargs)
+
+    @classmethod
+    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, **kwargs: t.Any) -> t.Self:
+        mapper = [
             ({'.json'}, cls.from_json),
             ({'.yaml', '.yml'}, cls.from_yaml),
-        ]:
-            if path.suffix in suffixes:
-                return method(path.read_text('utf-8'), path.parent, **kwargs)
-        raise Exception(f'Suffix "{path.suffix}" not supported')
+        ]
+        if suffix is not None:
+            for suffixes, method in mapper:
+                if suffix in suffixes:
+                    return method(text, root, **kwargs)
+        else:
+            for _, method in mapper:
+                try:
+                    return method(text, root, **kwargs)
+                except Exception as e:
+                    print(method.__name__, e)
+        raise Exception(f'Suffix "{suffix}" is not supported or not recognized')
 
     @classmethod
     def from_json(cls, text: str, root: Path, **kwargs: t.Any) -> t.Self:

@@ -150,6 +150,10 @@ CLASSES
      |  
      |  from_json(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
      |  
+     |  from_remote_file(url: str, **kwargs: Any) -> ~Self from builtins.type
+     |  
+     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, **kwargs: Any) -> ~Self from builtins.type
+     |  
      |  from_yaml(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
      |  
      |  list_demos() -> List[str] from builtins.type
@@ -185,5 +189,5 @@ DATA
     __all__ = ['app', 'Foam']
 
 VERSION
-    0.11.7
+    0.11.8
 ```

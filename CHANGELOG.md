@@ -73,6 +73,7 @@
 - Add third-party tutorials ([openfoam_tutorials](https://github.com/openfoamtutorials/openfoam_tutorials))
 - Add [mypy](https://github.com/python/mypy) support for static types
 - Add the ability to parse additional Foam files
+- Add the ability to read remote case
 - Compatible with python3.7
 - Move cases to a new [repository](https://github.com/iydon/of.yaml-tutorial)
 - Update program architecture (`Foam::_save_static`)

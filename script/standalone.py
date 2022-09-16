@@ -64,6 +64,7 @@ import subprocess
 import sys
 import types
 import typing
+import urllib
 import warnings
 
 if typing.TYPE_CHECKING:
@@ -121,6 +122,7 @@ Apps = {{}} if lib['tqdm'] is None else {show.apps(app.command.adapter.Apps)}
 
 {show.source(base.parse.register)}
 {show.source(base.parse.Static)}
+{show.source(base.parse.Url)}
 {show.source(base.parse.YAML)}
 {show.source(base.parse.Parser)}
 

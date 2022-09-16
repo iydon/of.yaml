@@ -8,6 +8,7 @@ import pathlib as p
 import shutil
 import sys
 import typing as t
+import urllib
 
 from .lib import lib
 from .type import Data, Dict
@@ -20,13 +21,29 @@ class register:
     '''Register'''
 
     static_methods = {}
+    url_methods = {}
 
     @classmethod
-    def decorate(cls, *types: str) -> t.Callable:
+    def static(cls, *types: str) -> t.Callable:
         '''Register processing methods for different types'''
 
         def decorate(func: t.Callable) -> t.Callable:
             cls.static_methods[types] = func
+
+            @f.wraps(func)
+            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+                return func(*args, **kwargs)
+
+            return wrapper
+        
+        return decorate
+
+    @classmethod
+    def url(cls, *types: str) -> t.Callable:
+        '''See register::static method for details'''
+
+        def decorate(func: t.Callable) -> t.Callable:
+            cls.url_methods[types] = func
 
             @f.wraps(func)
             def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
@@ -53,24 +70,29 @@ class Static:
     def from_foam(cls, foam: 'Foam') -> t.Self:
         return cls(foam)
 
-    @register.decorate('embed', 'text')
+    @register.static()
+    def _(self, static: Dict) -> None:
+        # do nothing
+        pass
+
+    @register.static('embed', 'text')
     def _(self, static: Dict) -> None:
         out = self._out(static['name'])
         self._foam._write(out, static['data'], static.get('permission', None))
 
-    @register.decorate('embed', 'binary')
+    @register.static('embed', 'binary')
     def _(self, static: Dict) -> None:
         out = self._out(static['name'])
         out.write_bytes(static['data'])
 
-    @register.decorate('embed', '7z')
+    @register.static('embed', '7z')
     def _(self, static: Dict) -> None:
         self._assert()
         out = self._out(static['name'])
         with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
             z.extractall(path=out.parent)
 
-    @register.decorate('path', 'raw')
+    @register.static('path', 'raw')
     def _(self, static: Dict) -> None:
         out, in_ = self._out(static['name']), self._in(static['data'])
         if in_.is_dir():
@@ -81,20 +103,20 @@ class Static:
         else:
             raise Exception('Target is neither a file nor a directory')
 
-    @register.decorate('path', '7z')
+    @register.static('path', '7z')
     def _(self, static: Dict) -> None:
         self._assert()
         out, in_ = self._out(static['name']), self._in(static['data'])
         with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
             z.extractall(path=out.parent)
 
-    @register.decorate('path', 'foam', 'json')
+    @register.static('path', 'foam', 'json')
     def _(self, static: Dict) -> None:
-        return self._path_foam(static)
+        self._path_foam(static)
 
-    @register.decorate('path', 'foam', 'yaml')
+    @register.static('path', 'foam', 'yaml')
     def _(self, static: Dict) -> None:
-        return self._path_foam(static)
+        self._path_foam(static)
 
     def _out(self, name: str) -> p.Path:
         out = self._foam._path(name)  # self._foam._dest is not None
@@ -116,6 +138,85 @@ class Static:
         }[static['type'][2]](in_)
         self._foam.__class__([{'order': ['meta', 'foam']}, data._data], in_.parent, warn=False) \
             .save(out, paraview=False)
+
+
+class Url:
+    '''Merge remote multiple files into a single file'''
+
+    def __init__(self, foam: 'Foam') -> None:
+        self._foam = foam
+        self._path = None
+        self._url = None
+
+    def __getitem__(self, keys: t.Tuple[str, ...]) -> t.Callable:
+        method = register.url_methods.get(keys, lambda self, static: static)
+        return lambda *args, **kwargs: method(self, *args, **kwargs)
+
+    @classmethod
+    def from_foam(cls, foam: 'Foam') -> t.Self:
+        return cls(foam)
+
+    @property
+    def path(self) -> p.Path:
+        return self._path
+
+    @property
+    def root(self) -> p.Path:
+        return self._path.parent
+
+    @property
+    def url(self) -> str:
+        return urllib.parse.urlunsplit(self._url)
+
+    def set_url(self, url: str) -> t.Self:
+        self._url = urllib.parse.urlsplit(url)
+        self._path = p.Path(self._url.path)
+        return self
+
+    def set_split_url(self, split_url: urllib.parse.SplitResult) -> t.Self:
+        self._url = split_url
+        self._path = p.Path(split_url.path)
+        return self
+
+    def url_from_path(self, path: p.Path) -> str:
+        parts = list(self._url)
+        parts[2] = path.as_posix()
+        return urllib.parse.urlunsplit(parts)
+
+    @register.url('path', 'raw')
+    def _(self, static: Dict) -> Dict:
+        # TODO: directory
+        url = self.url_from_path(self.root/static['data'])
+        static.update({'type': ['embed', 'binary'], 'data': self._urlopen(url)})
+        return static
+
+    @register.url('path', '7z')
+    def _(self, static: Dict) -> Dict:
+        url = self.url_from_path(self.root/static['data'])
+        static.update({'type': ['embed', '7z'], 'data': self._urlopen(url)})
+        return static
+
+    @register.url('path', 'foam', 'json')
+    def _(self, static: Dict) -> Dict:
+        return self._path_foam(static)
+
+    @register.url('path', 'foam', 'yaml')
+    def _(self, static: Dict) -> Dict:
+        return self._path_foam(static)
+
+    def _urlopen(self, url: str) -> bytes:
+        with urllib.request.urlopen(url) as f:
+            return f.read()
+
+    def _path_foam(self, static: Dict) -> Dict:
+        url = self.url_from_path(self.root/static['data'])
+        self._foam['foam'][static['name'].split('/')] = {  # p.Path(static['name']).parts
+            'json': lambda bytes: json.loads(bytes),
+            'yaml': lambda bytes: lib['yaml'].load(bytes, Loader=lib['SafeLoader']),
+        }[static['type'][2]](self._urlopen(url))
+        static.update({'type': []})
+        return static
+
 
 class YAML:
     '''OpenFOAM YAML parser'''
@@ -181,10 +282,15 @@ class YAML:
 class Parser:
     '''All parsers'''
 
-    def __init__(self, static: Static, yaml: YAML) -> None:
+    def __init__(self, static: Static, url: Url, yaml: YAML) -> None:
         self.static = static
+        self.url = url
         self.yaml = yaml
 
     @classmethod
     def from_foam(cls, foam: 'Foam') -> t.Self:
-        return cls(Static.from_foam(foam), YAML.default())
+        return cls(
+            Static.from_foam(foam),
+            Url.from_foam(foam),
+            YAML.default(),
+        )
