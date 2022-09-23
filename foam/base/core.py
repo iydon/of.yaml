@@ -107,7 +107,7 @@ class Foam:
     def from_file(cls, path: Path, **kwargs: t.Any) -> t.Self:
         '''Supported format: json, yaml'''
         path = p.Path(path)
-        return cls.from_text_via_suffix(path.read_text(), path.parent, path.suffix, **kwargs)
+        return cls.from_text(path.read_text(), path.parent, path.suffix, **kwargs)
 
     @classmethod
     def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, **kwargs: t.Any) -> t.Self:
