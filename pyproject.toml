@@ -2,7 +2,7 @@
 name = "ifoam"
 packages = [{ include = "foam" }]
 version = "0.11.8"
-description = "Python Interface to OpenFOAM (Configured Using YAML)"
+description = "Python Interface to OpenFOAM Case (Configured Using YAML)"
 authors = ["Iydon Liang <liangiydon@gmail.com>", "Qiang Yue <sustc_yq@163.com>"]
 keywords = ["OpenFOAM", "YAML"]
 readme = "README.md"

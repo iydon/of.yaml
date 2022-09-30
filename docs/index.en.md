@@ -26,7 +26,7 @@
   <h3 align="center">OpenFOAM.YAML</h3>
 
   <p align="center">
-    Python Interface to OpenFOAM (Configured Using YAML)
+    Python Interface to OpenFOAM Case (Configured Using YAML)
     <br />
     <a href="https://ifoam.readthedocs.io"><strong>Explore the docs »</strong></a>
     <br />
