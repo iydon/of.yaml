@@ -2,6 +2,9 @@
 !.vscode/settings.json
 .vscode/
 
+# .idea
+.idea/
+
 # python
 __pycache__/
 
