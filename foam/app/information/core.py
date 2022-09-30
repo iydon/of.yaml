@@ -11,6 +11,8 @@ from ...base.core import Foam
 from ...base.type import Path
 
 if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
     from ..command.core import Command
 
 
@@ -22,11 +24,11 @@ class Information:
         self._cmd: t.Optional['Command'] = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> t.Self:
+    def from_foam(cls, foam: Foam) -> 'Self':
         return cls(foam)
 
     @classmethod
-    def from_nothing(cls) -> t.Self:
+    def from_nothing(cls) -> 'Self':
         return cls(Foam.as_placeholder())
 
     @property

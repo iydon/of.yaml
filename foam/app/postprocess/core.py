@@ -11,6 +11,8 @@ from ...base.type import Array, Path
 if t.TYPE_CHECKING:
     import vtkmodules as vtk
 
+    from typing_extensions import Self
+
 
 class PostProcess:
     '''OpenFOAM post-processing'''
@@ -21,7 +23,7 @@ class PostProcess:
         self._logs: t.Optional[t.Dict[str, t.Any]] = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> t.Self:
+    def from_foam(cls, foam: Foam) -> 'Self':
         return cls(foam)
 
     @property
@@ -127,7 +129,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs) -> t.Self:
+    def from_file(cls, path: Path, **kwargs) -> 'Self':
         assert lib['vtk'] is not None, 'pip install ifoam[vtk]'  # TODO: improve error message
 
         reader = lib['vtk'].vtkGenericDataObjectReader()
@@ -143,7 +145,7 @@ class VTK:
         cls,
         foam: Foam, options: str = '', overwrite: bool = False,
         **kwargs,
-    ) -> t.Iterator[t.Self]:
+    ) -> t.Iterator[' ']:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         for name in ['writeCellCentres', 'writeCellVolumes']:

@@ -14,6 +14,8 @@ from .lib import lib
 from .type import Data, Dict
 
 if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
     from .core import Foam
 
 
@@ -67,7 +69,7 @@ class Static:
             raise Exception(f'Unknown types "{keys}"')
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> t.Self:
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @register.static()
@@ -153,7 +155,7 @@ class Url:
         return lambda *args, **kwargs: method(self, *args, **kwargs)
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> t.Self:
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
@@ -168,12 +170,12 @@ class Url:
     def url(self) -> str:
         return urllib.parse.urlunsplit(self._url)
 
-    def set_url(self, url: str) -> t.Self:
+    def set_url(self, url: str) -> 'Self':
         self._url = urllib.parse.urlsplit(url)
         self._path = p.Path(self._url.path)
         return self
 
-    def set_split_url(self, split_url: urllib.parse.SplitResult) -> t.Self:
+    def set_split_url(self, split_url: urllib.parse.SplitResult) -> 'Self':
         self._url = split_url
         self._path = p.Path(split_url.path)
         return self
@@ -224,7 +226,7 @@ class YAML:
     _instance = None
 
     @classmethod
-    def default(cls) -> t.Self:
+    def default(cls) -> 'Self':
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -288,7 +290,7 @@ class Parser:
         self.yaml = yaml
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> t.Self:
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(
             Static.from_foam(foam),
             Url.from_foam(foam),

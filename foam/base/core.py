@@ -15,6 +15,8 @@ from .parse import Parser
 from .type import Dict, List, Path, Data, Version
 
 if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
     from ..app.command.core import Command
     from ..app.information.core import Information
     from ..app.postprocess.core import PostProcess
@@ -72,7 +74,7 @@ class Foam:
         )
 
     @classmethod
-    def from_demo(cls, name: str = 'cavity') -> t.Self:
+    def from_demo(cls, name: str = 'cavity') -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         path = p.Path(__file__).parents[1] / 'demo' / version / name
@@ -87,11 +89,11 @@ class Foam:
             return self
 
     @classmethod
-    def from_demos(cls) -> t.List[t.Self]:
+    def from_demos(cls) -> t.List['Self']:
         return list(map(cls.from_demo, cls.list_demos()))
 
     @classmethod
-    def from_remote_file(cls, url: str, **kwargs: t.Any) -> t.Self:
+    def from_remote_file(cls, url: str, **kwargs: t.Any) -> 'Self':
         with urllib.request.urlopen(url) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
@@ -104,13 +106,13 @@ class Foam:
         return self
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs: t.Any) -> t.Self:
+    def from_file(cls, path: Path, **kwargs: t.Any) -> 'Self':
         '''Supported format: json, yaml'''
         path = p.Path(path)
         return cls.from_text(path.read_text(), path.parent, path.suffix, **kwargs)
 
     @classmethod
-    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, **kwargs: t.Any) -> t.Self:
+    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, **kwargs: t.Any) -> 'Self':
         mapper = [
             ({'.json'}, cls.from_json),
             ({'.yaml', '.yml'}, cls.from_yaml),
@@ -128,17 +130,17 @@ class Foam:
         raise Exception(f'Suffix "{suffix}" is not supported or not recognized')
 
     @classmethod
-    def from_json(cls, text: str, root: Path, **kwargs: t.Any) -> t.Self:
+    def from_json(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
         data = json.loads(text)
         return cls(data, root, **kwargs)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> t.Self:
+    def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
         data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
         return cls(data, root, **kwargs)
 
     @classmethod
-    def as_placeholder(cls) -> t.Self:
+    def as_placeholder(cls) -> 'Self':
         return cls([{}], '', warn=False)
 
     @property
@@ -240,7 +242,7 @@ class Foam:
             count = min(count, len(grids)-grids.count('1'))
         return count
 
-    def save(self, dest: Path, paraview: bool = True) -> t.Self:
+    def save(self, dest: Path, paraview: bool = True) -> 'Self':
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)
         self._dest.mkdir(parents=True, exist_ok=True)
@@ -250,7 +252,7 @@ class Foam:
             self._write(self._dest/'paraview.foam', '')
         return self
 
-    def reset(self) -> t.Self:
+    def reset(self) -> 'Self':
         self._dest = self._cmd = self._info = self._post = None
         for obj in gc.get_objects():
             if isinstance(obj, f._lru_cache_wrapper):

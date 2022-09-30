@@ -12,6 +12,9 @@ import warnings as w
 from .adapter import Default, Apps
 from ...base.core import Foam
 
+if t.TYPE_CHECKING:
+    from typing_extensions import  Self
+
 
 class Command:
     '''OpenFOAM command wrapper'''
@@ -20,13 +23,13 @@ class Command:
         self._foam = foam
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> t.Self:
+    def from_foam(cls, foam: Foam) -> 'Self':
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         return cls.from_foam_without_asserting(foam)
 
     @classmethod
-    def from_foam_without_asserting(cls, foam: Foam) -> t.Self:
+    def from_foam_without_asserting(cls, foam: Foam) -> 'Self':
         return cls(foam)
 
     @property

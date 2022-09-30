@@ -7,6 +7,9 @@ import warnings as w
 
 from .type import CachedLib
 
+if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 class Lib:
     def __init__(self) -> None:
@@ -34,10 +37,10 @@ class Lib:
         raise KeyError(key)
 
     @classmethod
-    def default(cls) -> t.Self:
+    def default(cls) -> 'Self':
         return cls()
 
-    def reset(self) -> t.Self:
+    def reset(self) -> 'Self':
         self._cache.clear()
         return self
 
