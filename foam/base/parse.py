@@ -37,7 +37,7 @@ class register:
                 return func(*args, **kwargs)
 
             return wrapper
-        
+
         return decorate
 
     @classmethod
@@ -52,7 +52,7 @@ class register:
                 return func(*args, **kwargs)
 
             return wrapper
-        
+
         return decorate
 
 

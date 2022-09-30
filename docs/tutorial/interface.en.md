@@ -103,28 +103,28 @@ PACKAGE CONTENTS
 CLASSES
     builtins.object
         foam.base.core.Foam
-    
+
     class Foam(builtins.object)
      |  Foam(data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
-     |  
+     |
      |  Convert multiple dictionary type data to OpenFOAM test case
-     |  
+     |
      |  Example:
      |      >>> foam = Foam.from_demo('cavity')
      |      >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
      |      >>> foam.save('cavity')
      |      >>> foam.cmd.all_run()
-     |  
+     |
      |  Methods defined here:
-     |  
+     |
      |  __getitem__(self, key: str) -> Union[ForwardRef('Data'), NoneType]
-     |  
+     |
      |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
-     |  
+     |
      |  __repr__(self) -> str
      |      Return repr(self).
-     |  
+     |
      |  application = <functools.cached_property object>
      |  environ = <functools.cached_property object>
      |  fields = <functools.cached_property object>
@@ -132,56 +132,56 @@ CLASSES
      |  number_of_processors = <functools.cached_property object>
      |  pipeline = <functools.cached_property object>
      |  reset(self) -> ~Self
-     |  
+     |
      |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> ~Self
      |      Persist case to hard disk
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
-     |  
+     |
      |  as_placeholder() -> ~Self from builtins.type
-     |  
+     |
      |  from_demo(name: str = 'cavity') -> ~Self from builtins.type
-     |  
+     |
      |  from_demos() -> List[~Self] from builtins.type
-     |  
+     |
      |  from_file(path: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
      |      Supported format: json, yaml
-     |  
+     |
      |  from_json(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
-     |  
+     |
      |  from_remote_file(url: str, **kwargs: Any) -> ~Self from builtins.type
-     |  
+     |
      |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, **kwargs: Any) -> ~Self from builtins.type
-     |  
+     |
      |  from_yaml(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> ~Self from builtins.type
-     |  
+     |
      |  list_demos() -> List[str] from builtins.type
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
-     |  
+     |
      |  cmd
      |      `app.command.Command`
-     |  
+     |
      |  info
      |      `app.information.Information`
-     |  
+     |
      |  meta
      |      Meta information
-     |  
+     |
      |  parser
      |      All parsers
-     |  
+     |
      |  post
      |      `app.postprocess.PostProcess`
-     |  
+     |
      |  ----------------------------------------------------------------------
      |  Data descriptors defined here:
-     |  
+     |
      |  __dict__
      |      dictionary for instance variables (if defined)
-     |  
+     |
      |  __weakref__
      |      list of weak references to the object (if defined)
 

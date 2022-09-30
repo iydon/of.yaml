@@ -145,7 +145,7 @@ class VTK:
         cls,
         foam: Foam, options: str = '', overwrite: bool = False,
         **kwargs,
-    ) -> t.Iterator[' ']:
+    ) -> t.Iterator['Self']:
         assert foam._dest is not None, 'Please call `Foam::save` method first'
 
         for name in ['writeCellCentres', 'writeCellVolumes']:

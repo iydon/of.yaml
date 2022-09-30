@@ -70,6 +70,8 @@ import warnings
 if typing.TYPE_CHECKING:
     import vtkmodules as vtk
 
+    from typing_extensions import Self
+
 c = collections
 f = functools
 p = pathlib
@@ -88,13 +90,9 @@ _NOT_FOUND = object()
 class compat(types.ModuleType):
 {show._indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
 
-    class typing(types.ModuleType):
-        Self = t.TypeVar('Self')
-
 for obj, name in [
     (f, 'cached_property'),
     (f, 'singledispatchmethod'),
-    (t, 'Self'),
 ]:
     if not hasattr(obj, name):
         setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
