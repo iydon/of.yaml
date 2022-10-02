@@ -90,12 +90,8 @@ _NOT_FOUND = object()
 class compat(types.ModuleType):
 {show._indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
 
-for obj, name in [
-    (f, 'cached_property'),
-    (f, 'singledispatchmethod'),
-]:
-    if not hasattr(obj, name):
-        setattr(obj, name, getattr(getattr(compat, obj.__name__), name))
+f.cached_property = compat.functools.cached_property
+f.singledispatchmethod = compat.functools.singledispatchmethod
 
 
 {show.source(base.lib.lib.__class__)}
