@@ -5,6 +5,9 @@ import pathlib as p
 import types
 import typing as t
 
+if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
@@ -105,4 +108,27 @@ class Data:
 class Version(t.NamedTuple):
     major: int
     minor: int
-    micro: int = 0
+    other: str
+
+    @classmethod
+    def from_string(cls, version: str) -> 'Self':
+        parts = version.split('.', maxsplit=2)
+        if len(parts) == 2:
+            major, minor = parts
+            other = ''
+        elif len(parts) == 3:
+            major, minor, other = parts
+        else:
+            raise Exception(f'"{version}" is not a valid version string')
+        return cls(int(major), int(minor), other)
+
+    @property
+    def micro(self) -> t.Optional[int]:
+        parts = self.other.split('.')
+        if parts and parts[0].isdigit():
+            return int(parts[0])
+        return None
+
+    @property
+    def micro_int(self) -> int:
+        return self.micro or 0

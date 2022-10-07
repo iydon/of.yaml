@@ -48,8 +48,8 @@ class Foam:
             openfoam = set(map(str, self.meta.get('openfoam', [])))
             if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
                 w.warn(f'OpenFOAM version mismatch: {root}')
-            version = self._parse(self.__version__)
-            current = self._parse(str(self.meta.get('version', '0.0.0')))
+            version = Version.from_string(self.__version__)
+            current = Version.from_string(str(self.meta.get('version', '0.0.0')))
             if (version.major, version.minor) < (current.major, current.minor):
                 w.warn('Forward compatibility is not yet guaranteed')
             elif (version.major, version.minor) > (current.major, current.minor):
@@ -300,6 +300,3 @@ class Foam:
         # TODO: use "prefix" will cause some of the `Command` methods to fail
         prefix = '.'  # (self['other'] or {}).get('directory', '.')
         return self._dest / prefix / p.Path(*parts)
-
-    def _parse(self, version: str) -> Version:
-        return Version(*map(int, version.split('.')))
