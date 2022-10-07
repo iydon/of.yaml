@@ -117,7 +117,7 @@ CLASSES
      |
      |  Methods defined here:
      |
-     |  __getitem__(self, key: str) -> Optional[ForwardRef('Data')]
+     |  __getitem__(self, key: str) -> Union[ForwardRef('Data'), NoneType]
      |
      |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
@@ -125,24 +125,12 @@ CLASSES
      |  __repr__(self) -> str
      |      Return repr(self).
      |
-     |  application = <functools.cached_property object>
-     |      Inspired by `getApplication`
-     |
-     |      - Reference:
-     |          - foamDictionary -disableFunctionEntries -entry application -value system/controlDict
-     |
-     |  environ = <functools.cached_property object>
-     |      OpenFOAM environments
-     |
-     |  fields = <functools.cached_property object>
-     |  ndim = <functools.cached_property object>
-     |  number_of_processors = <functools.cached_property object>
-     |      Inspired by `getNumberOfProcessors`
-     |
-     |      - Reference:
-     |          - foamDictionary -disableFunctionEntries -entry numberOfSubdomains -value system/decomposeParDict
-     |
-     |  pipeline = <functools.cached_property object>
+     |  application = <foam.compat.functools.cached_property object>
+     |  environ = <foam.compat.functools.cached_property object>
+     |  fields = <foam.compat.functools.cached_property object>
+     |  ndim = <foam.compat.functools.cached_property object>
+     |  number_of_processors = <foam.compat.functools.cached_property object>
+     |  pipeline = <foam.compat.functools.cached_property object>
      |  reset(self) -> 'Self'
      |
      |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> 'Self'
@@ -164,7 +152,7 @@ CLASSES
      |
      |  from_remote_file(url: str, **kwargs: Any) -> 'Self' from builtins.type
      |
-     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Optional[str] = None, **kwargs: Any) -> 'Self' from builtins.type
+     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, **kwargs: Any) -> 'Self' from builtins.type
      |
      |  from_yaml(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |
@@ -201,5 +189,5 @@ DATA
     __all__ = ['app', 'Foam']
 
 VERSION
-    0.11.9
+    0.11.10
 ```
