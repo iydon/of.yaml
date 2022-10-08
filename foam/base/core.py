@@ -144,6 +144,10 @@ class Foam:
         return cls([{}], '', warn=False)
 
     @property
+    def data(self) -> Data:
+        return Data(self._list)
+
+    @property
     def meta(self) -> Dict:
         '''Meta information'''
         return self._list[0]

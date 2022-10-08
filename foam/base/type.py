@@ -94,6 +94,29 @@ class Data:
     def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys, t.Any]]:
         yield from self._items(self._data, with_list=with_list)
 
+    def dump(self, *paths: Path) -> 'Self':
+        for path in map(p.Path, paths):
+            path.write_bytes(self.dumps(path.suffix[1:]))
+        return self
+
+    def dumps(self, type: str = 'yaml', **kwargs: t.Any) -> bytes:
+        if type in {'json'}:
+            import json
+
+            kwargs = {'ensure_ascii': False, **kwargs}
+            return json.dumps(self._data, **kwargs).encode()
+        elif type in {'pickle', 'pkl'}:
+            import pickle
+
+            return pickle.dumps(self._data, **kwargs)
+        elif type in {'yaml', 'yml'}:
+            from .lib import lib
+
+            kwargs = {'indent': 4, **kwargs}
+            return lib['yaml'].dump_all(self._data, **kwargs).encode()
+        else:
+            raise Exception(f'"{type}" is not a valid type string')
+
     def _items(self, data: t.Any, with_list: bool = False, keys: Keys = ()) -> t.Iterator[t.Tuple[Keys, t.Any]]:
         if isinstance(data, dict):
             for key, value in data.items():
