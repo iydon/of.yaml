@@ -27,13 +27,13 @@ class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case
 
     Example:
-        >>> foam = Foam.from_demo('cavity')
+        >>> foam = Foam.from_remote_demo('cavity')
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
         >>> foam.save('cavity')
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = Version.from_string('0.11.10')
+    __version__ = Version.from_string('0.11.11')
 
     def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data

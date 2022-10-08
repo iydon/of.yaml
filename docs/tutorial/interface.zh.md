@@ -89,7 +89,7 @@ NAME
 
 DESCRIPTION
     Example:
-        >>> foam = Foam.from_demo('cavity')
+        >>> foam = Foam.from_remote_demo('cavity')
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
         >>> foam.save('cavity')
         >>> foam.cmd.all_run()
@@ -110,7 +110,7 @@ CLASSES
      |  Convert multiple dictionary type data to OpenFOAM test case
      |
      |  Example:
-     |      >>> foam = Foam.from_demo('cavity')
+     |      >>> foam = Foam.from_remote_demo('cavity')
      |      >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
      |      >>> foam.save('cavity')
      |      >>> foam.cmd.all_run()
@@ -150,7 +150,11 @@ CLASSES
      |
      |  from_json(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |
-     |  from_remote_file(url: str, **kwargs: Any) -> 'Self' from builtins.type
+     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_remote_demos(timeout: Union[float, NoneType] = None) -> List[ForwardRef('Self')] from builtins.type
+     |
+     |  from_remote_file(url: str, timeout: Union[float, NoneType] = None, **kwargs: Any) -> 'Self' from builtins.type
      |
      |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, **kwargs: Any) -> 'Self' from builtins.type
      |
@@ -163,6 +167,8 @@ CLASSES
      |
      |  cmd
      |      `app.command.Command`
+     |
+     |  data
      |
      |  info
      |      `app.information.Information`
@@ -189,5 +195,5 @@ DATA
     __all__ = ['app', 'Foam']
 
 VERSION
-    0.11.10
+    0.11.11
 ```

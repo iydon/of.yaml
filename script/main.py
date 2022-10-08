@@ -2,7 +2,7 @@ from foam import Foam
 
 
 # core
-foam = Foam.from_demo('cavity')
+foam = Foam.from_remote_demo('cavity')
 foam.save('cavity')
 # info
 targets = ('fvSchemes', 'divSchemes', 'div(rhoPhi, U)')
