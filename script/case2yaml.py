@@ -15,7 +15,7 @@ Path = t.Union[str, p.Path]
 
 class Case:
     Self = __qualname__
-    version = foam.__version__
+    version = foam.__version__.to_string()
     keys = [('0', ), ('constant', ), ('system', )]
 
     def __init__(self, path: Path, threshold: int) -> None:
@@ -78,7 +78,7 @@ class Case:
     def _part_meta(self) -> str:
         return f'''
             openfoam: [{os.environ['WM_PROJECT_VERSION']}]
-            version: {foam.__version__}
+            version: {foam.__version__.to_string()}
             order:
                 - meta
                 - foam

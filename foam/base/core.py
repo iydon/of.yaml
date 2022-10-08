@@ -32,7 +32,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = '0.11.10'
+    __version__ = Version.from_string('0.11.10')
 
     def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data
@@ -48,11 +48,10 @@ class Foam:
             openfoam = set(map(str, self.meta.get('openfoam', [])))
             if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
                 w.warn(f'OpenFOAM version mismatch: {root}')
-            version = Version.from_string(self.__version__)
-            current = Version.from_string(str(self.meta.get('version', '0.0.0')))
-            if (version.major, version.minor) < (current.major, current.minor):
+            version = Version.from_string(str(self.meta.get('version', '0.0.0')))
+            if self.__version__ < version:
                 w.warn('Forward compatibility is not yet guaranteed')
-            elif (version.major, version.minor) > (current.major, current.minor):
+            elif self.__version__ > version:
                 w.warn('Backward compatibility is not yet guaranteed')
 
     def __getitem__(self, key: str) -> t.Optional['Data']:
@@ -85,7 +84,7 @@ class Foam:
         else:
             print(f'Foam.from_file(\'{path.as_posix()}\', warn=False)')
             self.meta.setdefault('openfoam', []).append(version)
-            self.meta['version'] = cls.__version__
+            self.meta['version'] = cls.__version__.to_string()
             return self
 
     @classmethod

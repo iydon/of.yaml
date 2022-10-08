@@ -131,14 +131,26 @@ class Data:
 class Version(t.NamedTuple):
     major: int
     minor: int
-    other: str
+    other: t.Optional[str]
+
+    def __lt__(self, other: 'Self') -> bool:
+        return (self.major, self.minor) < (other.major, other.minor)
+
+    def __gt__(self, other: 'Self') -> bool:
+        return other.__lt__(self)
+
+    def __repr__(self) -> str:
+        return self.to_string()
+
+    def __str__(self) -> str:
+        return self.to_string()
 
     @classmethod
     def from_string(cls, version: str) -> 'Self':
         parts = version.split('.', maxsplit=2)
         if len(parts) == 2:
             major, minor = parts
-            other = ''
+            other = None
         elif len(parts) == 3:
             major, minor, other = parts
         else:
@@ -147,11 +159,18 @@ class Version(t.NamedTuple):
 
     @property
     def micro(self) -> t.Optional[int]:
-        parts = self.other.split('.')
-        if parts and parts[0].isdigit():
-            return int(parts[0])
+        if self.other is not None:
+            parts = self.other.split('.')
+            if parts and parts[0].isdigit():
+                return int(parts[0])
         return None
 
     @property
     def micro_int(self) -> int:
         return self.micro or 0
+
+    def to_string(self) -> str:
+        version = f'{self.major}.{self.minor}'
+        if self.other is not None:
+            version += f'.{self.other}'
+        return version

@@ -14,7 +14,7 @@ class DEFAULT:
 
 
 @click.group()
-@click.version_option(version=Foam.__version__, prog_name=Foam.__name__)
+@click.version_option(version=Foam.__version__.to_string(), prog_name=Foam.__name__)
 def cli():
     pass
 
