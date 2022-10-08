@@ -7,6 +7,7 @@
         "Makefile": "makefile",
         "All*": "makefile",
         "*.json": "jsonc",
+        "*.lark": "lark",
         "*.lock": "toml",
         "*.md": "markdown",
         "*.py": "python",
