@@ -8,7 +8,8 @@ import pathlib as p
 import shutil
 import sys
 import typing as t
-import urllib
+import urllib.parse
+import urllib.request
 
 from .lib import lib
 from .type import Data, Dict

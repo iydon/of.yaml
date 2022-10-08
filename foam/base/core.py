@@ -7,7 +7,8 @@ import json
 import os
 import pathlib as p
 import typing as t
-import urllib
+import urllib.parse
+import urllib.request
 import warnings as w
 
 from .lib import lib
@@ -65,7 +66,7 @@ class Foam:
 
     @classmethod
     def list_demos(cls) -> t.List[str]:
-        root = p.Path(__file__).parents[1] / 'demo' / os.environ['WM_PROJECT_VERSION']
+        root = p.Path(__file__).parents[1] / 'static' / 'demo' / os.environ['WM_PROJECT_VERSION']
         return sorted(
             path.stem
             for path in root.iterdir()
@@ -76,7 +77,7 @@ class Foam:
     def from_demo(cls, name: str = 'cavity') -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
-        path = p.Path(__file__).parents[1] / 'demo' / version / name
+        path = p.Path(__file__).parents[1] / 'static' / 'demo' / version / name
         try:
             self = cls.from_file(path, warn=False)
         except FileNotFoundError:
@@ -92,8 +93,27 @@ class Foam:
         return list(map(cls.from_demo, cls.list_demos()))
 
     @classmethod
-    def from_remote_file(cls, url: str, **kwargs: t.Any) -> 'Self':
-        with urllib.request.urlopen(url) as f:
+    def from_remote_demo(cls, name: str = 'cavity', timeout: t.Optional[float] = None) -> 'Self':
+        version = os.environ['WM_PROJECT_VERSION']
+        name = name if name.endswith('.yaml') else f'{name}.yaml'
+        url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
+        try:
+            self = cls.from_remote_file(url, timeout, warn=False)
+        except:  # urllib.error.URLError
+            raise FileNotFoundError(f'No such demo: "{url}"')
+        else:
+            print(f'Foam.from_remote_file(\'{url}\', warn=False)')
+            self.meta.setdefault('openfoam', []).append(version)
+            self.meta['version'] = cls.__version__.to_string()
+            return self
+
+    @classmethod
+    def from_remote_demos(cls, timeout: t.Optional[float] = None) -> t.List['Self']:
+        return list(map(lambda name: cls.from_remote_demo(name, timeout), cls.list_demos()))
+
+    @classmethod
+    def from_remote_file(cls, url: str, timeout: t.Optional[float] = None, **kwargs: t.Any) -> 'Self':
+        with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)

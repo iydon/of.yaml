@@ -64,7 +64,8 @@ import subprocess
 import sys
 import types
 import typing
-import urllib
+import urllib.parse
+import urllib.request
 import warnings
 
 if typing.TYPE_CHECKING:
