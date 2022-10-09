@@ -68,7 +68,7 @@
 - Publish `ifoam` package on [PyPi](https://pypi.org/project/ifoam) using Poetry
 
 
-## `v0.11`
+## [`v0.11`](https://github.com/iydon/of.yaml/tree/v0.11)
 
 - Add third-party tutorials ([openfoam_tutorials](https://github.com/openfoamtutorials/openfoam_tutorials))
 - Add [mypy](https://github.com/python/mypy) support for static types
@@ -78,3 +78,6 @@
 - Compatible with python3.7
 - Move cases to a new [repository](https://github.com/iydon/of.yaml-tutorial)
 - Update program architecture (`Foam::_save_static`)
+
+
+## `v0.12`
