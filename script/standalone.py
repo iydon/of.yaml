@@ -94,10 +94,7 @@ f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
 
 
-{show.source(base.lib.lib.__class__)}
-
-lib = Lib.default()
-
+{show.source(base.lib.lib)}
 {show.source(base.type.Array)}
 {show.source(base.type.Keys)}
 
