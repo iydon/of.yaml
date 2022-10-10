@@ -81,3 +81,5 @@
 
 
 ## `v0.12`
+
+- Update program architecture (`foam::base::parse` -> `foam::parse`)

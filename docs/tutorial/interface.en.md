@@ -195,5 +195,5 @@ DATA
     __all__ = ['app', 'Foam']
 
 VERSION
-    0.11.11
+    0.12.0
 ```

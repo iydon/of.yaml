@@ -11,13 +11,12 @@ if t.TYPE_CHECKING:
 
 CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
-Keys = t.Tuple[t.Any, ...]
 List = t.List[Dict]
 Path = t.Union[str, p.Path]
 
 
 class Array:
-    def __class_getitem__(cls, dimensions: t.Union[int, t.Tuple[int, ...]]) -> type:
+    def __class_getitem__(cls, dimensions: 'Keys[int]') -> type:
         from .lib import lib
 
         if not isinstance(dimensions, tuple):
@@ -38,18 +37,19 @@ class Data:
     def __init__(self, data: t.Union[Dict, List]) -> None:
         self._data = data
 
-    def __getitem__(self, keys: t.Any) -> t.Any:
+    def __getitem__(self, keys: 'Keys[t.Any]') -> t.Any:
         if isinstance(keys, tuple):
             ans = self._data
             for key in keys:
                 ans = ans[key]
             return ans
         elif isinstance(keys, list):
+            # TODO: DeprecationWarning
             return self.__getitem__(tuple(keys))
         else:
             return self._data[keys]
 
-    def __setitem__(self, keys: t.Any, value: t.Any) -> None:
+    def __setitem__(self, keys: 'Keys[t.Any]', value: t.Any) -> None:
         if isinstance(keys, tuple):
             assert keys
 
@@ -60,9 +60,10 @@ class Data:
                 elif isinstance(ans, list):
                     ans = ans[key]
                 else:
-                    raise Exception
+                    raise Exception(f'Unknown type "{type(ans).__name__}"')
             ans[keys[-1]] = value
         elif isinstance(keys, list):
+            # TODO: DeprecationWarning
             self.__setitem__(tuple(keys), value)
         else:
             self._data[keys] = value
@@ -91,7 +92,7 @@ class Data:
         else:
             raise
 
-    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys, t.Any]]:
+    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple['Keys[t.Any]', t.Any]]:
         yield from self._items(self._data, with_list=with_list)
 
     def dump(self, *paths: Path) -> 'Self':
@@ -117,7 +118,10 @@ class Data:
         else:
             raise Exception(f'"{type}" is not a valid type string')
 
-    def _items(self, data: t.Any, with_list: bool = False, keys: Keys = ()) -> t.Iterator[t.Tuple[Keys, t.Any]]:
+    def _items(
+        self,
+        data: t.Any, with_list: bool = False, keys: 'Keys[t.Any]' = (),
+    ) -> t.Iterator[t.Tuple['Keys[t.Any]', t.Any]]:
         if isinstance(data, dict):
             for key, value in data.items():
                 yield from self._items(value, with_list, keys+(key, ))
@@ -126,6 +130,11 @@ class Data:
                 yield from self._items(value, with_list, keys+(key, ))
         else:
             yield keys, data
+
+
+class Keys:
+    def __class_getitem__(cls, T: type) -> type:
+        return t.Union[T, t.Tuple[T, ...]]
 
 
 class Version(t.NamedTuple):

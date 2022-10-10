@@ -82,7 +82,6 @@ w = warnings
 
 CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
 Dict = {base.type.Dict}
-Keys = {base.type.Keys}
 List = {base.type.List}
 Path = {base.type.Path}
 
@@ -102,6 +101,8 @@ lib = Lib.default()
 {show.source(base.type.Array)}
 
 {show.source(base.type.Data)}
+
+{show.source(base.type.Keys)}
 
 {show.source(base.type.Version)}
 
