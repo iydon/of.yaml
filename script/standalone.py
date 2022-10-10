@@ -4,7 +4,7 @@ import re
 import textwrap
 import typing as t
 
-from foam import app, base, compat
+from foam import app, base, compat, util
 
 
 class show:
@@ -99,12 +99,10 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 lib = Lib.default()
 
 {show.source(base.type.Array)}
-
-{show.source(base.type.Data)}
-
 {show.source(base.type.Keys)}
 
-{show.source(base.type.Version)}
+{show.source(util.object.Data)}
+{show.source(util.object.Version)}
 
 {show.source(app.command.adapter.Default)}
 {show.source(app.command.adapter.AppBase)}

@@ -12,7 +12,8 @@ import urllib.parse
 import urllib.request
 
 from .lib import lib
-from .type import Data, Dict
+from .type import Dict
+from ..util.object import Data
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -133,7 +134,7 @@ class Static:
         assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
 
     def _path_foam(self, static: Dict) -> None:
-        data = Data({})
+        data = Data.from_dict({})
         out, in_ = self._foam._path(), self._in(static['data'])
         data[static['name'].split('/')] = {  # p.Path(static['name']).parts
             'json': lambda path: json.loads(path.read_text()),

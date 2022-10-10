@@ -82,4 +82,6 @@
 
 ## `v0.12`
 
-- Update program architecture (`foam::base::parse` -> `foam::parse`)
+- Update program architecture
+    - `foam::base::type::{Data, Version}` -> `foam::util::object::{Data, Version}`
+    - `foam::base::parse` -> `foam::parse`

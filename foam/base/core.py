@@ -13,7 +13,8 @@ import warnings as w
 
 from .lib import lib
 from .parse import Parser
-from .type import Dict, List, Path, Data, Version
+from .type import Dict, List, Path
+from ..util.object import Data, Version
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -55,9 +56,9 @@ class Foam:
             elif self.__version__ > version:
                 w.warn('Backward compatibility is not yet guaranteed')
 
-    def __getitem__(self, key: str) -> t.Optional['Data']:
+    def __getitem__(self, key: str) -> t.Optional[Data]:
         try:
-            return Data(self._list[self.meta['order'].index(key)])
+            return Data.from_any(self._list[self.meta['order'].index(key)])
         except ValueError:
             return None
 
@@ -164,7 +165,7 @@ class Foam:
 
     @property
     def data(self) -> Data:
-        return Data(self._list)
+        return Data.from_list(self._list)
 
     @property
     def meta(self) -> Dict:
