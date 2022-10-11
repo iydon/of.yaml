@@ -6,7 +6,7 @@ import warnings as w
 
 from ...base.core import Foam
 from ...base.lib import lib
-from ...base.type import Array, Path
+from ...base.type import Array, Location, Path
 
 if t.TYPE_CHECKING:
     import vtkmodules as vtk
@@ -70,7 +70,7 @@ class PostProcess:
 
     def probe(
         self,
-        location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
+        location: Location, keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, t.Dict[float, Array[0, 1]]]:
         location_ = tuple(map(float, location))
@@ -78,9 +78,9 @@ class PostProcess:
 
     def probes(
         self,
-        *locations: t.Tuple[float, float, float],
+        *locations: Location,
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, t.Dict[float, Array[0, 1]]]]:
+    ) -> t.Dict[Location, t.Dict[str, t.Dict[float, Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -227,7 +227,7 @@ class VTK:
 
     def probe(
         self,
-        location: t.Tuple[float, float, float], keys: t.Optional[t.Set[str]] = None,
+        location: Location, keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, Array[0, 1]]:
         location_ = tuple(map(float, location))
@@ -235,9 +235,9 @@ class VTK:
 
     def probes(
         self,
-        *locations: t.Tuple[float, float, float],
+        *locations: Location,
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[t.Tuple[float, float, float], t.Dict[str, Array[0, 1]]]:
+    ) -> t.Dict[Location, t.Dict[str, Array[0, 1]]]:
         '''
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes

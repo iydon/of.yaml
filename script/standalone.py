@@ -83,6 +83,7 @@ w = warnings
 CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
 Dict = {base.type.Dict}
 List = {base.type.List}
+Location = {base.type.Location}
 Path = {base.type.Path}
 
 _NOT_FOUND = object()

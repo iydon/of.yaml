@@ -1,4 +1,4 @@
-__all__ = ['Array', 'CachedLib', 'Dict', 'Keys', 'List', 'Path']
+__all__ = ['Array', 'CachedLib', 'Dict', 'Keys', 'List', 'Location', 'Path']
 
 
 import pathlib as p
@@ -9,6 +9,7 @@ import typing as t
 CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
 List = t.List[Dict]
+Location = t.Tuple[float, float, float]
 Path = t.Union[str, p.Path]
 
 
