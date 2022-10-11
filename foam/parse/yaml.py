@@ -11,7 +11,34 @@ if t.TYPE_CHECKING:
 
 
 class YAML:
-    '''OpenFOAM YAML parser'''
+    '''OpenFOAM YAML parser
+
+    Example:
+        >>> data = {
+        ...     'FoamFile': {
+        ...         'version': 2.0,
+        ...         'format': 'ascii',
+        ...         'class': 'volVectorField',
+        ...         'object': 'U',
+        ...     },
+        ...     'dimensions': '[0 1 -1 0 0 0 0]',
+        ...     'internalField': 'uniform (0 0 0)',
+        ...     'boundaryField': {
+        ...         'movingWall': {
+        ...             'type': 'fixedValue',
+        ...             'value': 'uniform (1 0 0)',
+        ...         },
+        ...         'fixedWalls': {'type': 'noSlip'},
+        ...         'frontAndBack': {'type': 'empty'},
+        ...     },
+        ... }
+        >>> yaml = YAML.default()
+        >>> print('\n'.join(yaml.data(data)))
+        FoamFile {version 2.0; format ascii; class volVectorField; object U;}
+        dimensions [0 1 -1 0 0 0 0];
+        internalField uniform (0 0 0);
+        boundaryField {movingWall {type fixedValue; value uniform (1 0 0);} fixedWalls {type noSlip;} frontAndBack {type empty;}}
+    '''
 
     _instance = None
 

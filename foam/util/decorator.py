@@ -11,7 +11,30 @@ if t.TYPE_CHECKING:
 
 
 class Match:
-    '''Use decorator to simulate match syntax'''
+    '''Use decorator to simulate match syntax
+
+    Example:
+        >>> match = Match.default()
+
+        >>> @match.register()
+        ... def _():
+        ...     return 0
+
+        >>> @match.register('x')
+        ... def _():
+        ...     return 1
+
+        >>> @match.register('x', 'y')
+        ... def _():
+        ...     return 2
+
+        >>> match[()]()
+        0
+        >>> match['x']()
+        1
+        >>> match['x', 'y']()
+        2
+    '''
 
     def __init__(self) -> None:
         self._methods: t.Dict[t.Tuple[str, ...], t.Callable] = {}

@@ -20,7 +20,22 @@ if t.TYPE_CHECKING:
 
 
 class Static:
-    '''OpenFOAM static parser'''
+    '''OpenFOAM static parser
+
+    Example:
+        >>> foam = Foam.from_demo('cavity')
+        Foam.from_file('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
+        >>> foam.save('case')
+
+        >>> data = {
+        ...     'name': 'Allrun',
+        ...     'type': ['embed', 'text'],
+        ...     'permission': 777,
+        ...     'data': 'echo hello world!\n',
+        ... }
+        >>> static = Static.from_foam(foam)
+        >>> static[tuple(data['type'])](data)
+    '''
 
     match = Match.default()
 

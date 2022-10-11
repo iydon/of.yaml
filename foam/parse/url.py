@@ -18,7 +18,27 @@ if t.TYPE_CHECKING:
 
 
 class Url:
-    '''Merge remote multiple files into a single file'''
+    '''Merge remote multiple files into a single file
+
+    Example:
+        >>> foam = Foam.from_demo('cavity')
+        Foam.from_file('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
+        >>> foam.save('case')
+
+        >>> data = {
+        ...     'name': 'constant/polyMesh',
+        ...     'type': ['path', '7z'],
+        ...     'permission': None,
+        ...     'data': 'static/airFoil2D-polyMesh.7z',
+        ... }
+        >>> url = Url.from_foam(foam)
+        >>> url.set_url('https://raw.githubusercontent.com/iydon/of.yaml-tutorial/main/tutorials/7/incompressible/simpleFoam/airFoil2D.yaml')
+        >>> url[tuple(data['type'])](data)
+        {'name': 'constant/polyMesh',
+         'type': ['embed', '7z'],
+         'permission': None,
+         'data': ...}
+    '''
 
     match = Match.default()
 
