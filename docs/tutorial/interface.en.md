@@ -99,6 +99,8 @@ PACKAGE CONTENTS
     app (package)
     base (package)
     compat (package)
+    parse (package)
+    util (package)
 
 CLASSES
     builtins.object
@@ -117,7 +119,7 @@ CLASSES
      |
      |  Methods defined here:
      |
-     |  __getitem__(self, key: str) -> Union[ForwardRef('Data'), NoneType]
+     |  __getitem__(self, key: str) -> Union[foam.util.object.Data, NoneType]
      |
      |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
@@ -193,7 +195,8 @@ CLASSES
 
 DATA
     __all__ = ['app', 'Foam']
+    __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.0
+    0.12.1
 ```

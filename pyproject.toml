@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ifoam"
 packages = [{ include = "foam" }]
-version = "0.12.0"
+version = "0.12.1"
 description = "Python Interface to OpenFOAM Case (Configured Using YAML)"
 authors = ["Iydon Liang <liangiydon@gmail.com>", "Qiang Yue <sustc_yq@163.com>"]
 keywords = ["OpenFOAM", "YAML"]
@@ -44,10 +44,11 @@ vtk = { version = "^9.1.0", optional = true }
 [tool.poetry.extras]
 7z = ["py7zr"]
 cli = ["click"]
+lark = ["lark"]
 tqdm = ["tqdm"]
 type = ["typing-extensions"]
 vtk = ["vtk"]
-full = ["py7zr", "click", "tqdm", "typing-extensions", "vtk"]
+full = ["py7zr", "click", "lark", "tqdm", "typing-extensions", "vtk"]
 
 [tool.poetry.dev-dependencies]
 mkdocs-material = "^8.2.9"

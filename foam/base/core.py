@@ -34,7 +34,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = Version.from_string('0.12.0')
+    __version__ = Version.from_string('0.12.1')
 
     def __init__(self, data: List, root: Path, warn: bool = True) -> None:
         self._list = data
