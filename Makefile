@@ -2,16 +2,19 @@ POETRY = poetry
 PYTHON = $(POETRY) run python
 
 
-.PHONY: help demo dependencies shell test standalone preview docs uncache publish copyright mypy
+.PHONY: help demo dependencies init shell test standalone preview docs uncache publish copyright mypy
 
 help:                  ## Print the usage
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
 demo:                  ## Run the demo code
 	$(PYTHON) -m foam conv tutorials/incompressible/simpleFoam/airFoil2D.yaml
 
 dependencies:          ## List the dependencies as a tree
 	@$(POETRY) show --no-dev --tree
+
+init:                  ## Set environment variables, etc.
+	@echo export PYTHONPYCACHEPREFIX="$$HOME/.cache/cpython/"
 
 shell:                 ## Activate the virtual environment
 	@$(POETRY) shell
