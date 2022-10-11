@@ -4,7 +4,7 @@ import re
 import textwrap
 import typing as t
 
-from foam import app, base, compat, util
+from foam import app, base, compat, parse, util
 
 
 class show:
@@ -98,6 +98,7 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 {show.source(base.type.Array)}
 {show.source(base.type.Keys)}
 
+{show.source(util.decorator.Match)}
 {show.source(util.object.Data)}
 {show.source(util.object.Version)}
 
@@ -111,11 +112,10 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 
 Apps = {{}} if lib['tqdm'] is None else {show.apps(app.command.adapter.Apps)}
 
-{show.source(base.parse.register)}
-{show.source(base.parse.Static)}
-{show.source(base.parse.Url)}
-{show.source(base.parse.YAML)}
-{show.source(base.parse.Parser)}
+{show.source(parse.static.Static)}
+{show.source(parse.url.Url)}
+{show.source(parse.yaml.YAML)}
+{show.source(parse.Parser)}
 
 {show.submodule('app', app.command.core.Command, app.information.core.Information, app.postprocess.core.PostProcess, app.postprocess.core.VTK)}
 
@@ -125,4 +125,8 @@ PostProcess = app.PostProcess
 VTK = app.VTK
 
 {show.source(base.core.Foam)}
+
+__doc__ = Foam.__doc__
+__license__ = """{util.function.license(full_text=False)}"""
+__version__ = Foam.__version__
 '''))
