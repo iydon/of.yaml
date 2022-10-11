@@ -12,7 +12,9 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 
 from . import app
 from .base.core import Foam
+from .util.function import license
 
 
 __doc__ = Foam.__doc__
+__license__ = license(full_text=False)
 __version__ = Foam.__version__

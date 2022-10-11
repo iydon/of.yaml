@@ -12,8 +12,8 @@ import urllib.request
 import warnings as w
 
 from .lib import lib
-from .parse import Parser
 from .type import Dict, List, Path
+from ..parse import Parser
 from ..util.object import Data, Version
 
 if t.TYPE_CHECKING:
