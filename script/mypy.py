@@ -12,17 +12,19 @@ def is_valid(line: str) -> bool:
 
 
 if __name__ == '__main__':
+    command = 'poetry run python -m mypy foam/'
     mapper = {'error': '🛑', 'note': '⚠️'}
     hash = stdout('git rev-parse HEAD').strip()
     patterns = [
         re.compile(r'Name "t\.Self" is not defined'),
-        re.compile(r'Skipping analyzing "[a-zA-Z0-9_\.]+": module is installed, but missing library stubs or py\.typed marker')
+        re.compile(r'Skipping analyzing "[a-zA-Z0-9_\.]+": module is installed, but missing library stubs or py\.typed marker'),
+        re.compile(r'Variable "typing_extensions\.Self" is not valid as a type'),
     ]
     is_remote = True
 
     prefix = f'https://github.com/iydon/of.yaml/blob/{hash}/' if is_remote else ''
     lines = c.defaultdict(list)
-    for line in stdout('make mypy').splitlines():
+    for line in stdout(command).splitlines():
         if is_valid(line):
             path, number, type, message = map(str.strip, line.split(':', maxsplit=3))
             if any(p.match(message) for p in patterns):

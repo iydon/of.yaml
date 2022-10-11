@@ -47,7 +47,7 @@ copyright: standalone  ## http://www.gov.cn/zhengce/2020-12/26/content_5574414.h
 	@rm $@.py
 
 mypy:                  ## Check static type for Python
-	$(PYTHON) -m mypy foam/
+	@$(PYTHON) script/$@.py
 
 foam.py: foam/ script/standalone.py
 	make standalone
