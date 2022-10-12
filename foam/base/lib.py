@@ -1,98 +1,128 @@
-__all__ = ['lib']
+__all__ = ['argmin', 'is_tqdm_available', 'load_7z', 'load_text', 'progress_bar', 'square', 'vtk_generic_data_object_reader', 'vtk_to_numpy', 'yaml_dump_all', 'yaml_load', 'yaml_load_all']
 
 
-import types
+import pathlib as p
 import typing as t
-import warnings as w
 
-from .type import CachedLib
+if t.TYPE_CHECKING:
+    import numpy as np
+    import py7zr
+    import tqdm
+    import vtkmodules.all
 
 
-class lib:
-    '''Load modules on demand'''
+root = p.Path(__file__).parents[1]
 
-    _cache: t.Dict[str, CachedLib] = {}
 
-    def __class_getitem__(cls, key: str) -> t.Optional[CachedLib]:
-        if key in cls._cache:
-            ans = cls._cache[key]
-        else:
-            attr = getattr(cls, key)
-            try:
-                ans = attr()
-            except (ModuleNotFoundError, ImportError) as e:
-                ans = None
-                w.warn(f'{e.msg} ({attr.__doc__})')
-            cls._cache[key] = ans
-        return ans
+def argmin(*args: t.Any, **kwargs: t.Any) -> 'np.ndarray':
+    try:
+        import numpy as np
+    except Exception as e:
+        raise e.__class__('pip install ifoam[vtk]')
 
-    @classmethod
-    def reset(cls) -> type:
-        cls._cache.clear()
-        return cls
+    return np.argmin(*args, **kwargs)
 
-    @classmethod
-    def click(cls) -> types.ModuleType:
-        '''https://pypi.org/project/click'''
-        import click
 
-        return click
-
-    @classmethod
-    def lark(cls) -> types.ModuleType:
-        '''https://pypi.org/project/lark'''
-        import lark
-
-        return lark
-
-    @classmethod
-    def numpy(cls) -> types.ModuleType:
-        '''https://pypi.org/project/numpy'''
-        import numpy
-
-        return numpy
-
-    @classmethod
-    def py7zr(cls) -> types.ModuleType:
-        '''https://pypi.org/project/py7zr'''
-        import py7zr
-
-        return py7zr
-
-    @classmethod
-    def tqdm(cls) -> types.ModuleType:
-        '''https://pypi.org/project/tqdm'''
+def is_tqdm_available() -> bool:
+    try:
         import tqdm
+    except:
+        return False
+    else:
+        return True
 
-        return tqdm
 
-    @classmethod
-    def vtk(cls) -> types.ModuleType:
-        '''https://pypi.org/project/vtk'''
+def load_7z(*args: t.Any, **kwargs: t.Any) -> 'py7zr.SevenZipFile':
+    try:
+        import py7zr
+    except Exception as e:
+        raise e.__class__('pip install ifoam[7z]')
+
+    return py7zr.SevenZipFile(*args, **kwargs)
+
+
+def load_text(*args: t.Any, **kwargs: t.Any) -> 'np.ndarray':
+    try:
+        import numpy as np
+    except Exception as e:
+        raise e.__class__('pip install ifoam[vtk]')
+
+    return np.loadtxt(*args, **kwargs)
+
+
+def progress_bar(*args: t.Any, **kwargs: t.Any) -> 'tqdm.std.tqdm':
+    try:
+        import tqdm
+    except Exception as e:
+        raise e.__class__('pip install ifoam[tqdm]')
+
+    return tqdm.tqdm(*args, **kwargs)
+
+
+def square(*args: t.Any, **kwargs: t.Any) -> 'np.ndarray':
+    try:
+        import numpy as np
+    except Exception as e:
+        raise e.__class__('pip install ifoam[vtk]')
+
+    return np.square(*args, **kwargs)
+
+
+def vtk_generic_data_object_reader(*args: t.Any, **kwargs: t.Any) -> 'vtkmodules.vtkIOLegacy.vtkGenericDataObjectReader':
+    try:
         import vtkmodules.all as vtk
+    except Exception as e:
+        raise e.__class__('pip install ifoam[vtk]')
 
-        return vtk
+    return vtk.vtkGenericDataObjectReader()
 
-    @classmethod
-    def yaml(cls) -> types.ModuleType:
-        '''https://pypi.org/project/PyYAML'''
+
+def vtk_to_numpy(*args: t.Any, **kwargs: t.Any) -> 'np.ndarray':
+    try:
+        from vtkmodules.util.numpy_support import vtk_to_numpy
+    except Exception as e:
+        raise e.__class__('pip install ifoam[vtk]')
+
+    return vtk_to_numpy(*args, **kwargs)
+
+
+def yaml_dump_all(*args: t.Any, **kwargs: t.Any) -> str:
+    try:
         import yaml
-
-        return yaml
-
-    @classmethod
-    def SafeLoader(cls) -> object:
-        '''https://pypi.org/project/PyYAML'''
         try:
             from yaml import CSafeLoader as SafeLoader
         except ImportError:
             from yaml import SafeLoader
+    except Exception as e:
+        raise e.__class__('pip install ifoam')
 
-        return SafeLoader
+    kwargs['Loader'] = SafeLoader
+    return yaml.dump_all(*args, **kwargs)
 
-    @classmethod
-    def vtk_to_numpy(cls) -> t.Callable:
-        '''https://pypi.org/project/vtk'''
-        from vtkmodules.util.numpy_support import vtk_to_numpy
 
-        return vtk_to_numpy
+def yaml_load(*args: t.Any, **kwargs: t.Any) -> t.Any:
+    try:
+        import yaml
+        try:
+            from yaml import CSafeLoader as SafeLoader
+        except ImportError:
+            from yaml import SafeLoader
+    except Exception as e:
+        raise e.__class__('pip install ifoam')
+
+    kwargs['Loader'] = SafeLoader
+    return yaml.load(*args, **kwargs)
+
+
+def yaml_load_all(*args: t.Any, **kwargs: t.Any) -> t.Iterator[t.Any]:
+    try:
+        import yaml
+        try:
+            from yaml import CSafeLoader as SafeLoader
+        except ImportError:
+            from yaml import SafeLoader
+    except Exception as e:
+        raise e.__class__('pip install ifoam')
+
+    kwargs['Loader'] = SafeLoader
+    return yaml.load_all(*args, **kwargs)

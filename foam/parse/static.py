@@ -8,7 +8,7 @@ import shutil
 import sys
 import typing as t
 
-from ..base.lib import lib
+from ..base.lib import load_7z, yaml_load
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
 from ..util.object import Data
@@ -69,9 +69,8 @@ class Static:
 
     @match.register('embed', '7z')
     def _(self, static: Dict) -> None:
-        self._assert()
         out = self._out(static['name'])
-        with lib['py7zr'].SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
+        with load_7z(io.BytesIO(static['data']), mode='r') as z:
             z.extractall(path=out.parent)
 
     @match.register('path', 'raw')
@@ -87,9 +86,8 @@ class Static:
 
     @match.register('path', '7z')
     def _(self, static: Dict) -> None:
-        self._assert()
         out, in_ = self._out(static['name']), self._in(static['data'])
-        with lib['py7zr'].SevenZipFile(in_, mode='r') as z:
+        with load_7z(in_, mode='r') as z:
             z.extractall(path=out.parent)
 
     @match.register('path', 'foam', 'json')
@@ -108,15 +106,12 @@ class Static:
     def _in(self, data: str) -> p.Path:
         return self._foam._root / data
 
-    def _assert(self) -> None:
-        assert lib['py7zr'] is not None, 'pip install ifoam[7z]'  # TODO: improve error message
-
     def _path_foam(self, static: Dict) -> None:
         data = Data.from_dict({})
         out, in_ = self._foam._path(), self._in(static['data'])
         data[static['name'].split('/')] = {  # p.Path(static['name']).parts
             'json': lambda path: json.loads(path.read_text()),
-            'yaml': lambda path: lib['yaml'].load(path.read_text(), Loader=lib['SafeLoader']),
+            'yaml': lambda path: yaml_load(path.read_text()),
         }[static['type'][2]](in_)
         self._foam.__class__([{'order': ['meta', 'foam']}, data._data], in_.parent, warn=False) \
             .save(out, paraview=False)

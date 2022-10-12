@@ -5,7 +5,7 @@ import re
 import typing as t
 
 from ...base.core import Foam
-from ...base.lib import lib
+from ...base.lib import progress_bar, is_tqdm_available
 
 
 class Default:
@@ -24,11 +24,12 @@ class Default:
     def close(self) -> None:
         pass
 
+
 class AppBase(Default):
     def __init__(self, foam: Foam) -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
-        self.pbar = lib['tqdm'].tqdm(total=end-start)
+        self.pbar = progress_bar(total=end-start)
         self._new = self._old = start
 
     def __exit__(self, type, value, traceback) -> None:
@@ -41,6 +42,7 @@ class AppBase(Default):
 
     def now(self, line: bytes) -> t.Optional[float]:
         raise NotImplementedError
+
 
 class AppByTimeI(AppBase):
     '''
@@ -122,6 +124,7 @@ class AppByTimeI(AppBase):
         if line.startswith(b'Time = '):
             return float(line[7:])
 
+
 class AppByTimeII(AppBase):
     '''
     - utility:
@@ -133,6 +136,7 @@ class AppByTimeII(AppBase):
         if line.startswith(b'Time: '):
             return float(line[6:])
 
+
 class AppByIterationI(AppBase):
     '''
     - solver:
@@ -143,6 +147,7 @@ class AppByIterationI(AppBase):
         line = line.strip()
         if line.startswith(b'Iteration = '):
             return float(line[12:])
+
 
 class AppByIterationII(AppBase):
     '''
@@ -156,6 +161,7 @@ class AppByIterationII(AppBase):
         if line.startswith(b'Iteration: '):
             return float(line[11:])
 
+
 class AppByProcessor(AppBase):
     '''
     - utility:
@@ -166,13 +172,14 @@ class AppByProcessor(AppBase):
     def __init__(self, foam: Foam):
         start = 0
         end = foam.number_of_processors - 1
-        self.pbar = lib['tqdm'].tqdm(total=end-start)
+        self.pbar = progress_bar(total=end-start)
         self._new = self._old = start
 
     def now(self, line):
         line = line.strip()
         if line.startswith(b'Processor ') and line[10:].isdigit():
             return int(line[10:])
+
 
 class AppByOther(AppBase):
     '''
@@ -346,7 +353,7 @@ class AppByOther(AppBase):
 
 
 Apps = {}
-if lib['tqdm'] is not None:
+if is_tqdm_available():
     pattern = re.compile(r'\w+(?=\.C)')
     for App in [AppByTimeI, AppByTimeII, AppByIterationI, AppByIterationII, AppByProcessor]:
         for name in pattern.findall(App.__doc__):

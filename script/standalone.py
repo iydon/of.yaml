@@ -69,6 +69,9 @@ import urllib.request
 import warnings
 
 if typing.TYPE_CHECKING:
+    import numpy as np
+    import py7zr
+    import tqdm
     import vtkmodules.all
 
     from typing_extensions import Self
@@ -94,11 +97,21 @@ class compat(types.ModuleType):
 f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
 
-
-{show.source(base.lib.lib)}
+{show.source(base.lib.argmin)}
+{show.source(base.lib.is_tqdm_available)}
+{show.source(base.lib.load_7z)}
+{show.source(base.lib.load_text)}
+{show.source(base.lib.progress_bar)}
+{show.source(base.lib.square)}
+{show.source(base.lib.vtk_generic_data_object_reader)}
+{show.source(base.lib.vtk_to_numpy)}
+{show.source(base.lib.yaml_dump_all)}
+{show.source(base.lib.yaml_load)}
+{show.source(base.lib.yaml_load_all)}
 {show.source(base.type.Array)}
 {show.source(base.type.Keys)}
 
+{show.source(util.deprecation.lib)}
 {show.source(util.decorator.Match)}
 {show.source(util.object.Data)}
 {show.source(util.object.Version)}
@@ -111,7 +124,7 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 {show.source(app.command.adapter.AppByIterationII)}
 {show.source(app.command.adapter.AppByProcessor)}
 
-Apps = {{}} if lib['tqdm'] is None else {show.apps(app.command.adapter.Apps)}
+Apps = {{}} if is_tqdm_available() else {show.apps(app.command.adapter.Apps)}
 
 {show.source(parse.static.Static)}
 {show.source(parse.url.Url)}

@@ -11,7 +11,7 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .lib import lib
+from .lib import yaml_load_all
 from .type import Dict, List, Path
 from ..parse import Parser
 from ..util.object import Data, Version
@@ -156,8 +156,7 @@ class Foam:
 
     @classmethod
     def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
-        data = list(lib['yaml'].load_all(text, Loader=lib['SafeLoader']))
-        return cls(data, root, **kwargs)
+        return cls(list(yaml_load_all(text)), root, **kwargs)
 
     @classmethod
     def as_placeholder(cls) -> 'Self':
@@ -209,6 +208,7 @@ class Foam:
     @property
     def destination(self) -> p.Path:
         assert self._dest is not None, 'Please call `Foam::save` method first'
+
         return self._dest
 
     @destination.setter

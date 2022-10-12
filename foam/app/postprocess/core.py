@@ -5,7 +5,7 @@ import typing as t
 import warnings as w
 
 from ...base.core import Foam
-from ...base.lib import lib
+from ...base.lib import argmin, load_text, square, vtk_generic_data_object_reader, vtk_to_numpy
 from ...base.type import Array, Location, Path
 
 if t.TYPE_CHECKING:
@@ -43,7 +43,7 @@ class PostProcess:
             filename = next(log for log in self._foam.cmd.logs if self._foam.application in log.name).name
             self._foam.cmd.run([f'foamLog {filename}'], overwrite=True, exception=False, unsafe=True)
             self._logs = {
-                path.name.replace('_0', ''): lib['numpy'].loadtxt(path)
+                path.name.replace('_0', ''): load_text(path)
                 for path in (self._foam.destination/'logs').iterdir()
                 if path.suffix != '.awk'
             }
@@ -120,7 +120,6 @@ class VTK:
             for key, value in self._cell_fields.items():
                 self._cell_fields[key] = value[:len(cell_ids)]
             self._cells = self._cell_fields['C']
-        reader.CloseVTKFile()
 
     def __contains__(self, key: str) -> bool:
         return key in self._point_fields or key in self._cell_fields
@@ -130,15 +129,15 @@ class VTK:
 
     @classmethod
     def from_file(cls, path: Path, **kwargs) -> 'Self':
-        assert lib['vtk'] is not None, 'pip install ifoam[vtk]'  # TODO: improve error message
-
-        reader = lib['vtk'].vtkGenericDataObjectReader()
+        reader = vtk_generic_data_object_reader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
             if attr.startswith('ReadAll') and attr.endswith('On'):
                 getattr(reader, attr)()
         reader.Update()
-        return cls(reader, **kwargs)
+        self = cls(reader, **kwargs)
+        reader.CloseVTKFile()
+        return self
 
     @classmethod
     def from_foam(
@@ -157,6 +156,12 @@ class VTK:
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
             yield cls.from_file(path, foam=foam, **kwargs)
+
+    @property
+    def foam(self) -> 'Foam':
+        assert self._foam is not None
+
+        return self._foam
 
     @property
     def points(self) -> Array[2]:
@@ -218,7 +223,7 @@ class VTK:
     ) -> t.Dict[str, Array[1, 2]]:
         return {
             key: self.centroid(key, structured)
-            for key in (keys or self._foam.fields)
+            for key in (keys or self.foam.fields)
         }
 
     def centroid_with_args(self, *keys: str, structured: bool = False) -> t.Dict[str, Array[1, 2]]:
@@ -241,19 +246,17 @@ class VTK:
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
         '''
-        assert self._foam is not None
-
-        keys = keys or self._foam.fields
+        keys = keys or self.foam.fields
         coords = self.points if point else self.cells
         fields = self.point_fields if point else self.cell_fields
-        func = func or (lambda x: lib['numpy'].square(x).mean(axis=1))
+        func = func or (lambda x: square(x).mean(axis=1))
         ans = {}
         for location in locations:
-            index = lib['numpy'].argmin(func(coords-location))
+            index = argmin(func(coords-location))
             ans[tuple(map(float, location))] = {
                 key: fields[key][index]
                 for key in keys
             }
 
     def _to_numpy(self, array: 'vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
-        return lib['vtk_to_numpy'](array)
+        return vtk_to_numpy(array)

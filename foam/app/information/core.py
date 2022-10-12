@@ -43,7 +43,7 @@ class Information:
     @property
     def environ(self) -> t.Dict[str, str]:
         '''OpenFOAM environments (aliase for `Foam::environ` property)'''
-        if self._foam is not None:
+        if self._foam is not None:  # True
             return self._foam.environ
         else:
             return {

@@ -15,18 +15,18 @@ Path = t.Union[str, p.Path]
 
 class Array:
     def __class_getitem__(cls, dimensions: 'Keys[int]') -> type:
-        from .lib import lib
-
         if not isinstance(dimensions, tuple):
             dimensions = (dimensions, )
         assert all(isinstance(d, int) and d>=0 for d in dimensions)
 
         if t.TYPE_CHECKING:
+            import numpy as np
+
             dimensions_ = set(dimensions)
             if dimensions_ == {0}:
-                return lib['numpy'].number
+                return np.number
             else:
-                return lib['numpy'].ndarray
+                return np.ndarray
         else:
             return t.Any
 
