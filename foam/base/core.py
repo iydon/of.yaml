@@ -206,6 +206,15 @@ class Foam:
             self._post = PostProcess.from_foam(self)
         return self._post
 
+    @property
+    def destination(self) -> p.Path:
+        assert self._dest is not None, 'Please call `Foam::save` method first'
+        return self._dest
+
+    @destination.setter
+    def destination(self, dest: Path) -> None:
+        self._dest = p.Path(dest)
+
     @f.cached_property
     def application(self) -> str:
         '''Inspired by `getApplication`
@@ -323,4 +332,4 @@ class Foam:
     def _path(self, *parts: str) -> p.Path:
         # TODO: use "prefix" will cause some of the `Command` methods to fail
         prefix = '.'  # (self['other'] or {}).get('directory', '.')
-        return self._dest / prefix / p.Path(*parts)
+        return self.destination / prefix / p.Path(*parts)

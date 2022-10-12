@@ -101,7 +101,7 @@ class Static:
         self._path_foam(static)
 
     def _out(self, name: str) -> p.Path:
-        out = self._foam._path(name)  # self._foam._dest is not None
+        out = self._foam._path(name)
         out.parent.mkdir(parents=True, exist_ok=True)
         return out
 

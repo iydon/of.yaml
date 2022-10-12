@@ -24,8 +24,7 @@ class Command:
 
     @classmethod
     def from_foam(cls, foam: Foam) -> 'Self':
-        assert foam._dest is not None, 'Please call `Foam::save` method first'
-
+        foam.destination  # assert dest is not None
         return cls.from_foam_without_asserting(foam)
 
     @classmethod
@@ -36,7 +35,7 @@ class Command:
     def times(self) -> t.List[float]:
         '''Time directories'''
         times = []
-        for path in self._foam._dest.iterdir():
+        for path in self._foam.destination.iterdir():
             try:
                 time = float(path.name)
             except ValueError:
@@ -48,7 +47,7 @@ class Command:
     def logs(self) -> t.Set[p.Path]:
         '''Log files'''
         logs = set()
-        for path in self._foam._dest.iterdir():
+        for path in self._foam.destination.iterdir():
             if path.stem == 'log':
                 logs.add(path)
         return logs
@@ -60,8 +59,10 @@ class Command:
             '__app__': self._foam.application,
             '__procs__': str(self._foam.number_of_processors),
         }
-        if self._foam._dest:
-            macros['__pwd__'] = self._foam._dest.absolute().as_posix()
+        try:
+            macros['__pwd__'] = self._foam.destination.absolute().as_posix()
+        except AssertionError:
+            pass
         return macros
 
     def all_run(
@@ -71,7 +72,7 @@ class Command:
     ) -> t.List[int]:
         '''Inspired by  `Allrun`'''
         if not self._foam.pipeline:
-            assert (self._foam._dest/'Allrun').exists()
+            assert (self._foam.destination/'Allrun').exists()
 
             return [self.raw('./Allrun').returncode]
         else:
@@ -80,8 +81,8 @@ class Command:
     def all_clean(self) -> None:
         '''Inspired by `Allclean`'''
         # TODO: https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/CleanFunctions
-        shutil.rmtree(self._foam._dest)
-        self._foam.save(self._foam._dest)
+        shutil.rmtree(self._foam.destination)
+        self._foam.save(self._foam.destination)
 
     def run(
         self,
@@ -94,28 +95,16 @@ class Command:
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
         '''
-        popen = lambda args: s.Popen(
-            ' '.join(args) if unsafe else args,
-            cwd=self._foam._dest, shell=unsafe, stdout=s.PIPE,
-        )
         codes: t.List[int] = [-1] * len(commands)
         for ith, command in enumerate(commands):
-            if isinstance(command, str):
-                command_now, suffix_now, overwrite_now, exception_now, parallel_now = \
-                    command, suffix, overwrite, exception, parallel
-            elif isinstance(command, dict):
-                command_now = command['command']
-                suffix_now, overwrite_now, exception_now, parallel_now = \
-                    command.get('suffix', suffix), command.get('overwrite', overwrite), \
-                    command.get('exception', exception), command.get('parallel', parallel)
-            else:
-                raise Exception('`command` does not currently support variables other than `str`, `dict`')
-            raws = shlex.split(self._replace(command_now))
-            args = self._split(command_now, parallel_now and self._foam.number_of_processors>1)
-            path = self._foam._dest / f'log.{raws[0].replace("./", "")}{suffix_now}'
-            if not overwrite_now and path.exists():
+            option = self._command(command, suffix=suffix, overwrite=overwrite, exception=exception, parallel=parallel)
+            raws = self._split(option['command'], False)
+            args = self._split(option['command'], option['parallel'] and self._foam.number_of_processors>1)
+            path = self._foam.destination / f'log.{raws[0].replace("./", "")}{option["suffix"]}'
+            # Option: overwrite, exception
+            if not option['overwrite'] and path.exists():
                 message = f'{raws[0]} already run on {path.parent.absolute()}: remove log file "{path.name}" to re-run'
-                if exception_now:
+                if option['exception']:
                     raise Exception(message)
                 else:
                     w.warn(message)
@@ -123,7 +112,7 @@ class Command:
             print(f'Running {raws[0]} on {path.parent.absolute()} using {self._foam.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
             App = Apps.get(raws[0], Default)
-            with popen(args) as proc, open(path, 'wb') as file, App(self._foam) as app:
+            with self._popen(args, unsafe) as proc, open(path, 'wb') as file, App(self._foam) as app:
                 for line in proc.stdout:
                     file.write(line)
                     app.step(line)
@@ -133,7 +122,7 @@ class Command:
     def raw(self, command: str, output: bool = True) -> s.CompletedProcess:
         '''Execute raw command in case directory'''
         args = shlex.split(command)
-        return s.run(args, cwd=self._foam._dest, capture_output=output)
+        return s.run(args, cwd=self._foam._dest, capture_output=output)  # Deliberate use of the _dest
 
     def which(self, command: str) -> t.Optional[str]:
         stdout = self.raw(f'which {command}', output=True).stdout.decode().strip()
@@ -144,7 +133,22 @@ class Command:
             command = command.replace(old, new)
         return command
 
-    def _split(self, command: str, parallel: bool) -> t.List[str]:
+    def _split(self, command: str, parallel: bool, replace: bool = True) -> t.List[str]:
         if parallel and '__app__' in command:
             command = f'mpirun -np __procs__ {command} -parallel'
-        return shlex.split(self._replace(command))
+        if replace:
+            command = self._replace(command)
+        return shlex.split(command)
+
+    def _command(self, command: t.Union[str, t.Dict[str, t.Any]], **kwargs: t.Any) -> t.Dict[str, t.Any]:
+        if isinstance(command, str):
+            return {'command': command, **kwargs}
+        elif isinstance(command, dict):
+            kwargs.update(command)
+            return kwargs
+        else:
+            raise Exception('`command` does not currently support variables other than `str`, `dict`')
+
+    def _popen(self, args: t.List[str], unsafe: bool) -> s.Popen:
+        cmd = ' '.join(args) if unsafe else args
+        return s.Popen(cmd, cwd=self._foam.destination, shell=unsafe, stdout=s.PIPE)

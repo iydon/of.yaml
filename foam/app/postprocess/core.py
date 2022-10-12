@@ -44,7 +44,7 @@ class PostProcess:
             self._foam.cmd.run([f'foamLog {filename}'], overwrite=True, exception=False, unsafe=True)
             self._logs = {
                 path.name.replace('_0', ''): lib['numpy'].loadtxt(path)
-                for path in (self._foam._dest/'logs').iterdir()
+                for path in (self._foam.destination/'logs').iterdir()
                 if path.suffix != '.awk'
             }
         return self._logs
@@ -146,14 +146,13 @@ class VTK:
         foam: Foam, options: str = '', overwrite: bool = False,
         **kwargs,
     ) -> t.Iterator['Self']:
-        assert foam._dest is not None, 'Please call `Foam::save` method first'
-
+        foam.destination  # assert dest is not None
         for name in ['writeCellCentres', 'writeCellVolumes']:
             foam.cmd.run([f'postProcess -func {name}'], suffix=f'.{name}', overwrite=overwrite, exception=False, unsafe=True)
         foam.cmd.run([f'foamToVTK {options}'], overwrite=overwrite, exception=False, unsafe=True)
         paths = [
             path
-            for path in (foam._dest/'VTK').iterdir()
+            for path in (foam.destination/'VTK').iterdir()
             if path.is_file() and path.suffix=='.vtk'
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
