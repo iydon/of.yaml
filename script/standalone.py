@@ -69,7 +69,7 @@ import urllib.request
 import warnings
 
 if typing.TYPE_CHECKING:
-    import vtkmodules as vtk
+    import vtkmodules.all
 
     from typing_extensions import Self
 

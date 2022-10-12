@@ -9,7 +9,7 @@ from ...base.lib import lib
 from ...base.type import Array, Location, Path
 
 if t.TYPE_CHECKING:
-    import vtkmodules as vtk
+    import vtkmodules.all
 
     from typing_extensions import Self
 
@@ -98,7 +98,7 @@ class VTK:
 
     def __init__(
         self,
-        reader: 'vtk.vtkIOLegacy.vtkDataReader',
+        reader: 'vtkmodules.vtkIOLegacy.vtkDataReader',
         foam: t.Optional[Foam] = None, point: bool = True, cell: bool = True,
     ) -> None:
         self._foam = foam
@@ -254,7 +254,6 @@ class VTK:
                 key: fields[key][index]
                 for key in keys
             }
-        return ans
 
-    def _to_numpy(self, array: 'vtk.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
+    def _to_numpy(self, array: 'vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
         return lib['vtk_to_numpy'](array)
