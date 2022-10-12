@@ -24,19 +24,18 @@ class show:
     def code(cls, obj: str) -> str:
         '''
         - Steps:
-            1. convert type "Foam" to "'Foam'"
-            2. remove relative imports
-            3. remove trailing whitespace
-            4. remove redundant line breaks
+            1. remove relative imports
+            2. remove trailing whitespace
+            3. remove redundant line breaks
         '''
         br = '\n'
         pattern_im = re.compile(r'from \.[\w\.]* import \w+')
         pattern_br = re.compile(fr'{br}{{3,}}')
-        step_1 = obj.replace(': Foam', ': \'Foam\'').replace(': t.Optional[Foam]', ': t.Optional[\'Foam\']')
-        step_2 = pattern_im.sub('', step_1)
-        step_3 = br.join(map(str.rstrip, step_2.strip().splitlines())) + br
-        step_4 = pattern_br.sub(2*br, step_3)
-        return step_4
+        # step_1 = obj.replace(': Foam', ': \'Foam\'').replace(': t.Optional[Foam]', ': t.Optional[\'Foam\']')
+        step_1 = pattern_im.sub('', obj)
+        step_2 = br.join(map(str.rstrip, step_1.strip().splitlines())) + br
+        step_3 = pattern_br.sub(2*br, step_2)
+        return step_3
 
     @classmethod
     def submodule(cls, module: str, *objs: object) -> str:
@@ -86,6 +85,8 @@ w = warnings
 CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
 Dict = {base.type.Dict}
 List = {base.type.List}
+FoamItem = {base.type.FoamItem}
+FoamData = {base.type.FoamData}
 Location = {base.type.Location}
 Path = {base.type.Path}
 

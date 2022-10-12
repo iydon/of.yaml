@@ -5,14 +5,14 @@ import pathlib as p
 import typing as t
 
 from ..base.lib import yaml_dump_all
-from ..base.type import Dict, Keys, List, Path
+from ..base.type import Dict, FoamItem, Keys, List, Path
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
 
 class Data:
-    def __init__(self, data: t.Union[Dict, List]) -> None:
+    def __init__(self, data: FoamItem) -> None:
         self._data = data
 
     def __getitem__(self, keys: Keys[t.Any]) -> t.Any:
@@ -56,7 +56,7 @@ class Data:
         return self._data.__repr__()
 
     @classmethod
-    def from_any(cls, data: t.Union[Dict, List]) -> 'Self':
+    def from_any(cls, data: FoamItem) -> 'Self':
         return cls(data)
 
     @classmethod
@@ -68,7 +68,7 @@ class Data:
         return cls(data)
 
     @property
-    def data(self) -> t.Union[Dict, List]:
+    def data(self) -> FoamItem:
         return self._data
 
     def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:

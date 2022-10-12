@@ -12,7 +12,7 @@ import urllib.request
 import warnings as w
 
 from .lib import yaml_load_all
-from .type import Dict, List, Path
+from .type import Dict, FoamData, Path
 from ..parse import Parser
 from ..util.object import Data, Version
 
@@ -36,7 +36,7 @@ class Foam:
 
     __version__ = Version.from_string('0.12.1')
 
-    def __init__(self, data: List, root: Path, warn: bool = True) -> None:
+    def __init__(self, data: FoamData, root: Path, warn: bool = True) -> None:
         self._list = data
         self._root = p.Path(root)
         self._dest: t.Optional[p.Path] = None
