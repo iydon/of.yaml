@@ -7,28 +7,30 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base.core import Foam
 from ...base.type import Path
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
     from ..command.core import Command
+    from ...base.core import Foam
 
 
 class Information:
     '''OpenFOAM information wrapper'''
 
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
         self._cmd: t.Optional['Command'] = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> 'Self':
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @classmethod
     def from_nothing(cls) -> 'Self':
+        from ...base.core import Foam
+
         return cls(Foam.as_placeholder())
 
     @property
@@ -95,6 +97,8 @@ class Information:
         - Note:
             - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file
         '''
+        from ...base.core import Foam
+
         assert targets
 
         record = c.defaultdict(set)

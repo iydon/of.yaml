@@ -4,7 +4,6 @@ __all__ = ['PostProcess', 'VTK']
 import typing as t
 import warnings as w
 
-from ...base.core import Foam
 from ...base.lib import argmin, load_text, square, vtk_generic_data_object_reader, vtk_to_numpy
 from ...base.type import Array, Location, Path
 
@@ -13,17 +12,19 @@ if t.TYPE_CHECKING:
 
     from typing_extensions import Self
 
+    from ...base.core import Foam
+
 
 class PostProcess:
     '''OpenFOAM post-processing'''
 
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
         self._vtks: t.Optional[t.List['VTK']] = None
         self._logs: t.Optional[t.Dict[str, t.Any]] = None
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> 'Self':
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
@@ -99,7 +100,7 @@ class VTK:
     def __init__(
         self,
         reader: 'vtkmodules.vtkIOLegacy.vtkDataReader',
-        foam: t.Optional[Foam] = None, point: bool = True, cell: bool = True,
+        foam: t.Optional['Foam'] = None, point: bool = True, cell: bool = True,
     ) -> None:
         self._foam = foam
         self._points, self._cells = None, None
@@ -142,7 +143,7 @@ class VTK:
     @classmethod
     def from_foam(
         cls,
-        foam: Foam, options: str = '', overwrite: bool = False,
+        foam: 'Foam', options: str = '', overwrite: bool = False,
         **kwargs,
     ) -> t.Iterator['Self']:
         foam.destination  # assert dest is not None

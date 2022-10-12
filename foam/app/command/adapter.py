@@ -4,12 +4,14 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-from ...base.core import Foam
 from ...base.lib import progress_bar, is_tqdm_available
+
+if t.TYPE_CHECKING:
+    from ...base.core import Foam
 
 
 class Default:
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: 'Foam') -> None:
         pass
 
     def __enter__(self) -> 'Default':
@@ -26,7 +28,7 @@ class Default:
 
 
 class AppBase(Default):
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: 'Foam') -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
         self.pbar = progress_bar(total=end-start)
@@ -169,7 +171,7 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
-    def __init__(self, foam: Foam):
+    def __init__(self, foam: 'Foam'):
         start = 0
         end = foam.number_of_processors - 1
         self.pbar = progress_bar(total=end-start)

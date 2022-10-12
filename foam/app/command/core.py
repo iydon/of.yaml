@@ -10,25 +10,26 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...base.core import Foam
 
 if t.TYPE_CHECKING:
     from typing_extensions import  Self
+
+    from ...base.core import Foam
 
 
 class Command:
     '''OpenFOAM command wrapper'''
 
-    def __init__(self, foam: Foam) -> None:
+    def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
 
     @classmethod
-    def from_foam(cls, foam: Foam) -> 'Self':
+    def from_foam(cls, foam: 'Foam') -> 'Self':
         foam.destination  # assert dest is not None
         return cls.from_foam_without_asserting(foam)
 
     @classmethod
-    def from_foam_without_asserting(cls, foam: Foam) -> 'Self':
+    def from_foam_without_asserting(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
