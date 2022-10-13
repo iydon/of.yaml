@@ -11,7 +11,7 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .lib import yaml_load_all
+from .lib import yaml
 from .type import Dict, FoamData, Path
 from ..parse import Parser
 from ..util.object import Data, Version
@@ -156,7 +156,7 @@ class Foam:
 
     @classmethod
     def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
-        return cls(list(yaml_load_all(text)), root, **kwargs)
+        return cls(list(yaml.load_all(text)), root, **kwargs)
 
     @classmethod
     def as_placeholder(cls) -> 'Self':

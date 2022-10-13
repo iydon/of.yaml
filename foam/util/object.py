@@ -4,7 +4,7 @@ __all__ = ['Data', 'Version']
 import pathlib as p
 import typing as t
 
-from ..base.lib import yaml_dump_all
+from ..base.lib import yaml
 from ..base.type import Dict, FoamItem, Keys, List, Path
 
 if t.TYPE_CHECKING:
@@ -102,7 +102,7 @@ class Data:
             return pickle.dumps(self._data, **kwargs)
         elif type in {'yaml', 'yml'}:
             kwargs = {'indent': 4, **kwargs}
-            return yaml_dump_all(self._data, **kwargs).encode()
+            return yaml.dump_all(self._data, **kwargs).encode()
         else:
             raise Exception(f'"{type}" is not a valid type string')
 

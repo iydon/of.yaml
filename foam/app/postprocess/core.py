@@ -4,11 +4,11 @@ __all__ = ['PostProcess', 'VTK']
 import typing as t
 import warnings as w
 
-from ...base.lib import argmin, load_text, square, vtk_generic_data_object_reader, vtk_to_numpy
+from ...base.lib import numpy, vtkmodules
 from ...base.type import Array, Location, Path
 
 if t.TYPE_CHECKING:
-    import vtkmodules.all
+    import vtkmodules as _vtkmodules
 
     from typing_extensions import Self
 
@@ -44,7 +44,7 @@ class PostProcess:
             filename = next(log for log in self._foam.cmd.logs if self._foam.application in log.name).name
             self._foam.cmd.run([f'foamLog {filename}'], overwrite=True, exception=False, unsafe=True)
             self._logs = {
-                path.name.replace('_0', ''): load_text(path)
+                path.name.replace('_0', ''): numpy.loadtxt(path)
                 for path in (self._foam.destination/'logs').iterdir()
                 if path.suffix != '.awk'
             }
@@ -99,7 +99,7 @@ class VTK:
 
     def __init__(
         self,
-        reader: 'vtkmodules.vtkIOLegacy.vtkDataReader',
+        reader: '_vtkmodules.vtkIOLegacy.vtkDataReader',
         foam: t.Optional['Foam'] = None, point: bool = True, cell: bool = True,
     ) -> None:
         self._foam = foam
@@ -130,7 +130,7 @@ class VTK:
 
     @classmethod
     def from_file(cls, path: Path, **kwargs) -> 'Self':
-        reader = vtk_generic_data_object_reader()
+        reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
             if attr.startswith('ReadAll') and attr.endswith('On'):
@@ -250,14 +250,14 @@ class VTK:
         keys = keys or self.foam.fields
         coords = self.points if point else self.cells
         fields = self.point_fields if point else self.cell_fields
-        func = func or (lambda x: square(x).mean(axis=1))
+        func = func or (lambda x: numpy.square(x).mean(axis=1))
         ans = {}
         for location in locations:
-            index = argmin(func(coords-location))
+            index = numpy.argmin(func(coords-location))
             ans[tuple(map(float, location))] = {
                 key: fields[key][index]
                 for key in keys
             }
 
-    def _to_numpy(self, array: 'vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
-        return vtk_to_numpy(array)
+    def _to_numpy(self, array: '_vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
+        return vtkmodules.vtk_to_numpy(array)

@@ -7,7 +7,7 @@ import typing as t
 import urllib.parse
 import urllib.request
 
-from ..base.lib import yaml_load
+from ..base.lib import yaml
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
 
@@ -113,7 +113,7 @@ class Url:
         url = self.url_from_path(self.root/static['data'])
         self._foam['foam'][static['name'].split('/')] = {  # p.Path(static['name']).parts
             'json': lambda bytes: json.loads(bytes),
-            'yaml': lambda bytes: yaml_load(bytes),
+            'yaml': lambda bytes: yaml.load(bytes),
         }[static['type'][2]](self._urlopen(url))
         static.update({'type': []})
         return static

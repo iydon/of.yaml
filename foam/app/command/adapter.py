@@ -4,7 +4,7 @@ __all__ = ['Default', 'Apps']
 import re
 import typing as t
 
-from ...base.lib import progress_bar, is_tqdm_available
+from ...base.lib import tqdm
 
 if t.TYPE_CHECKING:
     from ...base.core import Foam
@@ -31,7 +31,7 @@ class AppBase(Default):
     def __init__(self, foam: 'Foam') -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
-        self.pbar = progress_bar(total=end-start)
+        self.pbar = tqdm.tqdm(total=end-start)
         self._new = self._old = start
 
     def __exit__(self, type, value, traceback) -> None:
@@ -174,7 +174,7 @@ class AppByProcessor(AppBase):
     def __init__(self, foam: 'Foam'):
         start = 0
         end = foam.number_of_processors - 1
-        self.pbar = progress_bar(total=end-start)
+        self.pbar = tqdm.tqdm(total=end-start)
         self._new = self._old = start
 
     def now(self, line):
@@ -355,7 +355,7 @@ class AppByOther(AppBase):
 
 
 Apps = {}
-if is_tqdm_available():
+if tqdm.is_available():
     pattern = re.compile(r'\w+(?=\.C)')
     for App in [AppByTimeI, AppByTimeII, AppByIterationI, AppByIterationII, AppByProcessor]:
         for name in pattern.findall(App.__doc__):

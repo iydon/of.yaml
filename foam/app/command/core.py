@@ -12,7 +12,7 @@ import warnings as w
 from .adapter import Default, Apps
 
 if t.TYPE_CHECKING:
-    from typing_extensions import  Self
+    from typing_extensions import Self
 
     from ...base.core import Foam
 
