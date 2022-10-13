@@ -26,7 +26,7 @@
   <h3 align="center">OpenFOAM.YAML</h3>
 
   <p align="center">
-    OpenFOAM 的 Python 接口（采用 YAML 配置）
+    OpenFOAM 案例的 Python 接口（采用 YAML 配置）
     <br />
     <a href="https://ifoam.readthedocs.io"><strong>探索文档 »</strong></a>
     <br />
