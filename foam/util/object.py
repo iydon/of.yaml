@@ -52,6 +52,9 @@ class Data:
     def __iter__(self) -> t.Iterator[t.Any]:
         return self._data.__iter__()
 
+    def __len__(self) -> int:
+        return self._data.__len__()
+
     def __repr__(self) -> str:
         return self._data.__repr__()
 
