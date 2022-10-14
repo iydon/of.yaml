@@ -15,15 +15,15 @@ class numpy:
     '''pip install ifoam[vtk]'''
 
     @classmethod
-    def argmin(cls, *args, **kwargs) -> '_numpy.ndarray':
+    def argmin(cls, *args: t.Any, **kwargs: t.Any) -> '_numpy.ndarray':
         return cls._().argmin(*args, **kwargs)
 
     @classmethod
-    def loadtxt(cls, *args, **kwargs) -> '_numpy.ndarray':
+    def loadtxt(cls, *args: t.Any, **kwargs: t.Any) -> '_numpy.ndarray':
         return cls._().loadtxt(*args, **kwargs)
 
     @classmethod
-    def square(cls, *args, **kwargs) -> '_numpy.ndarray':
+    def square(cls, *args: t.Any, **kwargs: t.Any) -> '_numpy.ndarray':
         return cls._().square(*args, **kwargs)
 
     @classmethod
@@ -40,7 +40,7 @@ class py7zr:
     '''pip install ifoam[7z]'''
 
     @classmethod
-    def SevenZipFile(cls, *args, **kwargs) -> '_py7zr.SevenZipFile':
+    def SevenZipFile(cls, *args: t.Any, **kwargs: t.Any) -> '_py7zr.SevenZipFile':
         return cls._().SevenZipFile(*args, **kwargs)
 
     @classmethod
@@ -70,7 +70,7 @@ class tqdm:
         return not cls.is_available()
 
     @classmethod
-    def tqdm(cls, *args, **kwargs) -> '_tqdm.std.tqdm':
+    def tqdm(cls, *args: t.Any, **kwargs: t.Any) -> '_tqdm.std.tqdm':
         return cls._().tqdm(*args, **kwargs)
 
     @classmethod
@@ -87,11 +87,11 @@ class vtkmodules:
     '''pip install ifoam[vtk]'''
 
     @classmethod
-    def vtkGenericDataObjectReader(cls, *args, **kwargs) -> '_vtkmodules.vtkIOLegacy.vtkGenericDataObjectReader':
+    def vtkGenericDataObjectReader(cls, *args: t.Any, **kwargs: t.Any) -> '_vtkmodules.vtkIOLegacy.vtkGenericDataObjectReader':
         return cls._().vtkIOLegacy.vtkGenericDataObjectReader()
 
     @classmethod
-    def vtk_to_numpy(cls, *args, **kwargs) -> '_numpy.ndarray':
+    def vtk_to_numpy(cls, *args: t.Any, **kwargs: t.Any) -> '_numpy.ndarray':
         try:
             from vtkmodules.util.numpy_support import vtk_to_numpy
         except Exception as e:
@@ -113,16 +113,16 @@ class yaml:
     '''pip install ifoam'''
 
     @classmethod
-    def dump_all(cls, *args, **kwargs) -> str:
+    def dump_all(cls, *args: t.Any, **kwargs: t.Any) -> str:
         return cls._().dump_all(*args, **kwargs)
 
     @classmethod
-    def load(cls, *args, **kwargs) -> t.Any:
+    def load(cls, *args: t.Any, **kwargs: t.Any) -> t.Any:
         kwargs['Loader'] = cls._loader()
         return cls._().load(*args, **kwargs)
 
     @classmethod
-    def load_all(cls, *args, **kwargs) -> t.Iterator[t.Any]:
+    def load_all(cls, *args: t.Any, **kwargs: t.Any) -> t.Iterator[t.Any]:
         kwargs['Loader'] = cls._loader()
         return cls._().load_all(*args, **kwargs)
 

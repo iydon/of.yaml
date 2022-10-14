@@ -80,11 +80,11 @@ class Foam:
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         path = p.Path(__file__).parents[1] / 'static' / 'demo' / version / name
         try:
-            self = cls.from_file(path, warn=False)
+            self = cls.from_path(path, warn=False)
         except FileNotFoundError:
             raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.list_demos()}')
         else:
-            print(f'Foam.from_file(\'{path.as_posix()}\', warn=False)')
+            print(f'Foam.from_path(\'{path.as_posix()}\', warn=False)')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
@@ -99,11 +99,11 @@ class Foam:
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
         try:
-            self = cls.from_remote_file(url, timeout, warn=False)
+            self = cls.from_remote_path(url, timeout, warn=False)
         except:  # urllib.error.URLError
             raise FileNotFoundError(f'No such demo: "{url}"')
         else:
-            print(f'Foam.from_remote_file(\'{url}\', warn=False)')
+            print(f'Foam.from_remote_path(\'{url}\', warn=False)')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
@@ -113,12 +113,12 @@ class Foam:
         return list(map(lambda name: cls.from_remote_demo(name, timeout), cls.list_demos()))
 
     @classmethod
-    def from_remote_file(cls, url: str, timeout: t.Optional[float] = None, **kwargs: t.Any) -> 'Self':
+    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None) -> 'Self':
         with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
-        self = cls.from_text(text, '.', path.suffix, **kwargs)
+        self = cls.from_text(text, '.', path.suffix)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -126,13 +126,24 @@ class Foam:
         return self
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs: t.Any) -> 'Self':
-        '''Supported format: json, yaml'''
+    def from_path(cls, path: Path) -> 'Self':
+        '''Supported path mode: file, directory'''
         path = p.Path(path)
-        return cls.from_text(path.read_text(), path.parent, path.suffix, **kwargs)
+        if path.is_file():
+            return cls.from_text(path.read_text(), path.parent, path.suffix)
+        elif path.is_dir():
+            return cls.from_openfoam(path)
+        else:
+            raise Exception(f'Mode "{path.stat().st_mode}" is not supported')
 
     @classmethod
-    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, **kwargs: t.Any) -> 'Self':
+    def from_openfoam(cls, path: Path, **kwargs: t.Any) -> 'Self':
+        '''From OpenFOAM directory'''
+        return Parser.to_foam(path, **kwargs)
+
+    @classmethod
+    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None) -> 'Self':
+        '''Supported format: json, yaml'''
         mapper = [
             ({'.json'}, cls.from_json),
             ({'.yaml', '.yml'}, cls.from_yaml),
@@ -140,23 +151,23 @@ class Foam:
         if suffix is not None:
             for suffixes, method in mapper:
                 if suffix in suffixes:
-                    return method(text, root, **kwargs)
+                    return method(text, root)
         else:
             for _, method in mapper:
                 try:
-                    return method(text, root, **kwargs)
+                    return method(text, root)
                 except Exception as e:
                     print(method.__name__, e)
         raise Exception(f'Suffix "{suffix}" is not supported or not recognized')
 
     @classmethod
-    def from_json(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
+    def from_json(cls, text: str, root: Path) -> 'Self':
         data = json.loads(text)
-        return cls(data, root, **kwargs)
+        return cls(data, root)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path, **kwargs: t.Any) -> 'Self':
-        return cls(list(yaml.load_all(text)), root, **kwargs)
+    def from_yaml(cls, text: str, root: Path) -> 'Self':
+        return cls(list(yaml.load_all(text)), root)
 
     @classmethod
     def as_placeholder(cls) -> 'Self':

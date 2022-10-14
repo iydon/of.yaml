@@ -50,7 +50,7 @@ class PostProcess:
             }
         return self._logs
 
-    def vtks_set(self, **kwargs) -> t.List['VTK']:
+    def vtks_set(self, **kwargs: t.Any) -> t.List['VTK']:
         self._vtks = list(VTK.from_foam(self._foam, **kwargs))
         return self._vtks
 
@@ -129,7 +129,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs) -> 'Self':
+    def from_file(cls, path: Path, **kwargs: t.Any) -> 'Self':
         reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
@@ -144,7 +144,7 @@ class VTK:
     def from_foam(
         cls,
         foam: 'Foam', options: str = '', overwrite: bool = False,
-        **kwargs,
+        **kwargs: t.Any,
     ) -> t.Iterator['Self']:
         foam.destination  # assert dest is not None
         for name in ['writeCellCentres', 'writeCellVolumes']:

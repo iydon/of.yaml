@@ -35,7 +35,7 @@ class Word:
         font.size = Pt(font_size)
 
     @classmethod
-    def from_config(cls, *args, **kwargs) -> Self:
+    def from_config(cls, *args: t.Any, **kwargs: t.Any) -> Self:
         return cls(*args, **kwargs)
 
     @property
