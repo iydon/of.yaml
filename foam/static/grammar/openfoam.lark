@@ -1,0 +1,58 @@
+// https://www.openfoam.com/documentation/user-guide/2-openfoam-cases/2-2-basic-inputoutput-file-format
+
+
+// 0 - Main
+?start: dictionary*
+
+%ignore COMMENT_INLINE
+%ignore COMMENT_MULTILINE
+%ignore WHITESPACE
+
+
+// 1 - Terminals
+// 1.1 Number
+DIGIT: "0".."9"
+INT: DIGIT+
+SIGNED_INT: ["+"|"-"] INT
+DECIMAL: INT "." INT? | "." INT
+_EXP: ("e"|"E") SIGNED_INT
+FLOAT: INT _EXP | DECIMAL _EXP?
+SIGNED_FLOAT: ["+"|"-"] FLOAT
+NUMBER: FLOAT | INT
+SIGNED_NUMBER: ["+"|"-"] NUMBER
+
+// 1.2 String
+_STRING_INNER: /.*?/
+_STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
+ESCAPED_STRING : "\"" _STRING_ESC_INNER "\""
+
+// 1.3 Variable
+LETTER_LOWER: "a".."z"
+LETTER_UPPER: "A".."Z"
+LETTER: LETTER_UPPER | LETTER_LOWER
+WORD: LETTER+
+IDENTIFIER: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+
+// 1.4 Whitespace
+WHITESPACE: /[ \t\xa0\f\r\n]/+
+CR : /\r/
+LF : /\n/
+NEWLINE: (CR? LF)+
+
+// 1.5 Comment
+COMMENT_INLINE: /\/\/[^\n]*/
+COMMENT_MULTILINE: "/*" /(.|\n)*?/ "*/"
+
+// 1.6 Other
+MACRO: "#" IDENTIFIER
+VARIABLE: "$" IDENTIFIER
+KEYWORD: IDENTIFIER | VARIABLE | ESCAPED_STRING
+ENTRY: IDENTIFIER | VARIABLE | SIGNED_NUMBER | ESCAPED_STRING
+
+
+// 2 - Rules
+// 2.1 Dictionaries
+dictionary_macro: MACRO ESCAPED_STRING*
+dictionary_entry: KEYWORD (ENTRY|dictionary_macro)* ";"
+_dictionaries: dictionary_entry | dictionary_macro | dictionary
+dictionary: KEYWORD "{" _dictionaries* "}" | _dictionaries

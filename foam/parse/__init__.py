@@ -1,14 +1,13 @@
 __all__ = ['Parser']
 
 
-import pathlib as p
 import typing as t
 
 from .lark import Lark
 from .static import Static
 from .url import Url
 from .yaml import YAML
-from ..base.type import FoamData, Path
+from ..base.type import Path
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -18,6 +17,8 @@ if t.TYPE_CHECKING:
 
 class Parser:
     '''All parsers'''
+
+    lark = None
 
     def __init__(self, static: Static, url: Url, yaml: YAML) -> None:
         self.static = static
@@ -36,6 +37,7 @@ class Parser:
     def to_foam(cls, path: Path, **kwargs: t.Any) -> 'Foam':
         from ..base.core import Foam
 
-        data = Lark.from_path(path, **kwargs).to_foam_data()
+        cls.lark = Lark.from_path(path, **kwargs)
+        data = cls.lark.to_foam_data()
         data[0]['version'] = Foam.__version__.to_string()
         return Foam(data, path)

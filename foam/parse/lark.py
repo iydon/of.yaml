@@ -1,6 +1,7 @@
 __all__ = ['Lark']
 
 
+import functools as f
 import os
 import pathlib as p
 import re
@@ -17,17 +18,24 @@ if t.TYPE_CHECKING:
 class Lark:
     '''Lark is a parsing toolkit for Python'''
 
+    __grammar__ = p.Path(__file__).parents[1] / 'static' / 'grammar' / 'openfoam.lark'
+
     order = ['meta', 'foam', 'static', 'other']
+
+    _instance = None
 
     def __init__(self, path: Path, embed: bool = True) -> None:
         self._root = p.Path(path)
         self._embed = embed
+        # foam, static
         self._foam = {}
         self._static = []
 
     @classmethod
     def from_path(cls, path: Path, **kwargs: t.Any) -> 'Self':
-        return cls(path, **kwargs)
+        if cls._instance is None:
+            cls._instance = cls(path, **kwargs)
+        return cls._instance
 
     @property
     def meta(self) -> Dict:
@@ -45,17 +53,33 @@ class Lark:
     def other(self) -> Dict:
         return {'pipeline': []}
 
+    @f.cached_property
+    def lark(self) -> lark.Lark:
+        kwargs = {
+            'debug': False,
+            'parser': 'earley',
+            'lexer': 'auto',
+            'transformer': None,
+            'start': 'start',
+        }
+        return lark.Lark(self.__grammar__.read_text(), **kwargs)
+
     def parse(self) -> None:
         for path in self._root.rglob('*'):
             if path.is_file():
+                # TODO: foam part
                 self._static.append(self._static_item(path))
+
+    def parse_once(self) -> None:
+        '''#pragma once'''
+        if not self.parsed():
+            self.parse()
 
     def parsed(self) -> bool:
         return bool(self._foam) or bool(self._static)
 
     def to_foam_data(self) -> FoamData:
-        if not self.parsed():
-            self.parse()
+        self.parse_once()
         return [getattr(self, o) for o in self.order]
 
     def _openfoam(self) -> str:
@@ -71,16 +95,14 @@ class Lark:
         name = path.relative_to(self._root).as_posix()
         permission = oct(path.stat().st_mode)[-3:]
         if self._embed:
-            data = self._read(path)
-            type = ['embed', 'text' if isinstance(data, str) else 'binary']
+            data = path.read_bytes()
+            try:
+                data = data.decode()
+            except UnicodeDecodeError:
+                type = ['embed', 'binary']
+            else:
+                type = ['embed', 'text']
         else:
             data = path.as_posix()
             type = ['path', 'raw']
         return {'name': name, 'type': type, 'permission': permission, 'data': data}
-
-    def _read(self, path: p.Path) -> t.Union[bytes, str]:
-        try:
-            return path.read_text()
-        except:
-            return path.read_bytes()
-
