@@ -75,50 +75,50 @@ class Foam:
         )
 
     @classmethod
-    def from_demo(cls, name: str = 'cavity') -> 'Self':
+    def from_demo(cls, name: str = 'cavity', warn: bool = False) -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         path = p.Path(__file__).parents[1] / 'static' / 'demo' / version / name
         try:
-            self = cls.from_path(path, warn=False)
+            self = cls.from_path(path, warn=warn)
         except FileNotFoundError:
             raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.list_demos()}')
         else:
-            print(f'Foam.from_path(\'{path.as_posix()}\', warn=False)')
+            print(f'Foam.from_path(\'{path.as_posix()}\', warn={warn})')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
 
     @classmethod
-    def from_demos(cls) -> t.List['Self']:
-        return list(map(cls.from_demo, cls.list_demos()))
+    def from_demos(cls, warn: bool = False) -> t.List['Self']:
+        return list(map(lambda name: cls.from_demo(name, warn), cls.list_demos()))
 
     @classmethod
-    def from_remote_demo(cls, name: str = 'cavity', timeout: t.Optional[float] = None) -> 'Self':
+    def from_remote_demo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False) -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
         try:
-            self = cls.from_remote_path(url, timeout, warn=False)
+            self = cls.from_remote_path(url, timeout, warn=warn)
         except:  # urllib.error.URLError
             raise FileNotFoundError(f'No such demo: "{url}"')
         else:
-            print(f'Foam.from_remote_path(\'{url}\', warn=False)')
+            print(f'Foam.from_remote_path(\'{url}\', warn={warn})')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
 
     @classmethod
-    def from_remote_demos(cls, timeout: t.Optional[float] = None) -> t.List['Self']:
-        return list(map(lambda name: cls.from_remote_demo(name, timeout), cls.list_demos()))
+    def from_remote_demos(cls, timeout: t.Optional[float] = None, warn: bool = False) -> t.List['Self']:
+        return list(map(lambda name: cls.from_remote_demo(name, timeout, warn), cls.list_demos()))
 
     @classmethod
-    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None) -> 'Self':
+    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True) -> 'Self':
         with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
-        self = cls.from_text(text, '.', path.suffix)
+        self = cls.from_text(text, '.', path.suffix, warn=warn)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -126,11 +126,11 @@ class Foam:
         return self
 
     @classmethod
-    def from_path(cls, path: Path) -> 'Self':
+    def from_path(cls, path: Path, warn: bool = True) -> 'Self':
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
-            return cls.from_text(path.read_text(), path.parent, path.suffix)
+            return cls.from_text(path.read_text(), path.parent, path.suffix, warn=warn)
         elif path.is_dir():
             return cls.from_openfoam(path)
         else:
@@ -142,7 +142,7 @@ class Foam:
         return Parser.to_foam(path, **kwargs)
 
     @classmethod
-    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None) -> 'Self':
+    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, warn: bool = True) -> 'Self':
         '''Supported format: json, yaml'''
         mapper = [
             ({'.json'}, cls.from_json),
@@ -151,23 +151,23 @@ class Foam:
         if suffix is not None:
             for suffixes, method in mapper:
                 if suffix in suffixes:
-                    return method(text, root)
+                    return method(text, root, warn=warn)
         else:
             for _, method in mapper:
                 try:
-                    return method(text, root)
+                    return method(text, root, warn=warn)
                 except Exception as e:
                     print(method.__name__, e)
         raise Exception(f'Suffix "{suffix}" is not supported or not recognized')
 
     @classmethod
-    def from_json(cls, text: str, root: Path) -> 'Self':
+    def from_json(cls, text: str, root: Path, warn: bool = True) -> 'Self':
         data = json.loads(text)
-        return cls(data, root)
+        return cls(data, root, warn=warn)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path) -> 'Self':
-        return cls(list(yaml.load_all(text)), root)
+    def from_yaml(cls, text: str, root: Path, warn: bool = True) -> 'Self':
+        return cls(list(yaml.load_all(text)), root, warn=warn)
 
     @classmethod
     def as_placeholder(cls) -> 'Self':
