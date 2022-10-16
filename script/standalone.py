@@ -68,6 +68,7 @@ import urllib.request
 import warnings
 
 if typing.TYPE_CHECKING:
+    import lark as _lark
     import numpy as _numpy
     import py7zr as _py7zr
     import tqdm as _tqdm
@@ -99,6 +100,7 @@ class compat(types.ModuleType):
 f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
 
+{show.source(base.lib.lark)}
 {show.source(base.lib.numpy)}
 {show.source(base.lib.py7zr)}
 {show.source(base.lib.tqdm)}
@@ -122,6 +124,7 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 
 Apps = {{}} if tqdm.is_not_available() else {show.apps(app.command.adapter.Apps)}
 
+{show.source(parse.lark.Lark).replace('grammar()', '__grammar__')}
 {show.source(parse.static.Static)}
 {show.source(parse.url.Url)}
 {show.source(parse.yaml.YAML)}
@@ -137,6 +140,7 @@ VTK = app.VTK
 {show.source(base.core.Foam)}
 
 __doc__ = Foam.__doc__
-__license__ = """{util.function.license(full_text=False)}"""
+__grammar__ = r"""{util.function.grammar()}"""
+__license__ = r"""{util.function.license(full_text=False)}"""
 __version__ = Foam.__version__
 '''))

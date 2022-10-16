@@ -7,18 +7,18 @@ import pathlib as p
 import re
 import typing as t
 
-import lark  # TODO: lib.lark
-
+from ..base.lib import lark
 from ..base.type import Dict, FoamData, List, Path
+from ..util.function import grammar
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
+    import lark as _lark
+
 
 class Lark:
     '''Lark is a parsing toolkit for Python'''
-
-    __grammar__ = p.Path(__file__).parents[1] / 'static' / 'grammar' / 'openfoam.lark'
 
     order = ['meta', 'foam', 'static', 'other']
 
@@ -54,15 +54,16 @@ class Lark:
         return {'pipeline': []}
 
     @f.cached_property
-    def lark(self) -> lark.Lark:
+    def lark(self) -> '_lark.Lark':
         kwargs = {
             'debug': False,
-            'parser': 'earley',
-            'lexer': 'auto',
+            'cache': False,  # cache only works with parser='lalr' for now
+            'parser': 'earley', # or 'lalr'
+            'lexer': 'dynamic',  # Parser 'lalr' does not support lexer 'dynamic', expected one of ('basic', 'contextual')
             'transformer': None,
             'start': 'start',
         }
-        return lark.Lark(self.__grammar__.read_text(), **kwargs)
+        return lark.Lark(grammar(), **kwargs)
 
     def parse(self) -> None:
         for path in self._root.rglob('*'):

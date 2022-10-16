@@ -1,14 +1,33 @@
-__all__ = ['numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml']
+__all__ = ['lark', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml']
 
 
 import typing as t
 
 if t.TYPE_CHECKING:
+    import lark as _lark
     import numpy as _numpy
     import py7zr as _py7zr
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
+
+
+class lark:
+    '''pip install ifoam[lark]'''
+
+    @classmethod
+    def Lark(cls, *args: t.Any, **kwargs: t.Any) -> '_lark.Lark':
+        return cls._().Lark(*args, **kwargs)
+
+    @classmethod
+    def _(cls) -> '_lark':
+        try:
+            import lark
+        except Exception as e:
+            raise e.__class__(cls.__doc__)
+
+        return lark
+
 
 
 class numpy:

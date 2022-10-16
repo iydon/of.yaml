@@ -18,8 +18,6 @@ if t.TYPE_CHECKING:
 class Parser:
     '''All parsers'''
 
-    lark = None
-
     def __init__(self, static: Static, url: Url, yaml: YAML) -> None:
         self.static = static
         self.url = url
@@ -37,7 +35,6 @@ class Parser:
     def to_foam(cls, path: Path, **kwargs: t.Any) -> 'Foam':
         from ..base.core import Foam
 
-        cls.lark = Lark.from_path(path, **kwargs)
-        data = cls.lark.to_foam_data()
+        data = Lark.from_path(path, **kwargs).to_foam_data()
         data[0]['version'] = Foam.__version__.to_string()
         return Foam(data, path)
