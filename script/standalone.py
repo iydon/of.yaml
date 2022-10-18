@@ -6,6 +6,7 @@ import typing as t
 
 from foam import app, base, compat, parse, util
 from foam.extra.email import Envelope, SMTP
+from foam.extra.timer import Timer
 
 
 class show:
@@ -52,6 +53,7 @@ p.Path('foam.py').write_text(show.code(f'''
 __all__ = ['app', 'extra', 'Foam']
 
 import collections
+import contextlib
 import functools
 import gc
 import io
@@ -141,6 +143,7 @@ Apps = {{}} if tqdm.is_not_available() else {show.apps(app.command.adapter.Apps)
 
 class extra(types.ModuleType):
 {show.indent(show.submodule('email', Envelope, SMTP))}
+{show.indent(show.submodule('timer', Timer))}
 
 Command = app.Command
 Information = app.Information

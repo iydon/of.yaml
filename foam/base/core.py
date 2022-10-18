@@ -63,6 +63,9 @@ class Foam:
             return None
 
     def __repr__(self) -> str:
+        return f'Foam({self._list!r}, {self._root!r})'
+
+    def __str__(self) -> str:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod

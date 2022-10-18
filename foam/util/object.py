@@ -56,7 +56,10 @@ class Data:
         return self._data.__len__()
 
     def __repr__(self) -> str:
-        return self._data.__repr__()
+        return f'Data({self._data!r})'
+
+    def __str__(self) -> str:
+        return self._data.__str__()
 
     @classmethod
     def from_any(cls, data: FoamItem) -> 'Self':
@@ -135,7 +138,7 @@ class Version(t.NamedTuple):
         return other.__lt__(self)
 
     def __repr__(self) -> str:
-        return self.to_string()
+        return f'Version.from_string({self.to_string()!r})'
 
     def __str__(self) -> str:
         return self.to_string()
