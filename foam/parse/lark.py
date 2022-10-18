@@ -85,7 +85,7 @@ class Lark:
 
     def _openfoam(self) -> str:
         '''OpenFOAM Version'''
-        pattern = re.compile(r'^(OpenFOAM-)([\d\.x]+)$')
+        pattern = re.compile(r'^(OpenFOAM-)([\d.x]+)$')
         for part in self._root.parts:
             match = pattern.match(part)
             if match is not None:

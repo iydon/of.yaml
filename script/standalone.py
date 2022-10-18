@@ -5,6 +5,7 @@ import textwrap
 import typing as t
 
 from foam import app, base, compat, parse, util
+from foam.extra.email import Envelope, SMTP
 
 
 class show:
@@ -18,7 +19,7 @@ class show:
             f'{key!r}: {value.__name__}'
             for key, value in obj.items()
         )
-        return f'{{\n{cls._indent(content)}\n}}'
+        return f'{{\n{cls.indent(content)}\n}}'
 
     @classmethod
     def code(cls, obj: str) -> str:
@@ -29,7 +30,7 @@ class show:
             3. remove redundant line breaks
         '''
         br = '\n'
-        pattern_im = re.compile(r'from \.[\w\.]* import \w+')
+        pattern_im = re.compile(r'from \.[\w.]* import \w+')
         pattern_br = re.compile(fr'{br}{{3,}}')
         # step_1 = obj.replace(': Foam', ': \'Foam\'').replace(': t.Optional[Foam]', ': t.Optional[\'Foam\']')
         step_1 = pattern_im.sub('', obj)
@@ -40,15 +41,16 @@ class show:
     @classmethod
     def submodule(cls, module: str, *objs: object) -> str:
         content = '\n\n'.join(cls.source(obj) for obj in objs)
-        return f'class {module}(types.ModuleType):\n{cls._indent(content)}'
+        return f'class {module}(types.ModuleType):\n{cls.indent(content)}'
 
     @classmethod
-    def _indent(cls, content: str, level: int = 1) -> str:
+    def indent(cls, content: str, level: int = 1) -> str:
         return textwrap.indent(content, 4*level*' ')
 
 
 p.Path('foam.py').write_text(show.code(f'''
-import _thread
+__all__ = ['app', 'extra', 'Foam']
+
 import collections
 import functools
 import gc
@@ -61,6 +63,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import time
 import types
 import typing
 import urllib.parse
@@ -74,6 +77,8 @@ if typing.TYPE_CHECKING:
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
+
+    from email.message import EmailMessage
 
     from typing_extensions import Self
 
@@ -95,7 +100,8 @@ Path = {base.type.Path}
 _NOT_FOUND = object()
 
 class compat(types.ModuleType):
-{show._indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
+
+{show.indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
 
 f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
@@ -138,6 +144,10 @@ PostProcess = app.PostProcess
 VTK = app.VTK
 
 {show.source(base.core.Foam)}
+
+class extra(types.ModuleType):
+
+{show.indent(show.submodule('email', Envelope, SMTP).replace("'Envelope'", "'extra.email.Envelope'").replace("'SMTP'", "'extra.email.SMTP'"))}
 
 __doc__ = Foam.__doc__
 __grammar__ = r"""{util.function.grammar()}"""

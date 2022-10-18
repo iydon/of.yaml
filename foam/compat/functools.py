@@ -1,7 +1,6 @@
 __all__ = ['cached_property', 'singledispatchmethod']
 
 
-import _thread
 import functools as f
 
 
@@ -10,6 +9,8 @@ _NOT_FOUND = object()
 
 class cached_property:
     def __init__(self, func):
+        import _thread
+
         self.func = func
         self.attrname = None
         self.__doc__ = func.__doc__

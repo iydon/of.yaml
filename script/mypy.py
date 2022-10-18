@@ -17,7 +17,7 @@ if __name__ == '__main__':
     hash = stdout('git rev-parse HEAD').strip()
     patterns = [
         re.compile(r'Name "t\.Self" is not defined'),
-        re.compile(r'Skipping analyzing "[a-zA-Z0-9_\.]+": module is installed, but missing library stubs or py\.typed marker'),
+        re.compile(r'Skipping analyzing "[a-zA-Z0-9_.]+": module is installed, but missing library stubs or py\.typed marker'),
         re.compile(r'Variable "typing_extensions\.Self" is not valid as a type'),
     ]
     is_remote = True
