@@ -100,7 +100,6 @@ Path = {base.type.Path}
 _NOT_FOUND = object()
 
 class compat(types.ModuleType):
-
 {show.indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
 
 f.cached_property = compat.functools.cached_property
@@ -138,16 +137,17 @@ Apps = {{}} if tqdm.is_not_available() else {show.apps(app.command.adapter.Apps)
 
 {show.submodule('app', app.command.core.Command, app.information.core.Information, app.postprocess.core.PostProcess, app.postprocess.core.VTK)}
 
+{show.source(base.core.Foam)}
+
+class extra(types.ModuleType):
+{show.indent(show.submodule('email', Envelope, SMTP))}
+
 Command = app.Command
 Information = app.Information
 PostProcess = app.PostProcess
 VTK = app.VTK
-
-{show.source(base.core.Foam)}
-
-class extra(types.ModuleType):
-
-{show.indent(show.submodule('email', Envelope, SMTP).replace("'Envelope'", "'extra.email.Envelope'").replace("'SMTP'", "'extra.email.SMTP'"))}
+Envelope = extra.email.Envelope
+SMTP = extra.email.SMTP
 
 __doc__ = Foam.__doc__
 __grammar__ = r"""{util.function.grammar()}"""

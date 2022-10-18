@@ -82,6 +82,7 @@
 
 ## `v0.12`
 
+- Add extra sub-module for sending emails
 - Update program architecture
     - `foam::base::type::{Data, Version}` -> `foam::util::object::{Data, Version}`
     - `foam::base::parse` -> `foam::parse`

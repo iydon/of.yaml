@@ -1,4 +1,4 @@
-__all__ = ['Envelope', 'SMTP']
+__all__ = ['SMTP']
 
 
 import pathlib as p
@@ -19,9 +19,17 @@ class Envelope:
         - https://github.com/tomekwojcik/envelopes
     '''
 
+    _smtp = None
+
     def __init__(self, *to_addresses: str) -> None:
         self._header = {'To': ', '.join(to_addresses)}
         self._applies = []
+
+    @classmethod
+    def auto(cls, smtp: 'SMTP') -> 'Self':  # type?
+        '''Auto-delivered envelope'''
+        cls._smtp = smtp
+        return cls
 
     @classmethod
     def to(cls, *addresses: str) -> 'Self':
@@ -83,18 +91,23 @@ class Envelope:
             smtp.send(self)
         return self
 
+    def send(self) -> None:
+        assert self._smtp is not None, 'Please do not use this class directly'
+
+        self.send_by(self._smtp)
+
 
 class SMTP:
     '''SMTP wrapper
 
     Example:
-        >>> with SMTP['163'](ssl=False).login(username, password) as smtp:
-        ...     Envelope \
+        >>> with SMTP.aio('163', username, password, ssl=False) as smtp:
+        ...     smtp.envelope \
         ...         .to('liangiydon@gmail.com') \
         ...         .set_subject('SMTP Test') \
         ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True) \
         ...         .add_attachment(__file__) \
-        ...         .send_by(smtp)
+        ...         .send()
     '''
 
     def __init__(self, domain: str, host: str, port: int, ssl: bool = True) -> None:
@@ -111,23 +124,34 @@ class SMTP:
         self.quit()
 
     def __class_getitem__(cls, key: str) -> 'Self':
+        # TODO: look forward to adding more
         return {
             '163': lambda ssl: cls('163.com', 'smtp.163.com', 25, ssl),  # mail.163.com
+            'qq': lambda ssl: cls('qq.com', 'smtp.qq.com', 587, ssl),  # mail.qq.com
         }[key]
+
+    @classmethod
+    def aio(cls, mail: str, username: str, password: str, ssl: bool = True) -> 'Self':
+        '''All-in-one'''
+        return cls[mail](ssl).login(username, password)
 
     @property
     def sender(self) -> str:
         assert self._username is not None, 'Please login first'
         return f'{self._username}@{self._domain}'
 
+    @property
+    def envelope(self) -> 'Envelope':
+        return Envelope.auto(self)
+
     def login(self, username: str, password: str) -> 'Self':
         self._username = username
         self._smtp.login(username, password)
         return self
 
-    def quit(self) -> None:
+    def quit(self, *args: t.Any, **kwargs: t.Any) -> None:
         # NOTE: Lifetime of this instance ends after quit is called, so it will not return self
-        self._smtp.__exit__()
+        self._smtp.__exit__(*args, **kwargs)
 
     def send(self, *envelopes: 'Envelope') -> 'Self':
         for envelope in envelopes:
