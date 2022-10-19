@@ -23,7 +23,7 @@ class Envelope:
 
     def __init__(self, *to_addresses: str) -> None:
         self._header = {'To': ', '.join(to_addresses)}
-        self._applies = []
+        self._applies = [lambda msg: None]
 
     @classmethod
     def auto(cls, smtp: 'SMTP') -> 'Self':  # type?
@@ -58,13 +58,13 @@ class Envelope:
             getattr(self, f'set_{key}')(value)
         return self
 
-    def set_date(self, timestamp: t.Optional[float]) -> 'Self':
+    def set_date(self, value: t.Optional[float]) -> 'Self':
         from email.utils import formatdate
 
-        self._header['Date'] = formatdate(timestamp, localtime=True, usegmt=False)
+        self._header['Date'] = formatdate(value, localtime=True, usegmt=False)
 
     def set_content(self, value: str, html: bool = False) -> 'Self':
-        self._applies.append(lambda msg: msg.set_content(value, subtype='html' if html else 'plain'))
+        self._applies[0] = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
         return self
 
     def set_content_by_path(self, value: Path, html: bool = False) -> 'Self':
@@ -121,7 +121,7 @@ class SMTP:
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        self.quit()
+        self._smtp.__exit__(type, value, traceback)
 
     def __class_getitem__(cls, key: str) -> 'Self':
         # TODO: look forward to adding more
@@ -149,9 +149,14 @@ class SMTP:
         self._smtp.login(username, password)
         return self
 
-    def quit(self, *args: t.Any, **kwargs: t.Any) -> None:
+    def quit(self) -> None:
         # NOTE: Lifetime of this instance ends after quit is called, so it will not return self
-        self._smtp.__exit__(*args, **kwargs)
+        import smtplib
+
+        try:
+            self._smtp.quit()
+        except smtplib.SMTPServerDisconnected:
+            pass
 
     def send(self, *envelopes: 'Envelope') -> 'Self':
         for envelope in envelopes:
