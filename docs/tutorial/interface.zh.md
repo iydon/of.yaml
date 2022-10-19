@@ -99,6 +99,7 @@ PACKAGE CONTENTS
     app (package)
     base (package)
     compat (package)
+    extra (package)
     parse (package)
     util (package)
 
@@ -107,7 +108,7 @@ CLASSES
         foam.base.core.Foam
 
     class Foam(builtins.object)
-     |  Foam(data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
+     |  Foam(data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |
      |  Convert multiple dictionary type data to OpenFOAM test case
      |
@@ -121,11 +122,14 @@ CLASSES
      |
      |  __getitem__(self, key: str) -> Union[foam.util.object.Data, NoneType]
      |
-     |  __init__(self, data: List[Dict[str, Any]], root: Union[str, pathlib.Path], warn: bool = True) -> None
+     |  __init__(self, data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
      |
      |  __repr__(self) -> str
      |      Return repr(self).
+     |
+     |  __str__(self) -> str
+     |      Return str(self).
      |
      |  application = <foam.compat.functools.cached_property object>
      |  environ = <foam.compat.functools.cached_property object>
@@ -143,24 +147,28 @@ CLASSES
      |
      |  as_placeholder() -> 'Self' from builtins.type
      |
-     |  from_demo(name: str = 'cavity') -> 'Self' from builtins.type
+     |  from_demo(name: str = 'cavity', warn: bool = False) -> 'Self' from builtins.type
      |
-     |  from_demos() -> List[ForwardRef('Self')] from builtins.type
+     |  from_demos(warn: bool = False) -> List[ForwardRef('Self')] from builtins.type
      |
-     |  from_file(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  from_json(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |
+     |  from_openfoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |      From OpenFOAM directory
+     |
+     |  from_path(path: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |      Supported path mode: file, directory
+     |
+     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_remote_demos(timeout: Union[float, NoneType] = None, warn: bool = False) -> List[ForwardRef('Self')] from builtins.type
+     |
+     |  from_remote_path(url: str, timeout: Union[float, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |
+     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
      |      Supported format: json, yaml
      |
-     |  from_json(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
-     |
-     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None) -> 'Self' from builtins.type
-     |
-     |  from_remote_demos(timeout: Union[float, NoneType] = None) -> List[ForwardRef('Self')] from builtins.type
-     |
-     |  from_remote_file(url: str, timeout: Union[float, NoneType] = None, **kwargs: Any) -> 'Self' from builtins.type
-     |
-     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, **kwargs: Any) -> 'Self' from builtins.type
-     |
-     |  from_yaml(text: str, root: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  from_yaml(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
      |
      |  list_demos() -> List[str] from builtins.type
      |
@@ -192,11 +200,13 @@ CLASSES
      |
      |  __weakref__
      |      list of weak references to the object (if defined)
+     |
+     |  destination
 
 DATA
     __all__ = ['app', 'Foam']
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.1
+    0.12.2
 ```
