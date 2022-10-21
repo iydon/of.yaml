@@ -41,7 +41,7 @@ class Match:
 
     def __getitem__(self, keys: Keys[str]) -> t.Callable:
         if not isinstance(keys, tuple):
-            keys = (keys, )
+            return self.__getitem__((keys, ))
         return self._methods[keys]
 
     @classmethod

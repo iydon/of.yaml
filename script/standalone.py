@@ -52,17 +52,23 @@ class show:
 p.Path('foam.py').write_text(show.code(f'''
 __all__ = ['app', 'extra', 'Foam']
 
+import _thread
 import collections
 import contextlib
+import email.message
+import email.utils
 import functools
 import gc
 import io
 import json
+import mimetypes
 import os
 import pathlib
+import pickle
 import re
 import shlex
 import shutil
+import smtplib
 import subprocess
 import sys
 import time

@@ -7,6 +7,8 @@ import time
 import typing as t
 import warnings as w
 
+from ..base.type import Keys
+
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -36,8 +38,10 @@ class Timer:
     def __exit__(self, type, value, traceback) -> None:
         pass
 
-    def __getitem__(self, label: str) -> float:
-        return -self._cache[label]
+    def __getitem__(self, labels: Keys[t.Hashable]) -> float:
+        if not isinstance(labels, tuple):
+            return self.__getitem__((labels, ))
+        return -self._cache[labels]
 
     def __repr__(self) -> str:
         return f'Timer.{self._func.__name__}()'
@@ -99,14 +103,14 @@ class Timer:
         return self._cache
 
     @contextlib.contextmanager
-    def new(self, label: str) -> t.Iterator[t.Callable]:
-        if label in self._cache:
-            w.warn(f'Label {label} already exists')
+    def new(self, *labels: t.Hashable) -> t.Iterator[t.Callable]:
+        if labels in self._cache:
+            w.warn(f'Label {labels} already exists')
         try:
-            self._cache[label] = self._func()
-            yield self._result(label)
+            self._cache[labels] = self._func()
+            yield self._result(*labels)
         finally:
-            self._cache[label] -= self._func()
+            self._cache[labels] -= self._func()
 
     def reset(self) -> 'Self':
         self._cache.clear()
@@ -115,9 +119,9 @@ class Timer:
     @f.cached_property
     def _result(self) -> type:
         return type('Result', (), {
-            '__init__': lambda this, label: setattr(this, '_label', label),
-            '__float__': lambda this: self.__getitem__(this._label),
-            '__repr__': lambda this: f'Result({this._label!r})',
-            '__str__': lambda this: f'<Result @ {this._label!r}>',
+            '__init__': lambda this, *labels: setattr(this, '_labels', labels),
+            '__float__': lambda this: self.__getitem__(this._labels),
+            '__repr__': lambda this: f'Result({", ".join(map(repr, this._labels))})',
+            '__str__': lambda this: f'<Result @ ({", ".join(map(repr, this._labels))})>',
             'value': property(lambda this: this.__float__()),
         })

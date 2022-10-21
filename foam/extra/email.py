@@ -1,7 +1,11 @@
 __all__ = ['SMTP']
 
 
+import email.message
+import email.utils
+import mimetypes
 import pathlib as p
+import smtplib
 import time
 import typing as t
 
@@ -42,8 +46,6 @@ class Envelope:
         '''
         path = p.Path(path)
         if type is None:
-            import mimetypes
-
             type, encoding = mimetypes.guess_type(path.as_posix(), strict=True)
             if type is None or encoding is not None:
                 type = 'application/octet-stream'
@@ -59,9 +61,7 @@ class Envelope:
         return self
 
     def set_date(self, value: t.Optional[float]) -> 'Self':
-        from email.utils import formatdate
-
-        self._header['Date'] = formatdate(value, localtime=True, usegmt=False)
+        self._header['Date'] = email.utils.formatdate(value, localtime=True, usegmt=False)
 
     def set_content(self, value: str, html: bool = False) -> 'Self':
         self._applies[0] = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
@@ -75,9 +75,7 @@ class Envelope:
         return self
 
     def to_message(self) -> 'EmailMessage':
-        from email.message import EmailMessage
-
-        msg = EmailMessage()
+        msg = email.message.EmailMessage()
         # _header
         for key, value in self._header.items():
             msg[key] = value
@@ -111,8 +109,6 @@ class SMTP:
     '''
 
     def __init__(self, domain: str, host: str, port: int, ssl: bool = True) -> None:
-        import smtplib
-
         self._domain = domain
         self._smtp = (smtplib.SMTP_SSL if ssl else smtplib.SMTP)(host, port)
         self._username = None
@@ -138,6 +134,7 @@ class SMTP:
     @property
     def sender(self) -> str:
         assert self._username is not None, 'Please login first'
+
         return f'{self._username}@{self._domain}'
 
     @property
@@ -151,8 +148,6 @@ class SMTP:
 
     def quit(self) -> None:
         # NOTE: Lifetime of this instance ends after quit is called, so it will not return self
-        import smtplib
-
         try:
             self._smtp.quit()
         except smtplib.SMTPServerDisconnected:

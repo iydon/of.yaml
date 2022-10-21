@@ -49,7 +49,7 @@ class Url:
 
     def __getitem__(self, keys: Keys[str]) -> t.Callable:
         if not isinstance(keys, tuple):
-            keys = (keys, )
+            return self.__getitem__((keys, ))
         method = self.match.get(*keys, default=lambda self, static: static)
         return lambda *args, **kwargs: method(self, *args, **kwargs)
 

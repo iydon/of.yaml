@@ -107,7 +107,7 @@ class Static:
         return self._foam._root / data
 
     def _path_foam(self, static: Dict) -> None:
-        data = Data.from_dict({})
+        data = Data.from_dict()
         out, in_ = self._foam._path(), self._in(static['data'])
         data[static['name'].split('/')] = {  # p.Path(static['name']).parts
             'json': lambda path: json.loads(path.read_text()),

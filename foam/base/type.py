@@ -5,6 +5,9 @@ import pathlib as p
 import types
 import typing as t
 
+if t.TYPE_CHECKING:
+    import numpy as _numpy
+
 
 CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
@@ -16,21 +19,17 @@ Path = t.Union[str, p.Path]
 
 
 class Array:
-    def __class_getitem__(cls, dimensions: 'Keys[int]') -> type:
+    # TODO: https://github.com/ramonhagenaars/nptyping?
+
+    def __class_getitem__(cls, dimensions: 'Keys[int]') -> t.Union['_numpy.number', '_numpy.ndarray']:
         if not isinstance(dimensions, tuple):
-            dimensions = (dimensions, )
+            return cls.__class_getitem__((dimensions, ))
         assert all(isinstance(d, int) and d>=0 for d in dimensions)
 
-        if t.TYPE_CHECKING:
-            import numpy as np
-
-            dimensions_ = set(dimensions)
-            if dimensions_ == {0}:
-                return np.number
-            else:
-                return np.ndarray
+        if dimensions == (0, ):
+            return '_numpy.number'
         else:
-            return t.Any
+            return '_numpy.ndarray'
 
 
 class Keys:

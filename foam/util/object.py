@@ -1,7 +1,9 @@
 __all__ = ['Data', 'Version']
 
 
+import json
 import pathlib as p
+import pickle
 import typing as t
 
 from ..base.lib import yaml
@@ -66,11 +68,11 @@ class Data:
         return cls(data)
 
     @classmethod
-    def from_dict(cls, data: Dict) -> 'Self':
+    def from_dict(cls, data: Dict = {}) -> 'Self':
         return cls(data)
 
     @classmethod
-    def from_list(cls, data: List) -> 'Self':
+    def from_list(cls, data: List = []) -> 'Self':
         return cls(data)
 
     @property
@@ -98,13 +100,9 @@ class Data:
 
     def dumps(self, type: str = 'yaml', **kwargs: t.Any) -> bytes:
         if type in {'json'}:
-            import json
-
             kwargs = {'ensure_ascii': False, **kwargs}
             return json.dumps(self._data, **kwargs).encode()
         elif type in {'pickle', 'pkl'}:
-            import pickle
-
             return pickle.dumps(self._data, **kwargs)
         elif type in {'yaml', 'yml'}:
             kwargs = {'indent': 4, **kwargs}
