@@ -7,7 +7,7 @@ import time
 import typing as t
 import warnings as w
 
-from ..base.type import Keys
+from ...base.type import Keys
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self

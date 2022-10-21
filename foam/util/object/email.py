@@ -1,4 +1,4 @@
-__all__ = ['SMTP']
+__all__ = ['Envelope', 'SMTP']
 
 
 import email.message
@@ -9,7 +9,7 @@ import smtplib
 import time
 import typing as t
 
-from ..base.type import Path
+from ...base.type import Path
 
 if t.TYPE_CHECKING:
     from email.message import EmailMessage

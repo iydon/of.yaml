@@ -5,8 +5,6 @@ import textwrap
 import typing as t
 
 from foam import app, base, compat, parse, util
-from foam.extra.email import Envelope, SMTP
-from foam.extra.timer import Timer
 
 
 class show:
@@ -50,7 +48,15 @@ class show:
 
 
 p.Path('foam.py').write_text(show.code(f'''
-__all__ = ['app', 'extra', 'Foam']
+__all__ = [
+    'Array', 'CachedLib', 'Dict', 'FoamItem', 'FoamData', 'Keys', 'List', 'Location', 'Path',
+    'lark', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml',
+    'lib', 'Match', 'Data', 'Envelope', 'SMTP', 'Timer', 'Version',
+    'Default', 'AppBase', 'AppByTimeI', 'AppByTimeII', 'AppByIterationI', 'AppByIterationII', 'AppByProcessor',
+    'Lark', 'Static', 'Url', 'YAML', 'Parser',
+    'Command', 'Information', 'PostProcess', 'VTK',
+    'Foam',
+]
 
 import _thread
 import collections
@@ -124,8 +130,11 @@ f.singledispatchmethod = compat.functools.singledispatchmethod
 
 {show.source(util.deprecation.lib)}
 {show.source(util.decorator.Match)}
-{show.source(util.object.Data)}
-{show.source(util.object.Version)}
+{show.source(util.object.data.Data)}
+{show.source(util.object.email.Envelope)}
+{show.source(util.object.email.SMTP)}
+{show.source(util.object.timer.Timer)}
+{show.source(util.object.version.Version)}
 
 {show.source(app.command.adapter.Default)}
 {show.source(app.command.adapter.AppBase)}
@@ -143,20 +152,12 @@ Apps = {{}} if tqdm.is_not_available() else {show.apps(app.command.adapter.Apps)
 {show.source(parse.yaml.YAML)}
 {show.source(parse.Parser)}
 
-{show.submodule('app', app.command.core.Command, app.information.core.Information, app.postprocess.core.PostProcess, app.postprocess.core.VTK)}
+{show.source(app.command.core.Command)}
+{show.source(app.information.core.Information)}
+{show.source(app.postprocess.core.PostProcess)}
+{show.source(app.postprocess.core.VTK)}
 
 {show.source(base.core.Foam)}
-
-class extra(types.ModuleType):
-{show.indent(show.submodule('email', Envelope, SMTP))}
-{show.indent(show.submodule('timer', Timer))}
-
-Command = app.Command
-Information = app.Information
-PostProcess = app.PostProcess
-VTK = app.VTK
-Envelope = extra.email.Envelope
-SMTP = extra.email.SMTP
 
 __doc__ = Foam.__doc__
 __grammar__ = r"""{util.function.grammar()}"""

@@ -86,3 +86,4 @@
 - Update program architecture
     - `foam::base::type::{Data, Version}` -> `foam::util::object::{Data, Version}`
     - `foam::base::parse` -> `foam::parse`
+    - `foam::extra` -> `foam::util::object`

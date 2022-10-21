@@ -14,7 +14,8 @@ import warnings as w
 from .lib import yaml
 from .type import Dict, FoamData, Path
 from ..parse import Parser
-from ..util.object import Data, Version
+from ..util.object.data import Data
+from ..util.object.version import Version
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self

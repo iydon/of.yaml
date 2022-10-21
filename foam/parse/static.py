@@ -11,7 +11,7 @@ import typing as t
 from ..base.lib import py7zr, yaml
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
-from ..util.object import Data
+from ..util.object.data import Data
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
