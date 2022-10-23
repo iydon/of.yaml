@@ -4,6 +4,8 @@ import re
 import textwrap
 import typing as t
 
+import foam
+
 from foam import app, base, compat, parse, util
 
 
@@ -48,15 +50,7 @@ class show:
 
 
 p.Path('foam.py').write_text(show.code(f'''
-__all__ = [
-    'Array', 'CachedLib', 'Dict', 'FoamItem', 'FoamData', 'Keys', 'List', 'Location', 'Path',
-    'lark', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml',
-    'lib', 'Match', 'Data', 'Envelope', 'SMTP', 'Timer', 'Version',
-    'Default', 'AppBase', 'AppByTimeI', 'AppByTimeII', 'AppByIterationI', 'AppByIterationII', 'AppByProcessor',
-    'Lark', 'Static', 'Url', 'YAML', 'Parser',
-    'Command', 'Information', 'PostProcess', 'VTK',
-    'Foam',
-]
+__all__ = {foam.__all__}
 
 import _thread
 import collections
@@ -115,9 +109,11 @@ _NOT_FOUND = object()
 
 class compat(types.ModuleType):
 {show.indent(show.submodule('functools', compat.functools.cached_property, compat.functools.singledispatchmethod))}
+{show.indent(show.submodule('shutil', compat.shutil.copytree))}
 
 f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
+shutil.copytree = compat.shutil.copytree
 
 {show.source(base.lib.lark)}
 {show.source(base.lib.numpy)}

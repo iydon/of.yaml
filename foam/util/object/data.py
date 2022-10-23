@@ -98,6 +98,9 @@ class Data:
             path.write_bytes(self.dumps(path.suffix[1:]))
         return self
 
+    def dump_to_path(self, *parts: str) -> 'Self':
+        return self.dump(p.Path(*parts))
+
     def dumps(self, type: str = 'yaml', **kwargs: t.Any) -> bytes:
         if type in {'json'}:
             kwargs = {'ensure_ascii': False, **kwargs}

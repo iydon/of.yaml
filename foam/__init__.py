@@ -1,19 +1,21 @@
-__all__ = ['app', 'util', 'Foam']
+import functools as _functools
+import shutil as _shutil
+
+from . import compat as _compat
 
 
-import functools as f
-
-from . import compat
-
-
-f.cached_property = compat.functools.cached_property
-f.singledispatchmethod = compat.functools.singledispatchmethod
+_functools.cached_property = _compat.functools.cached_property
+_functools.singledispatchmethod = _compat.functools.singledispatchmethod
+_shutil.copytree = _compat.shutil.copytree
 
 
-from . import app, util
-from .base.core import Foam
+import importlib as _importlib
+
+from .namespace import *
 
 
+__import__ = lambda name: _importlib.import_module(name, __name__)
+__all__ = __import__('.namespace').__all__
 __doc__ = Foam.__doc__
-__license__ = util.function.license(full_text=False)
+__license__ = __import__('.util').function.license(full_text=False)
 __version__ = Foam.__version__

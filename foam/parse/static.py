@@ -5,7 +5,6 @@ import io
 import json
 import pathlib as p
 import shutil
-import sys
 import typing as t
 
 from ..base.lib import py7zr, yaml
@@ -77,8 +76,7 @@ class Static:
     def _(self, static: Dict) -> None:
         out, in_ = self._out(static['name']), self._in(static['data'])
         if in_.is_dir():
-            kwargs = {'dirs_exist_ok': True} if sys.version_info >= (3, 8) else {}
-            shutil.copytree(in_, out, **kwargs)
+            shutil.copytree(in_, out, dirs_exist_ok=True)
         elif in_.is_file():
             shutil.copyfile(in_, out)
         else:
