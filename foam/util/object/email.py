@@ -18,7 +18,8 @@ if t.TYPE_CHECKING:
 
 
 class Envelope:
-    '''
+    '''Envelope
+
     Reference:
         - https://github.com/tomekwojcik/envelopes
     '''

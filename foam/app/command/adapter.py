@@ -11,6 +11,8 @@ if t.TYPE_CHECKING:
 
 
 class Default:
+    '''Default app'''
+
     def __init__(self, foam: 'Foam') -> None:
         pass
 
@@ -28,6 +30,8 @@ class Default:
 
 
 class AppBase(Default):
+    '''Base app'''
+
     def __init__(self, foam: 'Foam') -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
@@ -121,6 +125,7 @@ class AppByTimeI(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructParMesh/reconstructParMesh.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
     '''
+
     def now(self, line):
         line = line.strip()
         if line.startswith(b'Time = '):
@@ -133,6 +138,7 @@ class AppByTimeII(AppBase):
         - postProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK.C
     '''
+
     def now(self, line):
         line = line.strip()
         if line.startswith(b'Time: '):
@@ -145,6 +151,7 @@ class AppByIterationI(AppBase):
         - electromagnetics:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/electromagnetics/electrostaticFoam/electrostaticFoam.C
     '''
+
     def now(self, line):
         line = line.strip()
         if line.startswith(b'Iteration = '):
@@ -158,6 +165,7 @@ class AppByIterationII(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidEquilibriumDisplacementFoam/solidEquilibriumDisplacementFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidDisplacementFoam/solidDisplacementFoam.C
     '''
+
     def now(self, line):
         line = line.strip()
         if line.startswith(b'Iteration: '):
@@ -171,6 +179,7 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
+
     def __init__(self, foam: 'Foam'):
         start = 0
         end = foam.number_of_processors - 1
@@ -350,6 +359,7 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/surface/surfaceFind/surfaceFind.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/surface/surfaceMeshTriangulate/surfaceMeshTriangulate.C
     '''
+
     def now(self, _):
         raise NotImplementedError
 

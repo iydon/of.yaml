@@ -18,9 +18,9 @@ class Timer:
 
     Example:
         >>> timer = Timer.default()
-        >>>s with timer.new('1') as t:
+        >>> with timer.new('1', '2', '3') as t:
         ...     time.sleep(9)
-        >>> print(float(t), timer['1'])
+        >>> print(float(t), timer['1', '2', '3'])
         9.00686868999037 9.00686868999037
 
     Reference:
@@ -62,29 +62,22 @@ class Timer:
 
     @classmethod
     def monotonic(cls) -> 'Self':
-        '''
-        Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
+        '''Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.monotonic)
 
     @classmethod
     def perf_counter(cls) -> 'Self':
-        '''
-        Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-        '''
+        '''Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.perf_counter)
 
     @classmethod
     def process_time(cls) -> 'Self':
-        '''
-        Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-        '''
+        '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.process_time)
 
     @classmethod
     def thread_time(cls) -> 'Self':
-        '''
-        Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
-        '''
+        '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.'''
         return cls(time.thread_time)
 
     @classmethod

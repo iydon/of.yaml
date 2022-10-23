@@ -33,5 +33,7 @@ class Array:
 
 
 class Keys:
+    # TODO: https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
+
     def __class_getitem__(cls, T: type) -> type:
         return t.Union[T, t.Tuple[T, ...]]

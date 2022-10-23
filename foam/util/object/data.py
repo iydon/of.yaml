@@ -14,6 +14,25 @@ if t.TYPE_CHECKING:
 
 
 class Data:
+    '''Multi-key dictionary
+
+    Example:
+        >>> data = Data.from_dict_keys(
+        ...     ('left', 'x'), ('left', 'y'),
+        ...     ('right', 'x'), ('right', 'y'),
+        ...     default=list,
+        ... )
+        >>> data['left', 'x'].append({...})
+        >>> data['right', 'y'].append({...})
+
+        >>> for key, val in data.items():
+        ...     print(key, val)
+        ('left', 'x') [{Ellipsis}]
+        ('left', 'y') []
+        ('right', 'x') []
+        ('right', 'y') [{Ellipsis}]
+    '''
+
     def __init__(self, data: FoamItem) -> None:
         self._data = data
 
@@ -68,12 +87,23 @@ class Data:
         return cls(data)
 
     @classmethod
-    def from_dict(cls, data: Dict = {}) -> 'Self':
-        return cls(data)
+    def from_dict(cls, data: t.Optional[Dict] = None) -> 'Self':
+        return cls({} if data is None else data)
 
     @classmethod
-    def from_list(cls, data: List = []) -> 'Self':
-        return cls(data)
+    def from_dict_keys(cls, *keys: t.Hashable, default: t.Callable = dict) -> 'Self':
+        self = cls.from_dict()
+        for key in keys:
+            self[key] = default()
+        return self
+
+    @classmethod
+    def from_list(cls, data: t.Optional[List] = None) -> 'Self':
+        return cls([] if data is None else data)
+
+    @classmethod
+    def from_list_length(cls, length: int, default: t.Callable = lambda: None) -> 'Self':
+        return cls.from_list([default() for _ in range(length)])
 
     @property
     def data(self) -> FoamItem:

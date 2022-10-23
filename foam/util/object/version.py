@@ -8,6 +8,16 @@ if t.TYPE_CHECKING:
 
 
 class Version(t.NamedTuple):
+    '''Version named tuple
+
+    Example:
+        >>> version = Version.from_string('1.2.x')
+        >>> version.major, version.minor, version.other, version.micro
+        (1, 2, 'x', None)
+        >>> version.to_string()
+        '1.2.x'
+    '''
+
     major: int
     minor: int
     other: t.Optional[str]

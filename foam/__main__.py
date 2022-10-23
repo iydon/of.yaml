@@ -8,6 +8,8 @@ from foam import Foam
 
 
 class DEFAULT:
+    '''Default arguments'''
+
     CONV_DIRECTORY = '.'
     TEST_DIRECTORY = 'test'
     OPENFOAM = '7'
