@@ -1,9 +1,10 @@
-__all__ = ['Match']
+__all__ = ['classproperty', 'Match']
 
 
 import functools as f
 import typing as t
 
+from ..base.lib import classproperty
 from ..base.type import Keys
 
 if t.TYPE_CHECKING:

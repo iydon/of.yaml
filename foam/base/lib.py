@@ -1,15 +1,39 @@
-__all__ = ['lark', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml']
+__all__ = ['classproperty', 'lark', 'matplotlib', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml']
 
 
 import typing as t
 
 if t.TYPE_CHECKING:
     import lark as _lark
+    import matplotlib as _matplotlib
+    import matplotlib.figure as _figure
+    import matplotlib.pyplot as _pyplot
     import numpy as _numpy
     import py7zr as _py7zr
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
+
+
+class classproperty:
+    '''Decorator that converts a method with a single cls argument into a property that can be accessed directly from the class.
+
+    Reference:
+        - https://github.com/django/django
+
+    TODO:
+        - place it in util::decorator will cause circular import problem
+    '''
+
+    def __init__(self, method=None):
+        self.fget = method
+
+    def __get__(self, instance, cls=None):
+        return self.fget(cls)
+
+    def getter(self, method):
+        self.fget = method
+        return self
 
 
 class lark:
@@ -28,6 +52,28 @@ class lark:
 
         return lark
 
+
+class matplotlib:
+    '''pip install ifoam[mpl]'''
+
+    @classproperty
+    def figure(cls) -> '_figure':
+        return cls._().figure
+
+    @classproperty
+    def pyplot(cls) -> '_pyplot':
+        return cls._().pyplot
+
+    @classmethod
+    def _(cls) -> '_matplotlib':
+        try:
+            import matplotlib
+            import matplotlib.figure
+            import matplotlib.pyplot
+        except Exception as e:
+            raise e.__class__(cls.__doc__)
+
+        return matplotlib
 
 
 class numpy:

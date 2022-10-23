@@ -80,6 +80,10 @@ import warnings
 
 if typing.TYPE_CHECKING:
     import lark as _lark
+    import matplotlib as _matplotlib
+    import matplotlib.axes as _axes
+    import matplotlib.figure as _figure
+    import matplotlib.pyplot as _pyplot
     import numpy as _numpy
     import py7zr as _py7zr
     import tqdm as _tqdm
@@ -115,7 +119,10 @@ f.cached_property = compat.functools.cached_property
 f.singledispatchmethod = compat.functools.singledispatchmethod
 shutil.copytree = compat.shutil.copytree
 
+# util.decorator.classproperty
+{show.source(base.lib.classproperty)}
 {show.source(base.lib.lark)}
+{show.source(base.lib.matplotlib)}
 {show.source(base.lib.numpy)}
 {show.source(base.lib.py7zr)}
 {show.source(base.lib.tqdm)}
@@ -129,6 +136,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(util.object.data.Data)}
 {show.source(util.object.email.Envelope)}
 {show.source(util.object.email.SMTP)}
+{show.source(util.object.figure.Figure)}
 {show.source(util.object.timer.Timer)}
 {show.source(util.object.version.Version)}
 

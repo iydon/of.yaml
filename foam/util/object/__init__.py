@@ -1,4 +1,4 @@
-__all__ = ['data', 'email', 'timer', 'version']
+__all__ = ['data', 'email', 'figure', 'timer', 'version']
 
 
-from . import data, email, timer, version
+from . import data, email, figure, timer, version
