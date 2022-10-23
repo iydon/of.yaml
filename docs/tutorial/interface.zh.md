@@ -99,13 +99,184 @@ PACKAGE CONTENTS
     app (package)
     base (package)
     compat (package)
-    extra (package)
+    namespace
     parse (package)
     util (package)
 
+SUBMODULES
+    _compat
+
 CLASSES
     builtins.object
+        foam.app.command.core.Command
+        foam.app.information.core.Information
+        foam.app.postprocess.core.PostProcess
+        foam.app.postprocess.core.VTK
         foam.base.core.Foam
+        foam.util.object.data.Data
+        foam.util.object.email.Envelope
+        foam.util.object.email.SMTP
+        foam.util.object.timer.Timer
+    builtins.tuple(builtins.object)
+        foam.util.object.version.Version
+
+    class Command(builtins.object)
+     |  Command(foam: 'Foam') -> None
+     |
+     |  OpenFOAM command wrapper
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, foam: 'Foam') -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  all_clean(self) -> None
+     |      Inspired by `Allclean`
+     |
+     |  all_run(self, overwrite: bool = False, exception: bool = False, parallel: bool = True, unsafe: bool = True) -> List[int]
+     |      Inspired by  `Allrun`
+     |
+     |  macros = <foam.compat.functools.cached_property object>
+     |  raw(self, command: str, output: bool = True) -> subprocess.CompletedProcess
+     |      Execute raw command in case directory
+     |
+     |  run(self, commands: List[Union[str, Dict[str, Any]]], suffix: str = '', overwrite: bool = False, exception: bool = True, parallel: bool = True, unsafe: bool = False) -> List[int]
+     |      Inspired by `runApplication` and `runParallel`
+     |
+     |      - Reference:
+     |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
+     |
+     |  which(self, command: str) -> Union[str, NoneType]
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_foam_without_asserting(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  logs
+     |      Log files
+     |
+     |  times
+     |      Time directories
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class Data(builtins.object)
+     |  Data(data: Union[Dict[str, Any], List[Any]]) -> None
+     |
+     |  Methods defined here:
+     |
+     |  __bool__(self) -> bool
+     |
+     |  __getitem__(self, keys: Union[Any, Tuple[Any, ...]]) -> Any
+     |
+     |  __init__(self, data: Union[Dict[str, Any], List[Any]]) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __iter__(self) -> Iterator[Any]
+     |
+     |  __len__(self) -> int
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  __setitem__(self, keys: Union[Any, Tuple[Any, ...]], value: Any) -> None
+     |
+     |  __str__(self) -> str
+     |      Return str(self).
+     |
+     |  dump(self, *paths: Union[str, pathlib.Path]) -> 'Self'
+     |
+     |  dump_to_path(self, *parts: str) -> 'Self'
+     |
+     |  dumps(self, type: str = 'yaml', **kwargs: Any) -> bytes
+     |
+     |  get(self, key: Any, default: Union[Any, NoneType] = None) -> Any
+     |
+     |  items(self, with_list: bool = False) -> Iterator[Tuple[Union[Any, Tuple[Any, ...]], Any]]
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  from_any(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |
+     |  from_dict(data: Dict[str, Any] = {}) -> 'Self' from builtins.type
+     |
+     |  from_list(data: List[Any] = []) -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  data
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class Envelope(builtins.object)
+     |  Envelope(*to_addresses: str) -> None
+     |
+     |  Reference:
+     |      - https://github.com/tomekwojcik/envelopes
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, *to_addresses: str) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  add_attachment(self, path: Union[str, pathlib.Path], type: Union[str, NoneType] = None, **kwargs: Any) -> 'Self'
+     |      Reference:
+     |          - https://docs.python.org/zh-cn/3/library/email.examples.html
+     |
+     |  send(self) -> None
+     |
+     |  send_by(self, *smtps: 'SMTP') -> 'Self'
+     |
+     |  set(self, **kwargs: str) -> 'Self'
+     |
+     |  set_content(self, value: str, html: bool = False) -> 'Self'
+     |
+     |  set_content_by_path(self, value: Union[str, pathlib.Path], html: bool = False) -> 'Self'
+     |
+     |  set_date(self, value: Union[float, NoneType]) -> 'Self'
+     |
+     |  set_subject(self, value: str) -> 'Self'
+     |
+     |  to_message(self) -> 'EmailMessage'
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  auto(smtp: 'SMTP') -> 'Self' from builtins.type
+     |      Auto-delivered envelope
+     |
+     |  to(*addresses: str) -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
 
     class Foam(builtins.object)
      |  Foam(data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
@@ -120,7 +291,7 @@ CLASSES
      |
      |  Methods defined here:
      |
-     |  __getitem__(self, key: str) -> Union[foam.util.object.Data, NoneType]
+     |  __getitem__(self, key: str) -> Union[foam.util.object.data.Data, NoneType]
      |
      |  __init__(self, data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
@@ -203,10 +374,433 @@ CLASSES
      |
      |  destination
 
+    class Information(builtins.object)
+     |  Information(foam: 'Foam') -> None
+     |
+     |  OpenFOAM information wrapper
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, foam: 'Foam') -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  commands(self, foam_only: bool = True) -> Set[str]
+     |
+     |  search(self, *targets: str, process: bool = True) -> Union[str, Set[str]]
+     |      `foamSearch` wrapper
+     |
+     |      - Reference:
+     |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
+     |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
+     |
+     |  search_yaml(self, *targets: str, root: Union[str, pathlib.Path] = '.') -> Dict[Hashable, Set[str]]
+     |      `foamSearch` in YAML
+     |
+     |      - Note:
+     |          - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_nothing() -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  cmd
+     |      Command without asserting (no need to call `Foam::save` method first)
+     |
+     |  environ
+     |      OpenFOAM environments (aliase for `Foam::environ` property)
+     |
+     |  root
+     |
+     |  shared_libraries
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class PostProcess(builtins.object)
+     |  PostProcess(foam: 'Foam') -> None
+     |
+     |  OpenFOAM post-processing
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, foam: 'Foam') -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  centroid(self, key: str, structured: bool = False) -> Dict[float, ForwardRef('_numpy.ndarray')]
+     |
+     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]
+     |
+     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]
+     |
+     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]]
+     |
+     |  vtks_set(self, **kwargs: Any) -> List[ForwardRef('VTK')]
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  logs
+     |      Script extract data for each time-step from a log file for graphing
+     |
+     |      - Reference:
+     |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
+     |
+     |  vtks
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class SMTP(builtins.object)
+     |  SMTP(domain: str, host: str, port: int, ssl: bool = True) -> None
+     |
+     |  SMTP wrapper
+     |
+     |  Example:
+     |      >>> with SMTP.aio('163', username, password, ssl=False) as smtp:
+     |      ...     smtp.envelope         ...         .to('liangiydon@gmail.com')         ...         .set_subject('SMTP Test')         ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True)         ...         .add_attachment(__file__)         ...         .send()
+     |
+     |  Methods defined here:
+     |
+     |  __enter__(self) -> 'Self'
+     |
+     |  __exit__(self, type, value, traceback) -> None
+     |
+     |  __init__(self, domain: str, host: str, port: int, ssl: bool = True) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  login(self, username: str, password: str) -> 'Self'
+     |
+     |  quit(self) -> None
+     |
+     |  send(self, *envelopes: 'Envelope') -> 'Self'
+     |
+     |  wait(self, seconds: float) -> 'Self'
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  __class_getitem__(key: str) -> 'Self' from builtins.type
+     |
+     |  aio(mail: str, username: str, password: str, ssl: bool = True) -> 'Self' from builtins.type
+     |      All-in-one
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  envelope
+     |
+     |  sender
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class Timer(builtins.object)
+     |  Timer(func: Callable) -> None
+     |
+     |  Timer
+     |
+     |  Example:
+     |      >>> timer = Timer.default()
+     |      >>>s with timer.new('1') as t:
+     |      ...     time.sleep(9)
+     |      >>> print(float(t), timer['1'])
+     |      9.00686868999037 9.00686868999037
+     |
+     |  Reference:
+     |      - https://docs.python.org/3/library/time.html
+     |      - https://stackoverflow.com/questions/5849800/what-is-the-python-equivalent-of-matlabs-tic-and-toc-functions
+     |
+     |  Methods defined here:
+     |
+     |  __enter__(self) -> 'Self'
+     |
+     |  __exit__(self, type, value, traceback) -> None
+     |
+     |  __getitem__(self, labels: Union[Hashable, Tuple[Hashable, ...]]) -> float
+     |
+     |  __init__(self, func: Callable) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  __str__(self) -> str
+     |      Return str(self).
+     |
+     |  new(self, *labels: Hashable) -> Iterator[Callable]
+     |
+     |  reset(self) -> 'Self'
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  best() -> 'Self' from builtins.type
+     |
+     |  default() -> 'Self' from builtins.type
+     |
+     |  monotonic() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
+     |
+     |  perf_counter() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
+     |
+     |  process_time() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
+     |
+     |  thread_time() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
+     |
+     |  time() -> 'Self' from builtins.type
+     |      Return the time in seconds since the epoch as a floating point number. The specific date of the epoch and the handling of leap seconds is platform dependent. On Windows and most Unix systems, the epoch is January 1, 1970, 00:00:00 (UTC) and leap seconds are not counted towards the time in seconds since the epoch. This is commonly referred to as Unix time. To find out what the epoch is on a given platform, look at gmtime(0).
+     |
+     |      Note that even though the time is always returned as a floating point number, not all systems provide time with a better precision than 1 second. While this function normally returns non-decreasing values, it can return a lower value than a previous call if the system clock has been set back between the two calls.
+     |
+     |      The number returned by time() may be converted into a more common time format (i.e. year, month, day, hour, etc…) in UTC by passing it to gmtime() function or in local time by passing it to the localtime() function. In both cases a struct_time object is returned, from which the components of the calendar date may be accessed as attributes.
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  cache
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class VTK(builtins.object)
+     |  VTK(reader: '_vtkmodules.vtkIOLegacy.vtkDataReader', foam: Union[ForwardRef('Foam'), NoneType] = None, point: bool = True, cell: bool = True) -> None
+     |
+     |  OpenFOAM VTK post-processing
+     |
+     |  Methods defined here:
+     |
+     |  __contains__(self, key: str) -> bool
+     |
+     |  __getitem__(self, key: str) -> None
+     |
+     |  __init__(self, reader: '_vtkmodules.vtkIOLegacy.vtkDataReader', foam: Union[ForwardRef('Foam'), NoneType] = None, point: bool = True, cell: bool = True) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  centroid(self, key: str, structured: bool = False) -> '_numpy.ndarray'
+     |
+     |  centroid_with_args(self, *keys: str, structured: bool = False) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |
+     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |
+     |  keys(self) -> None
+     |
+     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |
+     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, ForwardRef('_numpy.ndarray')]]
+     |      - Reference:
+     |          - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  from_file(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |
+     |  from_foam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  cell_fields
+     |
+     |  cells
+     |
+     |  foam
+     |
+     |  point_fields
+     |
+     |  points
+     |
+     |  x
+     |
+     |  y
+     |
+     |  z
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+
+    class Version(builtins.tuple)
+     |  Version(major: int, minor: int, other: Union[str, NoneType])
+     |
+     |  Version(major, minor, other)
+     |
+     |  Method resolution order:
+     |      Version
+     |      builtins.tuple
+     |      builtins.object
+     |
+     |  Methods defined here:
+     |
+     |  __getnewargs__(self)
+     |      Return self as a plain tuple.  Used by copy and pickle.
+     |
+     |  __gt__(self, other: 'Self') -> bool
+     |      Return self>value.
+     |
+     |  __lt__(self, other: 'Self') -> bool
+     |      Return self<value.
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  __str__(self) -> str
+     |      Return str(self).
+     |
+     |  _asdict(self)
+     |      Return a new dict which maps field names to their values.
+     |
+     |  _replace(self, /, **kwds)
+     |      Return a new Version object replacing specified fields with new values
+     |
+     |  to_string(self) -> str
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  _make(iterable) from builtins.type
+     |      Make a new Version object from a sequence or iterable
+     |
+     |  from_string(version: str) -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Static methods defined here:
+     |
+     |  __new__(_cls, major: int, minor: int, other: Union[str, NoneType])
+     |      Create new instance of Version(major, minor, other)
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  micro
+     |
+     |  micro_int
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  major
+     |      Alias for field number 0
+     |
+     |  minor
+     |      Alias for field number 1
+     |
+     |  other
+     |      Alias for field number 2
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  __annotations__ = {'major': <class 'int'>, 'minor': <class 'int'>, 'ot...
+     |
+     |  _field_defaults = {}
+     |
+     |  _field_types = {'major': <class 'int'>, 'minor': <class 'int'>, 'other...
+     |
+     |  _fields = ('major', 'minor', 'other')
+     |
+     |  _fields_defaults = {}
+     |
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from builtins.tuple:
+     |
+     |  __add__(self, value, /)
+     |      Return self+value.
+     |
+     |  __contains__(self, key, /)
+     |      Return key in self.
+     |
+     |  __eq__(self, value, /)
+     |      Return self==value.
+     |
+     |  __ge__(self, value, /)
+     |      Return self>=value.
+     |
+     |  __getattribute__(self, name, /)
+     |      Return getattr(self, name).
+     |
+     |  __getitem__(self, key, /)
+     |      Return self[key].
+     |
+     |  __hash__(self, /)
+     |      Return hash(self).
+     |
+     |  __iter__(self, /)
+     |      Implement iter(self).
+     |
+     |  __le__(self, value, /)
+     |      Return self<=value.
+     |
+     |  __len__(self, /)
+     |      Return len(self).
+     |
+     |  __mul__(self, value, /)
+     |      Return self*value.
+     |
+     |  __ne__(self, value, /)
+     |      Return self!=value.
+     |
+     |  __rmul__(self, value, /)
+     |      Return value*self.
+     |
+     |  count(self, value, /)
+     |      Return number of occurrences of value.
+     |
+     |  index(self, value, start=0, stop=9223372036854775807, /)
+     |      Return first index of value.
+     |
+     |      Raises ValueError if the value is not present.
+
+FUNCTIONS
+    __import__ lambda name
+
 DATA
-    __all__ = ['app', 'Foam']
+    __all__ = ['Command', 'Information', 'PostProcess', 'VTK', 'Foam', 'Da...
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.2
+    0.12.3
 ```
