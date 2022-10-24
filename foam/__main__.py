@@ -5,6 +5,7 @@ import typing as t
 import click
 
 from foam import Foam
+from foam.base.type import TupleSequence
 
 
 class DEFAULT:
@@ -17,7 +18,7 @@ class DEFAULT:
 
 @click.group()
 @click.version_option(version=Foam.__version__.to_string(), prog_name=Foam.__name__)
-def cli():
+def cli() -> None:
     pass
 
 @cli.command(help=Foam.__doc__)
@@ -25,7 +26,7 @@ def cli():
 @click.option('-d', '--directory', default=DEFAULT.CONV_DIRECTORY, help='Destination directory')
 @click.option('-v', '--version', default=None, help='OpenFOAM version')
 @click.option('-o', '--exist-ok', is_flag=True, help='If `exist_ok` then do not overwrite')
-def conv(paths: t.Tuple[str, ...], directory: str, version: str, exist_ok: bool) -> None:
+def conv(paths: TupleSequence[str], directory: str, version: str, exist_ok: bool) -> None:
     root = p.Path(directory) if version is None else p.Path(directory, version)
     for path in map(p.Path, paths):
         if path.exists():

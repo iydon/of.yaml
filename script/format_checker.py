@@ -27,7 +27,7 @@ class FormatChecker:
                 if message is not None:
                     yield path, message
 
-    async def check_with(self, func: t.Callable) -> None:
+    async def check_with(self, func: t.Callable = print) -> None:
         async for path, message in self.check():
             func(path, message)
 
@@ -64,6 +64,15 @@ async def tab(path: p.Path, text: str) -> t.Optional[str]:
 async def end_with_newline(path: p.Path, text: str) -> t.Optional[str]:
     if not text.endswith('\n'):
         return '[text: end_with_newline]'
+
+@FormatChecker.decorate
+async def def_without_return(path: p.Path, text: str) -> t.Optional[str]:
+    if 'todo' in path.parts or path.suffix != '.py':
+        return None
+    pattern = re.compile(r'(?=def )[\s\S]+?(?<=:\n)')
+    for group in pattern.findall(text):
+        if '->' not in group:
+            return '[text: def_without_return]'
 
 
 if __name__ == '__main__':

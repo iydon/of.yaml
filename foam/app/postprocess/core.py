@@ -5,7 +5,7 @@ import typing as t
 import warnings as w
 
 from ...base.lib import numpy, vtkmodules
-from ...base.type import Array, Location, Path
+from ...base.type import Array, Dict, Location, Path
 
 if t.TYPE_CHECKING:
     import vtkmodules as _vtkmodules
@@ -21,7 +21,7 @@ class PostProcess:
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
         self._vtks: t.Optional[t.List['VTK']] = None
-        self._logs: t.Optional[t.Dict[str, t.Any]] = None
+        self._logs: t.Optional[Dict] = None
 
     @classmethod
     def from_foam(cls, foam: 'Foam') -> 'Self':
@@ -34,7 +34,7 @@ class PostProcess:
         return self._vtks
 
     @property
-    def logs(self) -> t.Dict[str, t.Any]:
+    def logs(self) -> Dict:
         '''Script extract data for each time-step from a log file for graphing
 
         - Reference:

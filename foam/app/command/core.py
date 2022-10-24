@@ -10,6 +10,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
+from ...base.type import Dict
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -87,7 +88,7 @@ class Command:
 
     def run(
         self,
-        commands: t.List[t.Union[str, t.Dict[str, t.Any]]],
+        commands: t.List[t.Union[str, Dict]],
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
     ) -> t.List[int]:
@@ -141,7 +142,7 @@ class Command:
             command = self._replace(command)
         return shlex.split(command)
 
-    def _command(self, command: t.Union[str, t.Dict[str, t.Any]], **kwargs: t.Any) -> t.Dict[str, t.Any]:
+    def _command(self, command: t.Union[str, Dict], **kwargs: t.Any) -> Dict:
         if isinstance(command, str):
             return {'command': command, **kwargs}
         elif isinstance(command, dict):

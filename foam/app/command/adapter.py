@@ -126,7 +126,7 @@ class AppByTimeI(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
     '''
 
-    def now(self, line):
+    def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Time = '):
             return float(line[7:])
@@ -139,7 +139,7 @@ class AppByTimeII(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK.C
     '''
 
-    def now(self, line):
+    def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Time: '):
             return float(line[6:])
@@ -152,7 +152,7 @@ class AppByIterationI(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/electromagnetics/electrostaticFoam/electrostaticFoam.C
     '''
 
-    def now(self, line):
+    def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Iteration = '):
             return float(line[12:])
@@ -166,7 +166,7 @@ class AppByIterationII(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidDisplacementFoam/solidDisplacementFoam.C
     '''
 
-    def now(self, line):
+    def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Iteration: '):
             return float(line[11:])
@@ -180,13 +180,13 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
 
-    def __init__(self, foam: 'Foam'):
+    def __init__(self, foam: 'Foam') -> None:
         start = 0
         end = foam.number_of_processors - 1
         self.pbar = tqdm.tqdm(total=end-start)
         self._new = self._old = start
 
-    def now(self, line):
+    def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Processor ') and line[10:].isdigit():
             return int(line[10:])
@@ -360,7 +360,7 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/surface/surfaceMeshTriangulate/surfaceMeshTriangulate.C
     '''
 
-    def now(self, _):
+    def now(self, line: bytes) -> t.Optional[float]:
         raise NotImplementedError
 
 
