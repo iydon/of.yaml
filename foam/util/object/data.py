@@ -105,6 +105,27 @@ class Data:
     def from_list_length(cls, length: int, default: t.Callable = lambda: None) -> 'Self':
         return cls.from_list([default() for _ in range(length)])
 
+    @classmethod
+    def load(cls, *paths: Path) -> t.Iterator['Self']:
+        for path in map(p.Path, paths):
+            yield cls.loads(path.read_bytes(), path.suffix[1:])
+
+    @classmethod
+    def load_from_path(cls, *parts: str) -> 'Self':
+        return next(cls.load(p.Path(*parts)))
+
+    @classmethod
+    def loads(cls, content: bytes, type: str = 'yaml') -> 'Self':
+        if type in {'json'}:
+            data = json.loads(content)
+        elif type in {'pickle', 'pkl'}:
+            data = pickle.loads(content)
+        elif type in {'yaml', 'yml'}:
+            data = yaml.load_all(content)
+        else:
+            raise Exception(f'"{type}" is not a valid type string')
+        return cls.from_any(data)
+
     @property
     def data(self) -> FoamItem:
         return self._data
@@ -142,6 +163,11 @@ class Data:
             return yaml.dump_all(self._data, **kwargs).encode()
         else:
             raise Exception(f'"{type}" is not a valid type string')
+
+    def set_via_dict(self, data: Dict) -> 'Self':
+        for keys, value in self.__class__.from_dict(data).items():
+            self[keys] = value
+        return self
 
     def _items(
         self,

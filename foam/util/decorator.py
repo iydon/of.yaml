@@ -5,7 +5,7 @@ import functools as f
 import typing as t
 
 from ..base.lib import classproperty
-from ..base.type import Keys
+from ..base.type import Keys, TupleSequence
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -38,7 +38,7 @@ class Match:
     '''
 
     def __init__(self) -> None:
-        self._methods: t.Dict[t.Tuple[str, ...], t.Callable] = {}
+        self._methods: t.Dict[TupleSequence[str], t.Callable] = {}
 
     def __getitem__(self, keys: Keys[str]) -> t.Callable:
         if not isinstance(keys, tuple):

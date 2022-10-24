@@ -4,7 +4,7 @@ __all__ = ['YAML']
 import functools as f
 import typing as t
 
-from ..base.type import Dict
+from ..base.type import Dict, List
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -73,7 +73,7 @@ class YAML:
         return f'{value};'
 
     @value.register(list)
-    def _(self, value: t.List[t.Any]) -> str:
+    def _(self, value: List) -> str:
         if not value or isinstance(value[0], (str, int, float)):
             return f'({" ".join(map(str, value))});'
         elif isinstance(value[0], dict):

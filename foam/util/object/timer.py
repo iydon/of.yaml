@@ -1,8 +1,7 @@
-__all__ = ['Timer']
+__all__ = ['Timer', 'TimerResult']
 
 
 import contextlib
-import functools as f
 import time
 import typing as t
 import warnings as w
@@ -96,12 +95,12 @@ class Timer:
         return self._cache
 
     @contextlib.contextmanager
-    def new(self, *labels: t.Hashable) -> t.Iterator[t.Callable]:
+    def new(self, *labels: t.Hashable) -> t.Iterator['TimerResult']:
         if labels in self._cache:
             w.warn(f'Label {labels} already exists')
         try:
             self._cache[labels] = self._func()
-            yield self._result(*labels)
+            yield TimerResult(self, *labels)
         finally:
             self._cache[labels] -= self._func()
 
@@ -109,12 +108,40 @@ class Timer:
         self._cache.clear()
         return self
 
-    @f.cached_property
-    def _result(self) -> type:
-        return type('Result', (), {
-            '__init__': lambda this, *labels: setattr(this, '_labels', labels),
-            '__float__': lambda this: self.__getitem__(this._labels),
-            '__repr__': lambda this: f'Result({", ".join(map(repr, this._labels))})',
-            '__str__': lambda this: f'<Result @ ({", ".join(map(repr, this._labels))})>',
-            'value': property(lambda this: this.__float__()),
-        })
+
+class TimerResult:
+    '''Result for timer (typed)
+    
+    Old version:
+        ```
+        import functools as f
+
+        class Timer:
+            @f.cached_property
+            def _result(self) -> type:
+                return type('Result', (), {
+                    '__init__': lambda this, *labels: setattr(this, '_labels', labels),
+                    '__float__': lambda this: self.__getitem__(this._labels),
+                    '__repr__': lambda this: f'Result({", ".join(map(repr, this._labels))})',
+                    '__str__': lambda this: f'<Result @ ({", ".join(map(repr, this._labels))})>',
+                    'value': property(lambda this: this.__float__()),
+                })
+        ```
+    '''
+
+    def __init__(self, timer: 'Timer', *labels: str) -> None:
+        self._timer = timer
+        self._labels = labels
+
+    def __float__(self) -> float:
+        return self._timer.__getitem__(self._labels)
+
+    def __repr__(self) -> str:
+        return f'TimerResult({self._timer!r}, {", ".join(map(repr, self._labels))})'
+
+    def __str__(self) -> str:
+        return f'<TimerResult @ ({", ".join(map(repr, self._labels))})>'
+
+    @property
+    def value(self) -> float:
+        return self.__float__()

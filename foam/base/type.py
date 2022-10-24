@@ -1,4 +1,4 @@
-__all__ = ['Array', 'CachedLib', 'Dict', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path']
+__all__ = ['Array', 'CachedLib', 'Dict', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
 
 
 import pathlib as p
@@ -36,4 +36,11 @@ class Keys:
     # TODO: https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
 
     def __class_getitem__(cls, T: type) -> type:
-        return t.Union[T, t.Tuple[T, ...]]
+        return t.Union[T, TupleSequence[T]]
+
+
+class TupleSequence:
+    # Reference: https://github.com/python/mypy/issues/184
+
+    def __class_getitem__(cls, T: type) -> type:
+        return t.Tuple[T, ...]

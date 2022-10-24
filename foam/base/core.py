@@ -1,6 +1,7 @@
 __all__ = ['Foam']
 
 
+import copy
 import functools as f
 import gc
 import json
@@ -255,7 +256,7 @@ class Foam:
             return 1
 
     @f.cached_property
-    def pipeline(self) -> t.List[t.Union[str, t.Dict[str, t.Any]]]:
+    def pipeline(self) -> t.List[t.Union[str, Dict]]:
         return (self['other'] or {}).get('pipeline', [])
 
     @f.cached_property
@@ -289,6 +290,11 @@ class Foam:
             grids = block[begin+1: end].split()
             count = min(count, len(grids)-grids.count('1'))
         return count
+
+    def copy(self) -> 'Self':
+        other = self.__class__(copy.deepcopy(self._list), self._root)
+        other._dest = self._dest
+        return other
 
     def save(self, dest: Path, paraview: bool = True) -> 'Self':
         '''Persist case to hard disk'''

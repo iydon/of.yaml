@@ -14,6 +14,8 @@ if t.TYPE_CHECKING:
     import vtkmodules as _vtkmodules
     import yaml as _yaml
 
+    from typing_extensions import Self
+
 
 class classproperty:
     '''Decorator that converts a method with a single cls argument into a property that can be accessed directly from the class.
@@ -25,13 +27,13 @@ class classproperty:
         - place it in util::decorator will cause circular import problem
     '''
 
-    def __init__(self, method=None):
+    def __init__(self, method: t.Optional[t.Callable] = None) -> None:
         self.fget = method
 
-    def __get__(self, instance, cls=None):
+    def __get__(self, instance: t.Any, cls: t.Optional[type] = None) -> t.Any:
         return self.fget(cls)
 
-    def getter(self, method):
+    def getter(self, method: t.Callable) -> 'Self':
         self.fget = method
         return self
 

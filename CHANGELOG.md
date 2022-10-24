@@ -82,7 +82,11 @@
 
 ## `v0.12`
 
-- Add extra object for emailing, timing, and plotting
+- Add extra object
+    -  Constructing case
+    -  E-mailing
+    -  Timing
+    -  Plotting
 - Add namespace to package
 - Update program architecture
     - `foam::base::type::{Data, Version}` -> `foam::util::object::{Data, Version}`

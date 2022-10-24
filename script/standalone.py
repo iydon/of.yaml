@@ -53,8 +53,10 @@ p.Path('foam.py').write_text(show.code(f'''
 __all__ = {foam.__all__}
 
 import _thread
+import abc
 import collections
 import contextlib
+import copy
 import email.message
 import email.utils
 import functools
@@ -130,14 +132,19 @@ shutil.copytree = compat.shutil.copytree
 {show.source(base.lib.yaml)}
 {show.source(base.type.Array)}
 {show.source(base.type.Keys)}
+{show.source(base.type.TupleSequence)}
 
 {show.source(util.deprecation.lib)}
 {show.source(util.decorator.Match)}
+{show.source(util.function.dict_without_keys)}
+{show.source(util.object.case.CaseBase)}
+{show.source(util.object.case.Parameter)}
 {show.source(util.object.data.Data)}
 {show.source(util.object.email.Envelope)}
 {show.source(util.object.email.SMTP)}
 {show.source(util.object.figure.Figure)}
 {show.source(util.object.timer.Timer)}
+{show.source(util.object.timer.TimerResult)}
 {show.source(util.object.version.Version)}
 
 {show.source(app.command.adapter.Default)}
