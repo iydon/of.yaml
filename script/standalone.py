@@ -138,7 +138,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(util.decorator.Match)}
 {show.source(util.function.dict_without_keys)}
 {show.source(util.object.case.CaseBase)}
-{show.source(util.object.case.Parameter)}
+{show.source(util.object.case.CaseParameter)}
 {show.source(util.object.data.Data)}
 {show.source(util.object.email.Envelope)}
 {show.source(util.object.email.SMTP)}

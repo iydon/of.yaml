@@ -101,11 +101,11 @@ class SMTP:
 
     Example:
         >>> with SMTP.aio('163', username, password, ssl=False) as smtp:
-        ...     smtp.envelope \
-        ...         .to('liangiydon@gmail.com') \
-        ...         .set_subject('SMTP Test') \
-        ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True) \
-        ...         .add_attachment(__file__) \
+        ...     smtp.envelope \\
+        ...         .to('liangiydon@gmail.com') \\
+        ...         .set_subject('SMTP Test') \\
+        ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True) \\
+        ...         .add_attachment(__file__) \\
         ...         .send()
     '''
 

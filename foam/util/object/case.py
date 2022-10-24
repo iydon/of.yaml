@@ -1,4 +1,4 @@
-__all__ = ['CaseBase', 'Parameter']
+__all__ = ['CaseBase', 'CaseParameter']
 
 
 import abc
@@ -20,27 +20,33 @@ class CaseBase(abc.ABC):
     '''Case abstract class
 
     Example:
-        >>> class CaseCavity(CaseBase):
-        ...     __template__ = 'foam/static/demo/7/cavity.yaml'
-        ...     @property
-        ...     def t(self) -> float:
-        ...         return self._required['t']
-        ...     def optional(self):
-        ...         pass
-        ...     def required(self, t: float, dt: float):
-        ...         return self.dict_without_keys(vars(), 'self')
-        ...     def finalize(self, foam, optional, required):
-        ...         foam['foam'].set_via_dict({
-        ...             'system': {
-        ...                 'controlDict': {
-        ...                     'endTime': self.t,
-        ...                     'deltaT': required['dt'],
-        ...                 },
-        ...             },
-        ...         })
+        ```
+        class CaseCavity(CaseBase):
+            __template__ = 'foam/static/demo/7/cavity.yaml'
+
+            @property
+            def t(self) -> float:
+                return self._required['t']
+
+            def optional(self):
+                pass
+
+            def required(self, t: float, dt: float):
+                return self.dict_without_keys(vars(), 'self')
+
+            def finalize(self, foam, optional, required):
+                foam['foam'].set_via_dict({
+                    'system': {
+                        'controlDict': {
+                            'endTime': self.t,
+                            'deltaT': required['dt'],
+                        },
+                    },
+                })
+        ```
 
         >>> case_template = CaseCavity.new(t=0.3, dt=0.005)
-        >>> print(case_tempalte)
+        >>> print(case_template)
         CaseCavity(t=0.3, dt=0.005) \\
             .set_optional() \\
             .set_optional(t=0.3, dt=0.005)
@@ -112,8 +118,8 @@ class CaseBase(abc.ABC):
         return p.Path(self.__template__)
 
     @property
-    def parameter(self) -> 'Parameter':
-        return Parameter(self._optional, self._required)
+    def parameter(self) -> 'CaseParameter':
+        return CaseParameter(self._optional, self._required)
 
     def copy(self, deepcopy: bool = False) -> 'Self':
         if deepcopy:
@@ -122,9 +128,9 @@ class CaseBase(abc.ABC):
             return self.__class__(**self._kwargs)
 
     def set_from_path(self, *parts: str) -> 'Self':
-        data = Data.load_from_path(*parts)
-        self.set_optional(**data.get('optional', {}))
-        self.set_required(**data.get('required', {}))
+        parameter = CaseParameter.load_from_path(*parts)
+        self.set_optional(**parameter.optional)
+        self.set_required(**parameter.required)
         return self
 
     def set_optional(self, **kwargs: t.Any) -> 'Self':
@@ -143,11 +149,16 @@ class CaseBase(abc.ABC):
         return self
 
 
-class Parameter(t.NamedTuple):
+class CaseParameter(t.NamedTuple):
     '''Parameter for case'''
 
     optional: Dict
     required: Dict
+
+    @classmethod
+    def load_from_path(cls, *parts: str) -> 'Self':
+        data = Data.load_from_path(*parts)
+        return cls(optional=data.get('optional', {}), required=data.get('required', {}))
 
     def dump(self, *paths: Path) -> 'Self':
         self._data().dump(*paths)

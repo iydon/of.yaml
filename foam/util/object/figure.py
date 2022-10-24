@@ -18,12 +18,12 @@ class Figure:
     '''Matplotlib simple wrapper
 
     Example:
-        >>> Figure.new(figsize=(4, 3)) \
-        ...     .plot([1, 2, 3], [3, 2, 1], label='a') \
-        ...     .plot([1, 2, 3], [2, 1, 3], label='b') \
-        ...     .set(xlabel='x label', ylabel='y label', title='title') \
-        ...     .grid() \
-        ...     .legend() \
+        >>> Figure.new(figsize=(4, 3)) \\
+        ...     .plot([1, 2, 3], [3, 2, 1], label='a') \\
+        ...     .plot([1, 2, 3], [2, 1, 3], label='b') \\
+        ...     .set(xlabel='x label', ylabel='y label', title='title') \\
+        ...     .grid() \\
+        ...     .legend() \\
         ...     .save('demo.png')
         <foam.util.object.figure.Figure at ...>
     '''

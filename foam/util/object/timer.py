@@ -52,7 +52,7 @@ class Timer:
     def best(cls) -> 'Self':
         names = {'monotonic', 'perf_counter', 'process_time', 'thread_time', 'time'}
         order = lambda info: (info.resolution, not info.monotonic, info.adjustable)
-        key = lambda name: order(time.get_clock_info(name)) 
+        key = lambda name: order(time.get_clock_info(name))
         return getattr(cls, min(names, key=key))()
 
     @classmethod
@@ -110,24 +110,7 @@ class Timer:
 
 
 class TimerResult:
-    '''Result for timer (typed)
-    
-    Old version:
-        ```
-        import functools as f
-
-        class Timer:
-            @f.cached_property
-            def _result(self) -> type:
-                return type('Result', (), {
-                    '__init__': lambda this, *labels: setattr(this, '_labels', labels),
-                    '__float__': lambda this: self.__getitem__(this._labels),
-                    '__repr__': lambda this: f'Result({", ".join(map(repr, this._labels))})',
-                    '__str__': lambda this: f'<Result @ ({", ".join(map(repr, this._labels))})>',
-                    'value': property(lambda this: this.__float__()),
-                })
-        ```
-    '''
+    '''Result for timer'''
 
     def __init__(self, timer: 'Timer', *labels: str) -> None:
         self._timer = timer

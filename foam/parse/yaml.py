@@ -33,7 +33,7 @@ class YAML:
         ...     },
         ... }
         >>> yaml = YAML.default()
-        >>> print('\n'.join(yaml.data(data)))
+        >>> print('\\n'.join(yaml.data(data)))
         FoamFile {version 2.0; format ascii; class volVectorField; object U;}
         dimensions [0 1 -1 0 0 0 0];
         internalField uniform (0 0 0);

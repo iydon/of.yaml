@@ -107,6 +107,8 @@ SUBMODULES
     _compat
 
 CLASSES
+    abc.ABC(builtins.object)
+        foam.util.object.case.CaseBase
     builtins.object
         foam.app.command.core.Command
         foam.app.information.core.Information
@@ -116,9 +118,128 @@ CLASSES
         foam.util.object.data.Data
         foam.util.object.email.Envelope
         foam.util.object.email.SMTP
+        foam.util.object.figure.Figure
         foam.util.object.timer.Timer
     builtins.tuple(builtins.object)
         foam.util.object.version.Version
+
+    class CaseBase(abc.ABC)
+     |  CaseBase(**kwargs: Any) -> None
+     |
+     |  Case abstract class
+     |
+     |  Example:
+     |      ```
+     |      class CaseCavity(CaseBase):
+     |          __template__ = 'foam/static/demo/7/cavity.yaml'
+     |
+     |          @property
+     |          def t(self) -> float:
+     |              return self._required['t']
+     |
+     |          def optional(self):
+     |              pass
+     |
+     |          def required(self, t: float, dt: float):
+     |              return self.dict_without_keys(vars(), 'self')
+     |
+     |          def finalize(self, foam, optional, required):
+     |              foam['foam'].set_via_dict({
+     |                  'system': {
+     |                      'controlDict': {
+     |                          'endTime': self.t,
+     |                          'deltaT': required['dt'],
+     |                      },
+     |                  },
+     |              })
+     |      ```
+     |
+     |      >>> case_template = CaseCavity.new(t=0.3, dt=0.005)
+     |      >>> print(case_template)
+     |      CaseCavity(t=0.3, dt=0.005) \
+     |          .set_optional() \
+     |          .set_optional(t=0.3, dt=0.005)
+     |      >>> for t in [0.3, 0.4, 0.5]:
+     |      ...     parts = 'case', str(t)
+     |      ...     case = case_template \
+     |      ...         .copy(deepcopy=False) \
+     |      ...         .set_required(t=t) \
+     |      ...         .save(*parts)
+     |      ...     case.parameter.dump_to_path(*parts, 'meta.json')
+     |      ...     codes = case.foam.cmd.all_run(overwrite=False)
+     |      ...     print(codes)
+     |      [0, 0]
+     |      [0, 0]
+     |      [0, 0]
+     |
+     |  Method resolution order:
+     |      CaseBase
+     |      abc.ABC
+     |      builtins.object
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, **kwargs: Any) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  copy(self, deepcopy: bool = False) -> 'Self'
+     |
+     |  finalize(self, foam: 'Foam', optional: Dict[str, Any], required: Dict[str, Any]) -> Union[ForwardRef('Foam'), NoneType]
+     |      Convert class properties to case parameters
+     |
+     |  optional(self) -> Union[Dict[str, Any], NoneType]
+     |      Initialize optional properties
+     |
+     |  required(self, **kwargs: Any) -> Union[Dict[str, Any], NoneType]
+     |      Initialize required properties
+     |
+     |  save(self, *parts: str) -> 'Self'
+     |
+     |  set_from_path(self, *parts: str) -> 'Self'
+     |
+     |  set_optional(self, **kwargs: Any) -> 'Self'
+     |
+     |  set_required(self, **kwargs: Any) -> 'Self'
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  new(**kwargs: Any) -> 'Self' from abc.ABCMeta
+     |
+     |  ----------------------------------------------------------------------
+     |  Static methods defined here:
+     |
+     |  dict_without_keys(data: dict, *keys: str) -> dict
+     |
+     |  ----------------------------------------------------------------------
+     |  Readonly properties defined here:
+     |
+     |  data
+     |
+     |  foam
+     |
+     |  parameter
+     |
+     |  tempalte
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  __abstractmethods__ = frozenset({'finalize', 'optional', 'required'})
+     |
+     |  __template__ = None
 
     class Command(builtins.object)
      |  Command(foam: 'Foam') -> None
@@ -176,6 +297,24 @@ CLASSES
     class Data(builtins.object)
      |  Data(data: Union[Dict[str, Any], List[Any]]) -> None
      |
+     |  Multi-key dictionary
+     |
+     |  Example:
+     |      >>> data = Data.from_dict_keys(
+     |      ...     ('left', 'x'), ('left', 'y'),
+     |      ...     ('right', 'x'), ('right', 'y'),
+     |      ...     default=list,
+     |      ... )
+     |      >>> data['left', 'x'].append({...})
+     |      >>> data['right', 'y'].append({...})
+     |
+     |      >>> for key, val in data.items():
+     |      ...     print(key, val)
+     |      ('left', 'x') [{Ellipsis}]
+     |      ('left', 'y') []
+     |      ('right', 'x') []
+     |      ('right', 'y') [{Ellipsis}]
+     |
      |  Methods defined here:
      |
      |  __bool__(self) -> bool
@@ -207,14 +346,26 @@ CLASSES
      |
      |  items(self, with_list: bool = False) -> Iterator[Tuple[Union[Any, Tuple[Any, ...]], Any]]
      |
+     |  set_via_dict(self, data: Dict[str, Any]) -> 'Self'
+     |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
      |  from_any(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
-     |  from_dict(data: Dict[str, Any] = {}) -> 'Self' from builtins.type
+     |  from_dict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list(data: List[Any] = []) -> 'Self' from builtins.type
+     |  from_dict_keys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
+     |
+     |  from_list(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f9662d81820>) -> 'Self' from builtins.type
+     |
+     |  load(*paths: Union[str, pathlib.Path]) -> Iterator[ForwardRef('Self')] from builtins.type
+     |
+     |  load_from_path(*parts: str) -> 'Self' from builtins.type
+     |
+     |  loads(content: bytes, type: str = 'yaml') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -232,6 +383,8 @@ CLASSES
 
     class Envelope(builtins.object)
      |  Envelope(*to_addresses: str) -> None
+     |
+     |  Envelope
      |
      |  Reference:
      |      - https://github.com/tomekwojcik/envelopes
@@ -278,6 +431,55 @@ CLASSES
      |  __weakref__
      |      list of weak references to the object (if defined)
 
+    class Figure(builtins.object)
+     |  Figure(**kwargs: Any) -> None
+     |
+     |  Matplotlib simple wrapper
+     |
+     |  Example:
+     |      >>> Figure.new(figsize=(4, 3)) \
+     |      ...     .plot([1, 2, 3], [3, 2, 1], label='a') \
+     |      ...     .plot([1, 2, 3], [2, 1, 3], label='b') \
+     |      ...     .set(xlabel='x label', ylabel='y label', title='title') \
+     |      ...     .grid() \
+     |      ...     .legend() \
+     |      ...     .save('demo.png')
+     |      <foam.util.object.figure.Figure at ...>
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, **kwargs: Any) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  grid(self, *args: Any, **kwargs: Any) -> 'Self'
+     |
+     |  legend(self, *args: Any, **kwargs: Any) -> 'Self'
+     |
+     |  plot(self, *args: Any, **kwargs: Any) -> 'Self'
+     |
+     |  save(self, path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self'
+     |
+     |  set(self, *args: Any, **kwargs: Any) -> 'Self'
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  new(**kwargs: Any) -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  __annotations__ = {'_ax': '_axes.SubplotBase', '_fig': '_figure.Figure...
+
     class Foam(builtins.object)
      |  Foam(data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
      |
@@ -303,6 +505,8 @@ CLASSES
      |      Return str(self).
      |
      |  application = <foam.compat.functools.cached_property object>
+     |  copy(self) -> 'Self'
+     |
      |  environ = <foam.compat.functools.cached_property object>
      |  fields = <foam.compat.functools.cached_property object>
      |  ndim = <foam.compat.functools.cached_property object>
@@ -480,7 +684,12 @@ CLASSES
      |
      |  Example:
      |      >>> with SMTP.aio('163', username, password, ssl=False) as smtp:
-     |      ...     smtp.envelope         ...         .to('liangiydon@gmail.com')         ...         .set_subject('SMTP Test')         ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True)         ...         .add_attachment(__file__)         ...         .send()
+     |      ...     smtp.envelope \
+     |      ...         .to('liangiydon@gmail.com') \
+     |      ...         .set_subject('SMTP Test') \
+     |      ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True) \
+     |      ...         .add_attachment(__file__) \
+     |      ...         .send()
      |
      |  Methods defined here:
      |
@@ -530,9 +739,9 @@ CLASSES
      |
      |  Example:
      |      >>> timer = Timer.default()
-     |      >>>s with timer.new('1') as t:
+     |      >>> with timer.new('1', '2', '3') as t:
      |      ...     time.sleep(9)
-     |      >>> print(float(t), timer['1'])
+     |      >>> print(float(t), timer['1', '2', '3'])
      |      9.00686868999037 9.00686868999037
      |
      |  Reference:
@@ -556,7 +765,7 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
-     |  new(self, *labels: Hashable) -> Iterator[Callable]
+     |  new(self, *labels: Hashable) -> Iterator[ForwardRef('TimerResult')]
      |
      |  reset(self) -> 'Self'
      |
@@ -666,7 +875,14 @@ CLASSES
     class Version(builtins.tuple)
      |  Version(major: int, minor: int, other: Union[str, NoneType])
      |
-     |  Version(major, minor, other)
+     |  Version named tuple
+     |
+     |  Example:
+     |      >>> version = Version.from_string('1.2.x')
+     |      >>> version.major, version.minor, version.other, version.micro
+     |      (1, 2, 'x', None)
+     |      >>> version.to_string()
+     |      '1.2.x'
      |
      |  Method resolution order:
      |      Version
@@ -798,9 +1014,9 @@ FUNCTIONS
     __import__ lambda name
 
 DATA
-    __all__ = ['Command', 'Information', 'PostProcess', 'VTK', 'Foam', 'Da...
+    __all__ = ['Command', 'Information', 'PostProcess', 'VTK', 'Foam', 'Ca...
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.3
+    0.12.4
 ```
