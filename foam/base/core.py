@@ -105,7 +105,7 @@ class Foam:
         url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
         try:
             self = cls.from_remote_path(url, timeout, warn=warn)
-        except:  # urllib.error.URLError
+        except Exception:  # urllib.error.URLError
             raise FileNotFoundError(f'No such demo: "{url}"')
         else:
             print(f'Foam.from_remote_path(\'{url}\', warn={warn})')
@@ -252,7 +252,7 @@ class Foam:
         '''
         try:
             return self['foam']['system', 'decomposeParDict', 'numberOfSubdomains']
-        except:
+        except Exception:
             return 1
 
     @f.cached_property

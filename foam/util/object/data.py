@@ -36,6 +36,20 @@ class Data:
     def __init__(self, data: FoamItem) -> None:
         self._data = data
 
+    def __contains__(self, keys: Keys[t.Any]) -> bool:
+        if isinstance(keys, tuple):
+            ans = self._data
+            for key in keys:
+                if key not in ans:
+                    return False
+                else:
+                    ans = ans[key]
+            return True
+        elif isinstance(keys, list):
+            return self.__contains__(tuple(keys))
+        else:
+            return self._data.__contains__(keys)
+
     def __getitem__(self, keys: Keys[t.Any]) -> t.Any:
         if isinstance(keys, tuple):
             ans = self._data
@@ -130,6 +144,12 @@ class Data:
     def data(self) -> FoamItem:
         return self._data
 
+    def contains(self, *keys: t.Any) -> bool:
+        try:
+            return self.__contains__(keys)
+        except Exception:
+            return False
+
     def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
         if isinstance(self._data, dict):
             return self._data.get(key, default)
@@ -163,6 +183,11 @@ class Data:
             return yaml.dump_all(self._data, **kwargs).encode()
         else:
             raise Exception(f'"{type}" is not a valid type string')
+
+    def set_default(self, *keys: t.Any, default: t.Any = None) -> 'Self':
+        if keys not in self:
+            self[keys] = default
+        return self[keys]
 
     def set_via_dict(self, data: Dict) -> 'Self':
         for keys, value in self.__class__.from_dict(data).items():

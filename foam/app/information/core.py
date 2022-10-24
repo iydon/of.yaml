@@ -88,7 +88,7 @@ class Information:
                 line.split(' ', maxsplit=1)[-1].strip()
                 for line in stdout.splitlines()
             )
-        except:
+        except Exception:
             return stdout
 
     def search_yaml(self, *targets: str, root: Path = '.') -> t.Dict[t.Hashable, t.Set[str]]:
@@ -115,7 +115,7 @@ class Information:
                         if hashed_keys[-length:] == hashed_targets:
                             record[foam['foam'][keys]].add(path.absolute().as_posix())
                             break
-                except:  # TODO: catch specific exceptions only
+                except Exception:  # TODO: catch specific exceptions only
                     pass
         return dict(record)
 

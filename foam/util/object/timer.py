@@ -2,6 +2,7 @@ __all__ = ['Timer', 'TimerResult']
 
 
 import contextlib
+import functools as f
 import time
 import typing as t
 import warnings as w
@@ -95,18 +96,32 @@ class Timer:
         return self._cache
 
     @contextlib.contextmanager
-    def new(self, *labels: t.Hashable) -> t.Iterator['TimerResult']:
+    def new(self, *labels: t.Hashable, builtin: bool = False) -> t.Iterator['TimerResult']:
         if labels in self._cache:
             w.warn(f'Label {labels} already exists')
         try:
             self._cache[labels] = self._func()
-            yield TimerResult(self, *labels)
+            yield self._result(*labels) if builtin else TimerResult(self, *labels)
         finally:
             self._cache[labels] -= self._func()
 
     def reset(self) -> 'Self':
         self._cache.clear()
         return self
+
+    def wait(self, seconds: float) -> 'Self':
+        time.sleep(seconds)
+        return self
+
+    @f.cached_property
+    def _result(self) -> type:
+        return type('TimerResult', (), {
+            '__init__': lambda this, *labels: setattr(this, '_labels', labels),
+            '__float__': lambda this: self.__getitem__(this._labels),
+            '__repr__': lambda this: f'TimerResult({self!r}, {", ".join(map(repr, this._labels))})',
+            '__str__': lambda this: f'<TimerResult @ ({", ".join(map(repr, this._labels))})>',
+            'value': property(lambda this: this.__float__()),
+        })
 
 
 class TimerResult:

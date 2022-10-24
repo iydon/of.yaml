@@ -127,7 +127,7 @@ class tqdm:
     def is_available(cls) -> bool:
         try:
             cls._()
-        except:
+        except Exception:
             return False
         else:
             return True
