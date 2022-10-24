@@ -38,6 +38,7 @@ class CaseBase(abc.ABC):
         ...                 },
         ...             },
         ...         })
+
         >>> case_template = CaseCavity.new(t=0.3, dt=0.005)
         >>> print(case_tempalte)
         CaseCavity(t=0.3, dt=0.005) \\
