@@ -319,6 +319,8 @@ CLASSES
      |
      |  __bool__(self) -> bool
      |
+     |  __contains__(self, keys: Union[Any, Tuple[Any, ...]]) -> bool
+     |
      |  __getitem__(self, keys: Union[Any, Tuple[Any, ...]]) -> Any
      |
      |  __init__(self, data: Union[Dict[str, Any], List[Any]]) -> None
@@ -336,6 +338,8 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
+     |  contains(self, *keys: Any) -> bool
+     |
      |  dump(self, *paths: Union[str, pathlib.Path]) -> 'Self'
      |
      |  dump_to_path(self, *parts: str) -> 'Self'
@@ -345,6 +349,8 @@ CLASSES
      |  get(self, key: Any, default: Union[Any, NoneType] = None) -> Any
      |
      |  items(self, with_list: bool = False) -> Iterator[Tuple[Union[Any, Tuple[Any, ...]], Any]]
+     |
+     |  set_default(self, *keys: Any, default: Any = None) -> 'Self'
      |
      |  set_via_dict(self, data: Dict[str, Any]) -> 'Self'
      |
@@ -359,7 +365,7 @@ CLASSES
      |
      |  from_list(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f9662d81820>) -> 'Self' from builtins.type
+     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f5242eae940>) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path]) -> Iterator[ForwardRef('Self')] from builtins.type
      |
@@ -765,9 +771,11 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
-     |  new(self, *labels: Hashable) -> Iterator[ForwardRef('TimerResult')]
+     |  new(self, *labels: Hashable, builtin: bool = False) -> Iterator[ForwardRef('TimerResult')]
      |
      |  reset(self) -> 'Self'
+     |
+     |  wait(self, seconds: float) -> 'Self'
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
@@ -1018,5 +1026,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.4
+    0.12.5
 ```
