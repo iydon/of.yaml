@@ -51,8 +51,8 @@ class lark:
             import lark
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return lark
+        else:
+            return lark
 
 
 class matplotlib:
@@ -74,8 +74,8 @@ class matplotlib:
             import matplotlib.pyplot
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return matplotlib
+        else:
+            return matplotlib
 
 
 class numpy:
@@ -99,8 +99,8 @@ class numpy:
             import numpy
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return numpy
+        else:
+            return numpy
 
 
 class py7zr:
@@ -116,8 +116,8 @@ class py7zr:
             import py7zr
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return py7zr
+        else:
+            return py7zr
 
 
 class tqdm:
@@ -146,8 +146,8 @@ class tqdm:
             import tqdm
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return tqdm
+        else:
+            return tqdm
 
 
 class vtkmodules:
@@ -163,8 +163,8 @@ class vtkmodules:
             from vtkmodules.util.numpy_support import vtk_to_numpy
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return vtk_to_numpy(*args, **kwargs)
+        else:
+            return vtk_to_numpy(*args, **kwargs)
 
     @classmethod
     def _(cls) -> '_vtkmodules':
@@ -172,8 +172,8 @@ class vtkmodules:
             import vtkmodules.all
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return vtkmodules
+        else:
+            return vtkmodules
 
 
 class yaml:
@@ -199,8 +199,8 @@ class yaml:
             import yaml
         except Exception as e:
             raise e.__class__(cls.__doc__)
-
-        return yaml
+        else:
+            return yaml
 
     @classmethod
     def _loader(cls) -> t.Union['_yaml.SafeLoader', '_yaml.CSafeLoader']:
