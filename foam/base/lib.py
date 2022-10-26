@@ -181,16 +181,17 @@ class yaml:
 
     @classmethod
     def dump_all(cls, *args: t.Any, **kwargs: t.Any) -> str:
+        kwargs = {'Dumper': cls._dumper(), **kwargs}
         return cls._().dump_all(*args, **kwargs)
 
     @classmethod
     def load(cls, *args: t.Any, **kwargs: t.Any) -> t.Any:
-        kwargs['Loader'] = cls._loader()
+        kwargs = {'Loader': cls._loader(), **kwargs}
         return cls._().load(*args, **kwargs)
 
     @classmethod
     def load_all(cls, *args: t.Any, **kwargs: t.Any) -> t.Iterator[t.Any]:
-        kwargs['Loader'] = cls._loader()
+        kwargs = {'Loader': cls._loader(), **kwargs}
         return cls._().load_all(*args, **kwargs)
 
     @classmethod
