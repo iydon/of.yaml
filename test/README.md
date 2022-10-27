@@ -1,1 +1,1 @@
-Temporary folder for Alltest intermediate files
+Temporary folder for test (cli, unit) intermediate files

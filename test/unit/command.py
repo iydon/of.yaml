@@ -2,16 +2,17 @@ import pathlib as p
 import shutil
 import unittest
 
-import foam
+from foam import Foam
+from foam.util.decorator import suppress
 
 
 class Test(unittest.TestCase):
-    '''Test demo'''
+    '''Test for Command'''
 
     @classmethod
     def setUpClass(cls) -> None:
         cls._root = p.Path(__file__).parent
-        cls._foam = foam.Foam.from_demo('cavity')
+        cls._foam = Foam.from_demo('cavity', verbose=False)
         cls._foam.save(cls._root/'case')
 
     @classmethod
@@ -23,10 +24,12 @@ class Test(unittest.TestCase):
             self.assertIn('__', key)
             self.assertIsInstance(val, str)
 
-    def test_allrun(self) -> None:
+    @suppress.stderr_decorator
+    @suppress.stdout_decorator
+    def test_all_run(self) -> None:
         # 1
         codes = self._foam.cmd.all_run(overwrite=True, exception=False)
-        self.assertEqual(sum(codes), 0)
+        self.assertSetEqual(set(codes), {0})
         self.assertEqual(len(codes), len(self._foam.pipeline))
         self.assertEqual(len(codes), len(self._foam.cmd.logs))
         self.assertEqual(min(self._foam.cmd.times), self._foam['foam']['system', 'controlDict', 'startTime'])
@@ -38,7 +41,7 @@ class Test(unittest.TestCase):
         with self.assertRaises(Exception):
             self._foam.cmd.all_run(overwrite=False, exception=True)
 
-    def test_allclean(self) -> None:
+    def test_all_clean(self) -> None:
         self._foam.cmd.all_clean()
         self.assertSetEqual(self._foam.cmd.logs, set())
         self.assertListEqual(self._foam.cmd.times, [self._foam['foam']['system', 'controlDict', 'startTime']])

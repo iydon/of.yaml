@@ -28,10 +28,10 @@ class Information:
         return cls(foam)
 
     @classmethod
-    def from_nothing(cls) -> 'Self':
+    def default(cls) -> 'Self':
         from ...base.core import Foam
 
-        return cls(Foam.as_placeholder())
+        return cls(Foam.default())
 
     @property
     def cmd(self) -> 'Command':
@@ -85,7 +85,7 @@ class Information:
             return stdout
         try:
             return set(
-                line.split(' ', maxsplit=1)[-1].strip()
+                line.split(' ', maxsplit=1)[-1].rstrip(';').strip()
                 for line in stdout.splitlines()
             )
         except Exception:

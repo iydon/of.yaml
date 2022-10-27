@@ -111,6 +111,7 @@ class Command:
                 else:
                     w.warn(message)
                     continue
+            # TODO: verbose?
             print(f'Running {raws[0]} on {path.parent.absolute()} using {self._foam.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
             App = Apps.get(raws[0], Default)
