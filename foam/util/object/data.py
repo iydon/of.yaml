@@ -1,12 +1,10 @@
 __all__ = ['Data']
 
 
-import json
 import pathlib as p
-import pickle
 import typing as t
 
-from ...base.lib import yaml
+from .conversion import Conversion
 from ...base.type import Dict, FoamItem, Keys, List, Path
 
 if t.TYPE_CHECKING:
@@ -130,15 +128,7 @@ class Data:
 
     @classmethod
     def loads(cls, content: bytes, type: str = 'yaml') -> 'Self':
-        if type in {'json'}:
-            data = json.loads(content)
-        elif type in {'pickle', 'pkl'}:
-            data = pickle.loads(content)
-        elif type in {'yaml', 'yml'}:
-            data = yaml.load_all(content)
-        else:
-            raise Exception(f'"{type}" is not a valid type string')
-        return cls.from_any(data)
+        return cls.from_any(Conversion.from_bytes(content, type, all=True).to_document())
 
     @property
     def data(self) -> FoamItem:
@@ -173,16 +163,9 @@ class Data:
         return self.dump(p.Path(*parts))
 
     def dumps(self, type: str = 'yaml', **kwargs: t.Any) -> bytes:
-        if type in {'json'}:
-            kwargs = {'ensure_ascii': False, **kwargs}
-            return json.dumps(self._data, **kwargs).encode()
-        elif type in {'pickle', 'pkl'}:
-            return pickle.dumps(self._data, **kwargs)
-        elif type in {'yaml', 'yml'}:
-            kwargs = {'indent': 4, **kwargs}
-            return yaml.dump_all(self._data, **kwargs).encode()
-        else:
-            raise Exception(f'"{type}" is not a valid type string')
+        return Conversion \
+            .from_document(self._data) \
+            .to_bytes(type, all=True, **kwargs)
 
     def set_default(self, *keys: t.Any, default: t.Any = None) -> 'Self':
         if keys not in self:

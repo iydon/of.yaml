@@ -27,12 +27,14 @@ class Conversion:
         '4': 5
     '''
 
+    types = {'json', 'pickle', 'toml', 'yaml'}
+
     def __init__(self, document: Document) -> None:
         self._document = document
 
     @classmethod
     def auto_from_bytes(cls, content: bytes, all: bool = False) -> 'Self':
-        for type in {'json', 'pickle', 'toml', 'yaml'}:
+        for type in cls.types:
             try:
                 return cls.from_bytes(content, type, all)
             except Exception:
@@ -93,34 +95,36 @@ class Conversion:
     def to_document(self) -> Document:
         return self._document
 
-    def to_bytes(self, type: str = 'json', all: bool = False) -> bytes:
+    def to_bytes(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> bytes:
         type = type.lstrip('.')
         for types, dumps in [
-            ({'json'}, lambda: self.to_json().encode()),
-            ({'pickle', 'pkl'}, lambda: self.to_pickle()),
-            ({'toml'}, lambda: self.to_toml().encode()),
-            ({'yaml', 'yml'}, lambda: self.to_yaml(all).encode()),
+            ({'json'}, lambda: self.to_json(**kwargs).encode()),
+            ({'pickle', 'pkl'}, lambda: self.to_pickle(**kwargs)),
+            ({'toml'}, lambda: self.to_toml(**kwargs).encode()),
+            ({'yaml', 'yml'}, lambda: self.to_yaml(all, **kwargs).encode()),
         ]:
             if type in types:
                 return dumps()
         raise Exception(f'"{type}" is not a valid type string')
 
-    def to_string(self, type: str = 'json', all: bool = False) -> str:
-        return self.to_bytes(type, all).decode()
+    def to_string(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> str:
+        return self.to_bytes(type, all, **kwargs).decode()
 
-    def to_path(self, path: Path, all: bool = False) -> p.Path:
+    def to_path(self, path: Path, all: bool = False, **kwargs: t.Any) -> p.Path:
         path = p.Path(path)
-        path.write_bytes(self.to_bytes(path.suffix[1:], all))
+        path.write_bytes(self.to_bytes(path.suffix[1:], all, **kwargs))
         return path
 
-    def to_json(self) -> str:
-        return json.dumps(self._document)
+    def to_json(self, **kwargs: t.Any) -> str:
+        kwargs = {'ensure_ascii': False, **kwargs}
+        return json.dumps(self._document, **kwargs)
 
-    def to_pickle(self) -> bytes:
-        return pickle.dumps(self._document)
+    def to_pickle(self, **kwargs: t.Any) -> bytes:
+        return pickle.dumps(self._document, **kwargs)
 
-    def to_toml(self) -> str:
-        return tomlkit.dumps(self._document)
+    def to_toml(self, **kwargs: t.Any) -> str:
+        return tomlkit.dumps(self._document, **kwargs)
 
-    def to_yaml(self, all: bool = False) -> str:
-        return (yaml.dump_all if all else yaml.dump)(self._document)
+    def to_yaml(self, all: bool = False, **kwargs: t.Any) -> str:
+        kwargs = {'indent': 4, **kwargs}
+        return (yaml.dump_all if all else yaml.dump)(self._document, **kwargs)

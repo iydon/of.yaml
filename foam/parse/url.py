@@ -1,15 +1,14 @@
 __all__ = ['Url']
 
 
-import json
 import pathlib as p
 import typing as t
 import urllib.parse
 import urllib.request
 
-from ..base.lib import yaml
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
+from ..util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -101,6 +100,10 @@ class Url:
     def _(self, static: Dict) -> Dict:
         return self._path_foam(static)
 
+    @match.register('path', 'foam', 'toml')
+    def _(self, static: Dict) -> Dict:
+        return self._path_foam(static)
+
     @match.register('path', 'foam', 'yaml')
     def _(self, static: Dict) -> Dict:
         return self._path_foam(static)
@@ -111,9 +114,8 @@ class Url:
 
     def _path_foam(self, static: Dict) -> Dict:
         url = self.url_from_path(self.root/static['data'])
-        self._foam['foam'][static['name'].split('/')] = {  # p.Path(static['name']).parts
-            'json': lambda bytes: json.loads(bytes),
-            'yaml': lambda bytes: yaml.load(bytes),
-        }[static['type'][2]](self._urlopen(url))
+        self._foam['foam'][static['name'].split('/')] = Conversion \
+            .from_bytes(self._urlopen(url), static['type'][2], all=False) \
+            .to_document()
         static.update({'type': []})
         return static

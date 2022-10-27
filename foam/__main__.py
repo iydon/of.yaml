@@ -1,6 +1,5 @@
 import os
 import pathlib as p
-import typing as t
 
 import click
 

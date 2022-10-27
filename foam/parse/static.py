@@ -2,14 +2,14 @@ __all__ = ['Static']
 
 
 import io
-import json
 import pathlib as p
 import shutil
 import typing as t
 
-from ..base.lib import py7zr, yaml
+from ..base.lib import py7zr
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
+from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 
 if t.TYPE_CHECKING:
@@ -92,6 +92,10 @@ class Static:
     def _(self, static: Dict) -> None:
         self._path_foam(static)
 
+    @match.register('path', 'foam', 'toml')
+    def _(self, static: Dict) -> None:
+        self._path_foam(static)
+
     @match.register('path', 'foam', 'yaml')
     def _(self, static: Dict) -> None:
         self._path_foam(static)
@@ -107,9 +111,8 @@ class Static:
     def _path_foam(self, static: Dict) -> None:
         data = Data.from_dict()
         out, in_ = self._foam._path(), self._in(static['data'])
-        data[static['name'].split('/')] = {  # p.Path(static['name']).parts
-            'json': lambda path: json.loads(path.read_text()),
-            'yaml': lambda path: yaml.load(path.read_text()),
-        }[static['type'][2]](in_)
+        data[static['name'].split('/')] = Conversion \
+            .from_bytes(in_.read_bytes(), static['type'][2], all=False) \
+            .to_document()
         self._foam.__class__([{'order': ['meta', 'foam']}, data._data], in_.parent, warn=False) \
             .save(out, paraview=False)

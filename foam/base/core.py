@@ -4,7 +4,6 @@ __all__ = ['Foam']
 import copy
 import functools as f
 import gc
-import json
 import os
 import pathlib as p
 import typing as t
@@ -12,9 +11,9 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .lib import yaml
 from .type import Dict, FoamData, Path
 from ..parse import Parser
+from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 from ..util.object.version import Version
 
@@ -123,7 +122,7 @@ class Foam:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
-        self = cls.from_text(text, '.', path.suffix, warn=warn)
+        self = cls.from_text(text, '.', path.suffix[1:], warn=warn)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -135,7 +134,7 @@ class Foam:
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
-            return cls.from_text(path.read_text(), path.parent, path.suffix, warn=warn)
+            return cls.from_text(path.read_text(), path.parent, path.suffix[1:], warn=warn)
         elif path.is_dir():
             return cls.from_openfoam(path)
         else:
@@ -147,32 +146,23 @@ class Foam:
         return Parser.to_foam(path, **kwargs)
 
     @classmethod
-    def from_text(cls, text: str, root: Path, suffix: t.Optional[str] = None, warn: bool = True) -> 'Self':
-        '''Supported format: json, yaml'''
-        mapper = [
-            ({'.json'}, cls.from_json),
-            ({'.yaml', '.yml'}, cls.from_yaml),
-        ]
+    def from_text(
+        cls,
+        text: t.Union[bytes, str], root: Path,
+        suffix: t.Optional[str] = None, warn: bool = True,
+    ) -> 'Self':
+        '''Supported formats: please refer to `Conversion`'''
+        content = text if isinstance(text, bytes) else content.encode()
         if suffix is not None:
-            for suffixes, method in mapper:
-                if suffix in suffixes:
-                    return method(text, root, warn=warn)
+            data = Conversion.from_bytes(content, suffix, all=True).to_document()
         else:
-            for _, method in mapper:
-                try:
-                    return method(text, root, warn=warn)
-                except Exception as e:
-                    print(method.__name__, e)
-        raise Exception(f'Suffix "{suffix}" is not supported or not recognized')
-
-    @classmethod
-    def from_json(cls, text: str, root: Path, warn: bool = True) -> 'Self':
-        data = json.loads(text)
+            data = Conversion.auto_from_bytes(content, all=True).to_document()
         return cls(data, root, warn=warn)
 
     @classmethod
     def from_yaml(cls, text: str, root: Path, warn: bool = True) -> 'Self':
-        return cls(list(yaml.load_all(text)), root, warn=warn)
+        data = Conversion.from_string(text, 'yaml', all=True).to_document()
+        return cls(data, root, warn=warn)
 
     @classmethod
     def as_placeholder(cls) -> 'Self':
