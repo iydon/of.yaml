@@ -1,4 +1,4 @@
-__all__ = ['Array', 'CachedLib', 'Dict', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
+__all__ = ['Array', 'CachedLib', 'Dict', 'Document', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
 
 
 import pathlib as p
@@ -12,7 +12,7 @@ if t.TYPE_CHECKING:
 CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
 List = t.List[t.Any]
-FoamItem = t.Union[Dict, List]
+Document = FoamItem = t.Union[Dict, List]
 FoamData = t.List[FoamItem]
 Location = t.Tuple[float, float, float]
 Path = t.Union[str, p.Path]

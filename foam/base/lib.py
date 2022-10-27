@@ -1,4 +1,4 @@
-__all__ = ['classproperty', 'lark', 'matplotlib', 'numpy', 'py7zr', 'tqdm', 'vtkmodules', 'yaml']
+__all__ = ['classproperty', 'lark', 'matplotlib', 'numpy', 'py7zr', 'tomlkit', 'tqdm', 'vtkmodules', 'yaml']
 
 
 import typing as t
@@ -10,6 +10,7 @@ if t.TYPE_CHECKING:
     import matplotlib.pyplot as _pyplot
     import numpy as _numpy
     import py7zr as _py7zr
+    import tomlkit as _tomlkit
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
@@ -120,6 +121,35 @@ class py7zr:
             return py7zr
 
 
+class tomlkit:
+    '''pip install ifoam[toml]'''
+
+    @classmethod
+    def dump(cls, *args: t.Any, **kwargs: t.Any) -> None:
+        cls._().dump(*args, **kwargs)
+
+    @classmethod
+    def dumps(cls, *args: t.Any, **kwargs: t.Any) -> str:
+        return cls._().dumps(*args, **kwargs)
+
+    @classmethod
+    def load(cls, *args: t.Any, **kwargs: t.Any) -> '_tomlkit.toml_document.TOMLDocument':
+        return cls._().load(*args, **kwargs)
+
+    @classmethod
+    def loads(cls, *args: t.Any, **kwargs: t.Any) -> t.Any:
+        return cls._().loads(*args, **kwargs)
+
+    @classmethod
+    def _(cls) -> '_tomlkit':
+        try:
+            import tomlkit
+        except Exception as e:
+            raise e.__class__(cls.__doc__)
+        else:
+            return tomlkit
+
+
 class tqdm:
     '''pip install ifoam[tqdm]'''
 
@@ -180,6 +210,11 @@ class yaml:
     '''pip install ifoam'''
 
     @classmethod
+    def dump(cls, *args: t.Any, **kwargs: t.Any) -> str:
+        kwargs = {'Dumper': cls._dumper(), **kwargs}
+        return cls._().dump(*args, **kwargs)
+
+    @classmethod
     def dump_all(cls, *args: t.Any, **kwargs: t.Any) -> str:
         kwargs = {'Dumper': cls._dumper(), **kwargs}
         return cls._().dump_all(*args, **kwargs)
@@ -202,6 +237,14 @@ class yaml:
             raise e.__class__(cls.__doc__)
         else:
             return yaml
+
+    @classmethod
+    def _dumper(cls) -> t.Union['_yaml.SafeDumper', '_yaml.CSafeDumper']:
+        yaml = cls._()
+        if yaml.__with_libyaml__:
+            return yaml.CSafeDumper
+        else:
+            return yaml.SafeDumper
 
     @classmethod
     def _loader(cls) -> t.Union['_yaml.SafeLoader', '_yaml.CSafeLoader']:

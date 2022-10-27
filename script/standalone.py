@@ -88,6 +88,7 @@ if typing.TYPE_CHECKING:
     import matplotlib.pyplot as _pyplot
     import numpy as _numpy
     import py7zr as _py7zr
+    import tomlkit as _tomlkit
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
@@ -106,7 +107,7 @@ w = warnings
 CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
 Dict = {base.type.Dict}
 List = {base.type.List}
-FoamItem = {base.type.FoamItem}
+Document = FoamItem = {base.type.FoamItem}
 FoamData = {base.type.FoamData}
 Location = {base.type.Location}
 Path = {base.type.Path}
@@ -127,6 +128,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(base.lib.matplotlib)}
 {show.source(base.lib.numpy)}
 {show.source(base.lib.py7zr)}
+{show.source(base.lib.tomlkit)}
 {show.source(base.lib.tqdm)}
 {show.source(base.lib.vtkmodules)}
 {show.source(base.lib.yaml)}
@@ -139,6 +141,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(util.function.dict_without_keys)}
 {show.source(util.object.case.CaseBase)}
 {show.source(util.object.case.CaseParameter)}
+{show.source(util.object.conversion.Conversion)}
 {show.source(util.object.data.Data)}
 {show.source(util.object.email.Envelope)}
 {show.source(util.object.email.SMTP)}
