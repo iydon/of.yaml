@@ -2,7 +2,7 @@ POETRY = poetry
 PYTHON = $(POETRY) run python
 
 
-.PHONY: help demo dependencies init shell test standalone preview docs uncache publish copyright mypy
+.PHONY: help demo dependencies init shell test-cli standalone preview docs uncache publish copyright mypy
 
 help:                  ## Print the usage
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
@@ -19,10 +19,10 @@ init:                  ## Set environment variables, etc.
 shell:                 ## Activate the virtual environment
 	@$(POETRY) shell
 
-test:                  ## Run unit tests
+test-cli:              ## Run cli test
 	for version in 7 ; do \
-		$(PYTHON) -m foam conv extra/tutorial/tutorials/$$version --directory test --version $$version --exist-ok ; \
-		$(PYTHON) -m foam test                                    --directory test --version $$version ; \
+		$(PYTHON) -m foam cnv extra/tutorial/tutorials/$$version --directory ~/test/cli --version $$version --exist-ok ; \
+		$(PYTHON) -m foam run                                    --directory ~/test/cli --version $$version ; \
 	done
 
 standalone:            ## Convert Python package into a single file
