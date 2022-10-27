@@ -40,14 +40,14 @@ class Conversion:
         raise Exception('Unable to recognize content type')
 
     @classmethod
-    def auto_from_string(cls, content: str) -> 'Self':
-        # TODO: return cls.auto_from_bytes(content.encode())
+    def auto_from_string(cls, text: str) -> 'Self':
+        # TODO: return cls.auto_from_bytes(text.encode())
         for type in {'json', 'toml', 'yaml'}:
             try:
-                return cls.from_string(content, type)
+                return cls.from_string(text, type)
             except Exception:
                 pass
-        raise Exception('Unable to recognize content type')
+        raise Exception('Unable to recognize text type')
 
     @classmethod
     def auto_from_path(cls, path: Path) -> 'Self':
@@ -59,6 +59,7 @@ class Conversion:
 
     @classmethod
     def from_bytes(cls, content: bytes, type: str = 'json') -> 'Self':
+        type = type.lstrip('.')
         for types, loads in [
             ({'json'}, lambda content: cls.from_json(content.decode())),
             ({'pickle', 'pkl'}, lambda content: cls.from_pickle(content)),
@@ -70,15 +71,16 @@ class Conversion:
         raise Exception(f'"{type}" is not a valid type string')
 
     @classmethod
-    def from_string(cls, content: str, type: str = 'json') -> 'Self':
-        # TODO: return cls.from_bytes(content.encode(), type)
+    def from_string(cls, text: str, type: str = 'json') -> 'Self':
+        # TODO: return cls.from_bytes(text.encode(), type)
+        type = type.lstrip('.')
         for types, loads in [
             ({'json'}, cls.from_json),
             ({'toml'}, cls.from_toml),
             ({'yaml', 'yml'}, cls.from_yaml),
         ]:
             if type in types:
-                return loads(content)
+                return loads(text)
         raise Exception(f'"{type}" is not a valid type string')
 
     @classmethod
@@ -87,29 +89,30 @@ class Conversion:
         return cls.from_bytes(path.read_bytes(), path.suffix[1:])
 
     @classmethod
-    def from_json(cls, content: str) -> 'Self':
-        return cls(json.loads(content))
+    def from_json(cls, text: str) -> 'Self':
+        return cls(json.loads(text))
 
     @classmethod
-    def from_pickle(cls, content: bytes) -> 'Self':
-        return cls(pickle.loads(content))
+    def from_pickle(cls, text: bytes) -> 'Self':
+        return cls(pickle.loads(text))
 
     @classmethod
-    def from_toml(cls, content: str) -> 'Self':
-        return cls(tomlkit.loads(content))
+    def from_toml(cls, text: str) -> 'Self':
+        return cls(tomlkit.loads(text))
 
     @classmethod
-    def from_yaml(cls, content: str) -> 'Self':
-        return cls(yaml.load(content))
+    def from_yaml(cls, text: str) -> 'Self':
+        return cls(yaml.load(text))
 
     @classmethod
-    def from_yaml_all(cls, content: str) -> 'Self':
-        return cls(yaml.load_all(content))
+    def from_yaml_all(cls, text: str) -> 'Self':
+        return cls(list(yaml.load_all(text)))
 
     def to_document(self) -> Document:
         return self._document
 
     def to_bytes(self, type: str = 'json') -> bytes:
+        type = type.lstrip('.')
         for types, dumps in [
             ({'json'}, lambda: self.to_json().encode()),
             ({'pickle', 'pkl'}, lambda: self.to_pickle()),
@@ -121,6 +124,7 @@ class Conversion:
         raise Exception(f'"{type}" is not a valid type string')
 
     def to_string(self, type: str = 'json') -> str:
+        type = type.lstrip('.')
         for types, dumps in [
             ({'json'}, self.to_json),
             ({'toml'}, self.to_toml),
