@@ -81,30 +81,42 @@ class suppress:
     _stdout_previous = ''
 
     @classmethod
-    def stderr(cls, func: t.Callable) -> t.Callable:
+    def stderr_decorator(cls, func: t.Callable) -> t.Callable:
 
         @f.wraps(func)
         def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-            with io.StringIO() as target:
-                with contextlib.redirect_stderr(target):
-                    ans = func(*args, **kwargs)
-                cls.stderr_previous = target.getvalue()
-            return ans
+            with cls.stderr_context():
+                return func(*args, **kwargs)
 
         return wrapper
 
     @classmethod
-    def stdout(cls, func: t.Callable) -> t.Callable:
+    def stdout_decorator(cls, func: t.Callable) -> t.Callable:
 
         @f.wraps(func)
         def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-            with io.StringIO() as target:
-                with contextlib.redirect_stdout(target):
-                    ans = func(*args, **kwargs)
-                cls.stdout_previous = target.getvalue()
-            return ans
+            with cls.stdout_context():
+                return func(*args, **kwargs)
 
         return wrapper
+
+    @classmethod
+    @contextlib.contextmanager
+    def stderr_context(cls) -> None:
+        with io.StringIO() as target, contextlib.redirect_stderr(target):
+            try:
+                yield None
+            finally:
+                cls._stderr_previous = target.getvalue()
+
+    @classmethod
+    @contextlib.contextmanager
+    def stdout_context(cls) -> None:
+        with io.StringIO() as target, contextlib.redirect_stdout(target):
+            try:
+                yield None
+            finally:
+                cls._stdout_previous = target.getvalue()
 
     @classproperty
     def stderr_previous(cls) -> str:
