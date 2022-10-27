@@ -1,7 +1,9 @@
-__all__ = ['classproperty', 'Match']
+__all__ = ['classproperty', 'Match', 'suppress']
 
 
+import contextlib
 import functools as f
+import io
 import typing as t
 
 from ..base.lib import classproperty
@@ -65,3 +67,49 @@ class Match:
             return wrapper
 
         return decorate
+
+
+class suppress:
+    '''Suppress stderr or stdout
+
+    Reference:
+        - https://docs.python.org/3/library/unittest.html
+        - https://stackoverflow.com/questions/9718950/do-i-have-to-do-stringio-close
+    '''
+
+    _stderr_previous = ''
+    _stdout_previous = ''
+
+    @classmethod
+    def stderr(cls, func: t.Callable) -> t.Callable:
+
+        @f.wraps(func)
+        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            with io.StringIO() as target:
+                with contextlib.redirect_stderr(target):
+                    ans = func(*args, **kwargs)
+                cls.stderr_previous = target.getvalue()
+            return ans
+
+        return wrapper
+
+    @classmethod
+    def stdout(cls, func: t.Callable) -> t.Callable:
+
+        @f.wraps(func)
+        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            with io.StringIO() as target:
+                with contextlib.redirect_stdout(target):
+                    ans = func(*args, **kwargs)
+                cls.stdout_previous = target.getvalue()
+            return ans
+
+        return wrapper
+
+    @classproperty
+    def stderr_previous(cls) -> str:
+        return cls._stderr_previous
+
+    @classproperty
+    def stdout_previous(cls) -> str:
+        return cls._stdout_previous

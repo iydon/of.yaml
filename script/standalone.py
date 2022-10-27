@@ -138,6 +138,7 @@ shutil.copytree = compat.shutil.copytree
 
 {show.source(util.deprecation.lib)}
 {show.source(util.decorator.Match)}
+{show.source(util.decorator.suppress)}
 {show.source(util.function.dict_without_keys)}
 {show.source(util.object.case.CaseBase)}
 {show.source(util.object.case.CaseParameter)}
