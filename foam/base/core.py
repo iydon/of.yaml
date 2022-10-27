@@ -152,7 +152,7 @@ class Foam:
         suffix: t.Optional[str] = None, warn: bool = True,
     ) -> 'Self':
         '''Supported formats: please refer to `Conversion`'''
-        content = text if isinstance(text, bytes) else content.encode()
+        content = text if isinstance(text, bytes) else text.encode()
         if suffix is not None:
             data = Conversion.from_bytes(content, suffix, all=True).to_document()
         else:

@@ -84,6 +84,7 @@
 
 - Add extra object
     -  Constructing case
+    -  Converting string to object with each other
     -  E-mailing
     -  Timing
     -  Plotting
@@ -91,4 +92,5 @@
 - Update program architecture
     - `foam::base::type::{Data, Version}` -> `foam::util::object::{Data, Version}`
     - `foam::base::parse` -> `foam::parse`
+    - `foam::parse::yaml::YAML` -> `foam::parse::case::Case`
     - `foam::extra` -> `foam::util::object`
