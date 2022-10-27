@@ -14,9 +14,8 @@ dist/
 # mkdocs
 site/
 
-# Alltest
-!test/README.md
-test/
+# test
+test/cli/
 
 # todo!
 todo/

@@ -21,8 +21,8 @@ shell:                 ## Activate the virtual environment
 
 test-cli:              ## Run cli test
 	for version in 7 ; do \
-		$(PYTHON) -m foam cnv extra/tutorial/tutorials/$$version --directory ~/test/cli --version $$version --exist-ok ; \
-		$(PYTHON) -m foam run                                    --directory ~/test/cli --version $$version ; \
+		$(PYTHON) -m foam cnv extra/tutorial/tutorials/$$version --directory test/cli --version $$version --exist-ok ; \
+		$(PYTHON) -m foam run                                    --directory test/cli --version $$version ; \
 	done
 
 standalone:            ## Convert Python package into a single file
