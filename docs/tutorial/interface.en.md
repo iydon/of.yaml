@@ -115,6 +115,7 @@ CLASSES
         foam.app.postprocess.core.PostProcess
         foam.app.postprocess.core.VTK
         foam.base.core.Foam
+        foam.util.object.conversion.Conversion
         foam.util.object.data.Data
         foam.util.object.email.Envelope
         foam.util.object.email.SMTP
@@ -294,6 +295,81 @@ CLASSES
      |  __weakref__
      |      list of weak references to the object (if defined)
 
+    class Conversion(builtins.object)
+     |  Conversion(document: Union[Dict[str, Any], List[Any]]) -> None
+     |
+     |  Conversion between object and bytes/string
+     |
+     |  Example:
+     |      >>> data = {'a': 1, 'b': [2, 3], 'c': {'4': 5}}
+     |      >>> print(Conversion.from_document(data).to_yaml())
+     |      a: 1
+     |      b:
+     |      - 2
+     |      - 3
+     |      c:
+     |      '4': 5
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, document: Union[Dict[str, Any], List[Any]]) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  to_bytes(self, type: str = 'json', all: bool = False, **kwargs: Any) -> bytes
+     |
+     |  to_document(self) -> Union[Dict[str, Any], List[Any]]
+     |
+     |  to_json(self, **kwargs: Any) -> str
+     |
+     |  to_path(self, path: Union[str, pathlib.Path], all: bool = False, **kwargs: Any) -> pathlib.Path
+     |
+     |  to_pickle(self, **kwargs: Any) -> bytes
+     |
+     |  to_string(self, type: str = 'json', all: bool = False, **kwargs: Any) -> str
+     |
+     |  to_toml(self, **kwargs: Any) -> str
+     |
+     |  to_yaml(self, all: bool = False, **kwargs: Any) -> str
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods defined here:
+     |
+     |  auto_from_bytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
+     |
+     |  auto_from_path(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |
+     |  auto_from_string(text: str, all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_bytes(content: bytes, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_document(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |
+     |  from_json(text: str) -> 'Self' from builtins.type
+     |
+     |  from_path(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_pickle(text: bytes) -> 'Self' from builtins.type
+     |
+     |  from_string(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_toml(text: str) -> 'Self' from builtins.type
+     |
+     |  from_yaml(text: str, all: bool = False) -> 'Self' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  types = {'json', 'pickle', 'toml', 'yaml'}
+
     class Data(builtins.object)
      |  Data(data: Union[Dict[str, Any], List[Any]]) -> None
      |
@@ -365,7 +441,7 @@ CLASSES
      |
      |  from_list(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f5242eae940>) -> 'Self' from builtins.type
+     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f772047c820>) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path]) -> Iterator[ForwardRef('Self')] from builtins.type
      |
@@ -532,8 +608,6 @@ CLASSES
      |
      |  from_demos(warn: bool = False) -> List[ForwardRef('Self')] from builtins.type
      |
-     |  from_json(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
-     |
      |  from_openfoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |      From OpenFOAM directory
      |
@@ -546,8 +620,8 @@ CLASSES
      |
      |  from_remote_path(url: str, timeout: Union[float, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
      |
-     |  from_text(text: str, root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
-     |      Supported format: json, yaml
+     |  from_text(text: Union[bytes, str], root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |      Supported formats: please refer to `Conversion`
      |
      |  from_yaml(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
      |
@@ -1026,5 +1100,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.5
+    0.12.6
 ```

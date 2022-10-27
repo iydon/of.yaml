@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ifoam"
 packages = [{ include = "foam" }]
-version = "0.12.5"
+version = "0.12.6"
 description = "Python Interface to OpenFOAM Case (Configured Using YAML)"
 authors = ["Iydon Liang <liangiydon@gmail.com>", "Qiang Yue <sustc_yq@163.com>"]
 keywords = ["OpenFOAM", "YAML"]
