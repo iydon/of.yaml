@@ -160,10 +160,10 @@ shutil.copytree = compat.shutil.copytree
 
 Apps = {{}} if tqdm.is_not_available() else {show.apps(app.command.adapter.Apps)}
 
+{show.source(parse.case.Case)}
 {show.source(parse.lark.Lark).replace('grammar()', '__grammar__')}
 {show.source(parse.static.Static)}
 {show.source(parse.url.Url)}
-{show.source(parse.yaml.YAML)}
 {show.source(parse.Parser)}
 
 {show.source(app.command.core.Command)}

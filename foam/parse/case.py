@@ -1,4 +1,4 @@
-__all__ = ['YAML']
+__all__ = ['Case']
 
 
 import functools as f
@@ -10,8 +10,8 @@ if t.TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class YAML:
-    '''OpenFOAM YAML parser
+class Case:
+    '''OpenFOAM case parser
 
     Example:
         >>> data = {
@@ -32,8 +32,8 @@ class YAML:
         ...         'frontAndBack': {'type': 'empty'},
         ...     },
         ... }
-        >>> yaml = YAML.default()
-        >>> print('\\n'.join(yaml.data(data)))
+        >>> case = Case.default()
+        >>> print('\\n'.join(case.data(data)))
         FoamFile {version 2.0; format ascii; class volVectorField; object U;}
         dimensions [0 1 -1 0 0 0 0];
         internalField uniform (0 0 0);

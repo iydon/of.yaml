@@ -328,7 +328,7 @@ class Foam:
             # write the parsed text data
             path = self._path(*map(str, keys))  # self._dest is not None
             path.parent.mkdir(parents=True, exist_ok=True)
-            self._write(path, '\n'.join(self.parser.yaml.data(data)))
+            self._write(path, '\n'.join(self.parser.case.data(data)))
 
     def _extract_files(
         self,

@@ -3,10 +3,10 @@ __all__ = ['Parser']
 
 import typing as t
 
+from .case import Case
 from .lark import Lark
 from .static import Static
 from .url import Url
-from .yaml import YAML
 from ..base.type import Path
 
 if t.TYPE_CHECKING:
@@ -18,17 +18,17 @@ if t.TYPE_CHECKING:
 class Parser:
     '''All parsers'''
 
-    def __init__(self, static: Static, url: Url, yaml: YAML) -> None:
+    def __init__(self, case: Case, static: Static, url: Url) -> None:
+        self.case = case
         self.static = static
         self.url = url
-        self.yaml = yaml
 
     @classmethod
     def from_foam(cls, foam: 'Foam') -> 'Self':
         return cls(
+            Case.default(),
             Static.from_foam(foam),
             Url.from_foam(foam),
-            YAML.default(),
         )
 
     @classmethod
