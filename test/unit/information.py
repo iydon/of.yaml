@@ -22,9 +22,9 @@ class Test(unittest.TestCase):
         self.assertIsNotNone(self._foam.info.cmd)
 
     def test_environ(self) -> None:
-        for key, val in self._foam.info.environ.items():
+        for key, value in self._foam.info.environ.items():
             self.assertTrue(key.isupper())
-            self.assertIsInstance(val, str)
+            self.assertIsInstance(value, str)
 
     def test_root(self) -> None:
         self.assertTrue(self._foam.info.root.exists())

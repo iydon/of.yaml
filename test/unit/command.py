@@ -20,9 +20,9 @@ class Test(unittest.TestCase):
         shutil.rmtree(cls._foam.destination)
 
     def test_macros(self) -> None:
-        for key, val in self._foam.cmd.macros.items():
+        for key, value in self._foam.cmd.macros.items():
             self.assertIn('__', key)
-            self.assertIsInstance(val, str)
+            self.assertIsInstance(value, str)
 
     @suppress.stderr.decorator_without_previous
     @suppress.stdout.decorator_without_previous
