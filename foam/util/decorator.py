@@ -77,51 +77,65 @@ class suppress:
         - https://stackoverflow.com/questions/9718950/do-i-have-to-do-stringio-close
     '''
 
-    _stderr_previous = ''
-    _stdout_previous = ''
+    class _base:
+        '''Base'''
 
-    @classmethod
-    @contextlib.contextmanager
-    def stderr_context(cls) -> None:
-        with io.StringIO() as target, contextlib.redirect_stderr(target):
-            try:
-                yield None
-            finally:
-                cls._stderr_previous = target.getvalue()
+        __redirect__: t.Callable
 
-    @classmethod
-    @contextlib.contextmanager
-    def stdout_context(cls) -> None:
-        with io.StringIO() as target, contextlib.redirect_stdout(target):
-            try:
-                yield None
-            finally:
-                cls._stdout_previous = target.getvalue()
+        _previous = ''
 
-    @classmethod
-    def stderr_decorator(cls, func: t.Callable) -> t.Callable:
+        @classmethod
+        @contextlib.contextmanager
+        def context_without_previous(cls) -> t.Iterator[io.StringIO]:
+            with io.StringIO() as target, cls.__redirect__(target):
+                try:
+                    yield target
+                finally:
+                    pass
 
-        @f.wraps(func)
-        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-            with cls.stderr_context():
-                return func(*args, **kwargs)
+        @classmethod
+        @contextlib.contextmanager
+        def context_with_previous(cls) -> t.Iterator[io.StringIO]:
+            with cls.context_without_previous() as target:
+                try:
+                    yield target
+                finally:
+                    cls._previous = target.getvalue()
 
-        return wrapper
+        context = context_without_previous
 
-    @classmethod
-    def stdout_decorator(cls, func: t.Callable) -> t.Callable:
+        @classmethod
+        def decorator_without_previous(cls, func: t.Callable) -> t.Callable:
 
-        @f.wraps(func)
-        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-            with cls.stdout_context():
-                return func(*args, **kwargs)
+            @f.wraps(func)
+            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+                with cls.context_without_previous():
+                    return func(*args, **kwargs)
 
-        return wrapper
+            return wrapper
 
-    @classproperty
-    def stderr_previous(cls) -> str:
-        return cls._stderr_previous
+        @classmethod
+        def decorator_with_previous(cls, func: t.Callable) -> t.Callable:
 
-    @classproperty
-    def stdout_previous(cls) -> str:
-        return cls._stdout_previous
+            @f.wraps(func)
+            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+                with cls.context_with_previous():
+                    return func(*args, **kwargs)
+
+            return wrapper
+
+        decorator = decorator_with_previous
+
+        @classproperty
+        def previous(cls) -> str:
+            return cls._previous
+
+    class stderr(_base):
+        '''Std Err'''
+
+        __redirect__ = contextlib.redirect_stderr
+
+    class stdout(stderr):
+        '''Std Out'''
+
+        __redirect__ = contextlib.redirect_stdout

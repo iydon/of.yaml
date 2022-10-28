@@ -24,8 +24,8 @@ class Test(unittest.TestCase):
             self.assertIn('__', key)
             self.assertIsInstance(val, str)
 
-    @suppress.stderr_decorator
-    @suppress.stdout_decorator
+    @suppress.stderr.decorator_without_previous
+    @suppress.stdout.decorator_without_previous
     def test_all_run(self) -> None:
         # 1
         codes = self._foam.cmd.all_run(overwrite=True, exception=False)
