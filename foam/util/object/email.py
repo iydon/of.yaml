@@ -12,8 +12,6 @@ import typing as t
 from ...base.type import Path
 
 if t.TYPE_CHECKING:
-    from email.message import EmailMessage
-
     from typing_extensions import Self
 
 
@@ -75,7 +73,7 @@ class Envelope:
         self._header['Subject'] = value
         return self
 
-    def to_message(self) -> 'EmailMessage':
+    def to_message(self) -> email.message.EmailMessage:
         msg = email.message.EmailMessage()
         # _header
         for key, value in self._header.items():

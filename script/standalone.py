@@ -93,8 +93,6 @@ if typing.TYPE_CHECKING:
     import vtkmodules as _vtkmodules
     import yaml as _yaml
 
-    from email.message import EmailMessage
-
     from typing_extensions import Self
 
 c = collections
