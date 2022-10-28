@@ -129,7 +129,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def from_file(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def from_path(cls, path: Path, **kwargs: t.Any) -> 'Self':
         reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
@@ -156,7 +156,7 @@ class VTK:
             if path.is_file() and path.suffix=='.vtk'
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
-            yield cls.from_file(path, foam=foam, **kwargs)
+            yield cls.from_path(path, foam=foam, **kwargs)
 
     @property
     def foam(self) -> 'Foam':

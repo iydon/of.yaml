@@ -23,7 +23,7 @@ class Static:
 
     Example:
         >>> foam = Foam.from_demo('cavity')
-        Foam.from_file('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
+        Foam.from_path('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
         >>> foam.save('case')
 
         >>> data = {

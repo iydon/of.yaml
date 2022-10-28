@@ -28,7 +28,7 @@ n_time = 19
 bench = {}
 root = p.Path('extra', 'tutorial', 'tutorials', os.environ['WM_PROJECT_VERSION'])
 for path in root.rglob('*.yaml'):
-    foam = Foam.from_file(path).save(f'case/{path.stem}')
+    foam = Foam.from_path(path).save(f'case/{path.stem}')
     control = foam['foam']['system', 'controlDict']
     if control['startFrom']=='startTime' and control['stopAt']=='endTime' and is_valid(foam, 4):
         key = path.as_posix()

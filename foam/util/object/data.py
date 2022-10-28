@@ -12,7 +12,7 @@ if t.TYPE_CHECKING:
 
 
 class Data:
-    '''Multi-key dictionary
+    '''Multi-key dictionary or list (not recommended)
 
     Example:
         >>> data = Data.from_dict_keys(
@@ -106,7 +106,7 @@ class Data:
     def from_dict_keys(cls, *keys: t.Hashable, default: t.Callable = dict) -> 'Self':
         self = cls.from_dict()
         for key in keys:
-            self[key] = default()
+            self.__setitem__(key, default())
         return self
 
     @classmethod
@@ -141,6 +141,7 @@ class Data:
             return False
 
     def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+        # TODO: retained due to compatibility needs
         if isinstance(self._data, dict):
             return self._data.get(key, default)
         elif isinstance(self._data, list):
@@ -149,7 +150,23 @@ class Data:
             except (IndexError, TypeError):
                 return default
         else:
-            raise
+            raise Exception(f'Unknown type "{type(self._data).__name__}"')
+
+    def gets(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+        try:
+            return self.__getitem__(keys)
+        except (IndexError, KeyError, TypeError):
+            return default
+
+    def set_default(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> 'Self':
+        if keys not in self:
+            self.__setitem__(keys, default)
+        return self.__getitem__(keys)
+
+    def set_via_dict(self, data: Dict) -> 'Self':
+        for keys, value in self.__class__.from_dict(data).items():
+            self.__setitem__(keys, value)
+        return self
 
     def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys[t.Any], t.Any]]:
         yield from self._items(self._data, with_list=with_list)
@@ -166,16 +183,6 @@ class Data:
         return Conversion \
             .from_document(self._data) \
             .to_bytes(type, all=True, **kwargs)
-
-    def set_default(self, *keys: t.Any, default: t.Any = None) -> 'Self':
-        if keys not in self:
-            self[keys] = default
-        return self[keys]
-
-    def set_via_dict(self, data: Dict) -> 'Self':
-        for keys, value in self.__class__.from_dict(data).items():
-            self[keys] = value
-        return self
 
     def _items(
         self,

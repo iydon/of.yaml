@@ -109,7 +109,7 @@ class Information:
             if path.suffix in {'.yaml', '.yml'}:
                 # try-except or try-except-else?
                 try:
-                    foam = Foam.from_file(path, warn=False)
+                    foam = Foam.from_path(path, warn=False)
                     for keys, _ in foam['foam'].items(with_list=False):
                         hashed_keys = tuple(map(hashing, keys))
                         if hashed_keys[-length:] == hashed_targets:

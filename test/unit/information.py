@@ -37,6 +37,13 @@ class Test(unittest.TestCase):
         self.assertIsInstance(results, set)
         self.assertTrue(all(isinstance(result, str) for result in results))
 
+    def test_search_yaml(self) -> None:
+        results = self._foam.info.search_yaml('fvSchemes', 'divSchemes', 'div(rhoPhi, U)')
+        for key, values in results.items():
+            self.assertIsInstance(key, str)
+            self.assertIsInstance(values, set)
+            self.assertTrue(all(isinstance(value, str) for value in values))
+
     def test_commands(self) -> None:
         results = self._foam.info.commands()
         self.assertIsInstance(results, set)
