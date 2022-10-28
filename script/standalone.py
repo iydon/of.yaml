@@ -102,7 +102,6 @@ s = subprocess
 t = typing
 w = warnings
 
-CachedLib = {repr(base.type.CachedLib).replace('module', 'types.ModuleType')}
 Dict = {base.type.Dict}
 List = {base.type.List}
 Document = FoamItem = {base.type.FoamItem}
@@ -134,7 +133,6 @@ shutil.copytree = compat.shutil.copytree
 {show.source(base.type.Keys)}
 {show.source(base.type.TupleSequence)}
 
-{show.source(util.deprecation.lib)}
 {show.source(util.decorator.Match)}
 {show.source(util.decorator.suppress)}
 {show.source(util.function.dict_without_keys)}

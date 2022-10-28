@@ -1,15 +1,13 @@
-__all__ = ['Array', 'CachedLib', 'Dict', 'Document', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
+__all__ = ['Array', 'Dict', 'Document', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
 
 
 import pathlib as p
-import types
 import typing as t
 
 if t.TYPE_CHECKING:
     import numpy as _numpy
 
 
-CachedLib = t.Union[types.ModuleType, object, t.Callable]
 Dict = t.Dict[str, t.Any]
 List = t.List[t.Any]
 Document = FoamItem = t.Union[Dict, List]
