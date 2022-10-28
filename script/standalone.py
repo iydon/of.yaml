@@ -106,7 +106,6 @@ Dict = {base.type.Dict}
 List = {base.type.List}
 Document = FoamItem = {base.type.FoamItem}
 FoamData = {base.type.FoamData}
-Location = {base.type.Location}
 Path = {base.type.Path}
 
 _NOT_FOUND = object()
@@ -131,6 +130,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(base.lib.yaml)}
 {show.source(base.type.Array)}
 {show.source(base.type.Keys)}
+{show.source(base.type.Location)}
 {show.source(base.type.TupleSequence)}
 
 {show.source(util.decorator.Match)}

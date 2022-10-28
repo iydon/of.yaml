@@ -71,17 +71,17 @@ class PostProcess:
 
     def probe(
         self,
-        location: Location, keys: t.Optional[t.Set[str]] = None,
+        location: Location[float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, t.Dict[float, Array[0, 1]]]:
-        location_ = tuple(map(float, location))
-        return self.probes(location_, keys=keys, point=point, func=func)[location_]
+        location = Location.cast(location, float)
+        return self.probes(location, keys=keys, point=point, func=func)[location]
 
     def probes(
         self,
-        *locations: Location,
+        *locations: Location[float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[Location, t.Dict[str, t.Dict[float, Array[0, 1]]]]:
+    ) -> t.Dict[Location[float], t.Dict[str, t.Dict[float, Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -232,17 +232,17 @@ class VTK:
 
     def probe(
         self,
-        location: Location, keys: t.Optional[t.Set[str]] = None,
+        location: Location[float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[str, Array[0, 1]]:
-        location_ = tuple(map(float, location))
-        return self.probes(location_, keys=keys, point=point, func=func)[location_]
+        location = Location.cast(location, float)
+        return self.probes(location, keys=keys, point=point, func=func)[location]
 
     def probes(
         self,
-        *locations: Location,
+        *locations: Location[float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[Location, t.Dict[str, Array[0, 1]]]:
+    ) -> t.Dict[Location[float], t.Dict[str, Array[0, 1]]]:
         '''
         - Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
@@ -258,6 +258,7 @@ class VTK:
                 key: fields[key][index]
                 for key in keys
             }
+        return ans
 
     def _to_numpy(self, array: '_vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
         return vtkmodules.vtk_to_numpy(array)
