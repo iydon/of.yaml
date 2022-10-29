@@ -1,3 +1,6 @@
+__all__ = ['Test']
+
+
 import pathlib as p
 import shutil
 import unittest
@@ -6,7 +9,7 @@ from foam import Foam
 
 
 class Test(unittest.TestCase):
-    '''Test for Command
+    '''Test for Foam
 
     TODO:
         - Foam.from_openfoam
@@ -59,3 +62,6 @@ class Test(unittest.TestCase):
 
     def test_copy(self) -> None:
         self.assertIsNot(self._foam, self._foam.copy())
+
+    def test_save(self) -> None:
+        self._foam.save(self._path)

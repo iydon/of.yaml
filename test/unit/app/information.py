@@ -1,3 +1,6 @@
+__all__ = ['Test']
+
+
 import pathlib as p
 import shutil
 import unittest
