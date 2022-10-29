@@ -18,7 +18,11 @@ if t.TYPE_CHECKING:
 
 
 class Lark:
-    '''Lark is a parsing toolkit for Python'''
+    '''Lark is a parsing toolkit for Python
+
+    TODO:
+        - unit-test (Lark, Foam.from_openfoam)
+    '''
 
     order = ['meta', 'foam', 'static', 'other']
 

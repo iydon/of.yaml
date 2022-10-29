@@ -9,11 +9,7 @@ from foam import Foam
 
 
 class Test(unittest.TestCase):
-    '''Test for Foam
-
-    TODO:
-        - Foam.from_openfoam
-    '''
+    '''Test for Foam'''
 
     @classmethod
     def setUpClass(cls) -> None:
