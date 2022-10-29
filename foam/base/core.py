@@ -6,6 +6,7 @@ import functools as f
 import gc
 import os
 import pathlib as p
+import shutil
 import typing as t
 import urllib.parse
 import urllib.request
@@ -95,8 +96,8 @@ class Foam:
             return self
 
     @classmethod
-    def from_demos(cls, warn: bool = False) -> t.List['Self']:
-        return list(map(lambda name: cls.from_demo(name, warn), cls.list_demos()))
+    def from_demos(cls, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+        return list(map(lambda name: cls.from_demo(name, warn, verbose), cls.list_demos()))
 
     @classmethod
     def from_remote_demo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> 'Self':
@@ -115,8 +116,8 @@ class Foam:
             return self
 
     @classmethod
-    def from_remote_demos(cls, timeout: t.Optional[float] = None, warn: bool = False) -> t.List['Self']:
-        return list(map(lambda name: cls.from_remote_demo(name, timeout, warn), cls.list_demos()))
+    def from_remote_demos(cls, timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+        return list(map(lambda name: cls.from_remote_demo(name, timeout, warn, verbose), cls.list_demos()))
 
     @classmethod
     def from_remote_path(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True) -> 'Self':
@@ -175,9 +176,9 @@ class Foam:
         return Data.from_list(self._list)
 
     @property
-    def meta(self) -> Dict:
+    def meta(self) -> Data:
         '''Meta information'''
-        return self._list[0]
+        return Data.from_dict(self._list[0])
 
     @property
     def parser(self) -> Parser:
@@ -222,6 +223,11 @@ class Foam:
     @destination.setter
     def destination(self, dest: Path) -> None:
         self._dest = p.Path(dest)
+
+    @destination.deleter
+    def destination(self) -> None:
+        shutil.rmtree(self.destination)
+        self._dest = None
 
     @f.cached_property
     def application(self) -> str:

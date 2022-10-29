@@ -134,6 +134,15 @@ class Data:
     def data(self) -> FoamItem:
         return self._data
 
+    def is_dict(self) -> bool:
+        return isinstance(self._data, dict)
+
+    def is_list(self) -> bool:
+        return isinstance(self._data, list)
+
+    def is_other(self) -> bool:
+        return not (self.is_dict() or self.is_list())
+
     def contains(self, *keys: t.Any) -> bool:
         try:
             return self.__contains__(keys)
@@ -157,6 +166,10 @@ class Data:
             return self.__getitem__(keys)
         except (IndexError, KeyError, TypeError):
             return default
+
+    def setdefault(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+        # TODO: retained due to compatibility needs
+        return self._data.setdefault(key, default)
 
     def set_default(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> 'Self':
         if keys not in self:

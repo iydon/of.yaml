@@ -15,9 +15,9 @@ class Test(unittest.TestCase):
     @suppress.stderr.decorator_without_previous
     @suppress.stdout.decorator_without_previous
     def setUpClass(cls) -> None:
-        cls._root = p.Path(__file__).parent
+        cls._path = p.Path(__file__).parent / 'case'
         cls._foam = Foam.from_demo('cavity', verbose=False)
-        cls._foam.save(cls._root/'case')
+        cls._foam.save(cls._path)
         cls._foam.cmd.all_run(overwrite=False, exception=False)
         cls._foam.post.vtks_set(point=True, cell=True)
 

@@ -10,9 +10,9 @@ class Test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls._root = p.Path(__file__).parent
+        cls._path = p.Path(__file__).parent / 'case'
         cls._foam = Foam.from_demo('cavity', verbose=False)
-        cls._foam.save(cls._root/'case')
+        cls._foam.save(cls._path)
 
     @classmethod
     def tearDownClass(cls) -> None:

@@ -116,6 +116,7 @@ class Timer:
     @f.cached_property
     def _result(self) -> type:
         return type('TimerResult', (), {
+            '__slots__': ('_labels', ),
             '__init__': lambda this, *labels: setattr(this, '_labels', labels),
             '__float__': lambda this: self.__getitem__(this._labels),
             '__repr__': lambda this: f'TimerResult({self!r}, {", ".join(map(repr, this._labels))})',
@@ -126,6 +127,8 @@ class Timer:
 
 class TimerResult:
     '''Result for timer'''
+
+    __slots__ = ('_timer', '_labels')
 
     def __init__(self, timer: 'Timer', *labels: str) -> None:
         self._timer = timer
