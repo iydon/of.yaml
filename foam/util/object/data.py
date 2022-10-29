@@ -143,6 +143,19 @@ class Data:
     def is_other(self) -> bool:
         return not (self.is_dict() or self.is_list())
 
+    def to_any(self) -> FoamItem:
+        return self._data
+
+    def to_dict(self) -> Dict:
+        assert self.is_dict()
+
+        return self._data
+
+    def to_list(self) -> List:
+        assert self.is_list()
+
+        return self._data
+
     def contains(self, *keys: t.Any) -> bool:
         try:
             return self.__contains__(keys)
