@@ -120,15 +120,15 @@ class Data:
     @classmethod
     def load(cls, *paths: Path) -> t.Iterator['Self']:
         for path in map(p.Path, paths):
-            yield cls.loads(path.read_bytes(), path.suffix[1:])
+            yield cls.loads(path.read_bytes(), path.suffix)
 
     @classmethod
     def load_from_path(cls, *parts: str) -> 'Self':
         return next(cls.load(p.Path(*parts)))
 
     @classmethod
-    def loads(cls, content: bytes, type: str = 'yaml') -> 'Self':
-        return cls.from_any(Conversion.from_bytes(content, type, all=True).to_document())
+    def loads(cls, content: bytes, type_or_suffix: str = 'yaml') -> 'Self':
+        return cls.from_any(Conversion.from_bytes(content, type_or_suffix, all=True).to_document())
 
     @property
     def data(self) -> FoamItem:
@@ -173,16 +173,16 @@ class Data:
 
     def dump(self, *paths: Path) -> 'Self':
         for path in map(p.Path, paths):
-            path.write_bytes(self.dumps(path.suffix[1:]))
+            path.write_bytes(self.dumps(path.suffix))
         return self
 
     def dump_to_path(self, *parts: str) -> 'Self':
         return self.dump(p.Path(*parts))
 
-    def dumps(self, type: str = 'yaml', **kwargs: t.Any) -> bytes:
+    def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
         return Conversion \
             .from_document(self._data) \
-            .to_bytes(type, all=True, **kwargs)
+            .to_bytes(type_or_suffix, all=True, **kwargs)
 
     def _items(
         self,
@@ -196,4 +196,3 @@ class Data:
                 yield from self._items(value, with_list, keys+(key, ))
         else:
             yield keys, data
-

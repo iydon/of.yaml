@@ -124,7 +124,7 @@ class Foam:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
-        self = cls.from_text(text, '.', path.suffix[1:], warn=warn)
+        self = cls.from_text(text, '.', path.suffix, warn=warn)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -136,7 +136,7 @@ class Foam:
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
-            return cls.from_text(path.read_text(), path.parent, path.suffix[1:], warn=warn)
+            return cls.from_text(path.read_text(), path.parent, path.suffix, warn=warn)
         elif path.is_dir():
             return cls.from_openfoam(path)
         else:
@@ -151,12 +151,12 @@ class Foam:
     def from_text(
         cls,
         text: t.Union[bytes, str], root: Path,
-        suffix: t.Optional[str] = None, warn: bool = True,
+        type_or_suffix: t.Optional[str] = None, warn: bool = True,
     ) -> 'Self':
         '''Supported formats: please refer to `Conversion`'''
         content = text if isinstance(text, bytes) else text.encode()
-        if suffix is not None:
-            data = Conversion.from_bytes(content, suffix, all=True).to_document()
+        if type_or_suffix is not None:
+            data = Conversion.from_bytes(content, type_or_suffix, all=True).to_document()
         else:
             data = Conversion.auto_from_bytes(content, all=True).to_document()
         return cls(data, root, warn=warn)

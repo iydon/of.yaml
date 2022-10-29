@@ -27,14 +27,15 @@ class Conversion:
         '4': 5
     '''
 
-    types = {'json', 'pickle', 'toml', 'yaml'}
+    _alias = {'pkl': 'pickle', 'yml': 'yaml'}
+    _types = {'json', 'pickle', 'toml', 'yaml'}
 
     def __init__(self, document: Document) -> None:
         self._document = document
 
     @classmethod
     def auto_from_bytes(cls, content: bytes, all: bool = False) -> 'Self':
-        for type in cls.types:
+        for type in cls._types:
             try:
                 return cls.from_bytes(content, type, all)
             except Exception:
@@ -54,17 +55,17 @@ class Conversion:
         return cls(document)
 
     @classmethod
-    def from_bytes(cls, content: bytes, type: str = 'json', all: bool = False) -> 'Self':
-        type = type.lstrip('.')
-        for types, loads in [
-            ({'json'}, lambda content: cls.from_json(content.decode())),
-            ({'pickle', 'pkl'}, lambda content: cls.from_pickle(content)),
-            ({'toml'}, lambda content: cls.from_toml(content.decode())),
-            ({'yaml', 'yml'}, lambda content: cls.from_yaml(content.decode(), all)),
-        ]:
-            if type in types:
-                return loads(content)
-        raise Exception(f'"{type}" is not a valid type string')
+    def from_bytes(cls, content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self':
+        type = cls._type_from_suffix(type_or_suffix)
+        if type not in cls._types:
+            raise Exception(f'"{type}" is not a valid type string')
+        else:
+            return {
+                'json': lambda content: cls.from_json(content.decode()),
+                'pickle': lambda content: cls.from_pickle(content),
+                'toml': lambda content: cls.from_toml(content.decode()),
+                'yaml': lambda content: cls.from_yaml(content.decode(), all),
+            }[type](content)
 
     @classmethod
     def from_string(cls, text: str, type: str = 'json', all: bool = False) -> 'Self':
@@ -73,7 +74,7 @@ class Conversion:
     @classmethod
     def from_path(cls, path: Path, all: bool = False) -> 'Self':
         path = p.Path(path)
-        return cls.from_bytes(path.read_bytes(), path.suffix[1:], all)
+        return cls.from_bytes(path.read_bytes(), path.suffix, all)
 
     @classmethod
     def from_json(cls, text: str) -> 'Self':
@@ -95,24 +96,24 @@ class Conversion:
     def to_document(self) -> Document:
         return self._document
 
-    def to_bytes(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> bytes:
-        type = type.lstrip('.')
-        for types, dumps in [
-            ({'json'}, lambda: self.to_json(**kwargs).encode()),
-            ({'pickle', 'pkl'}, lambda: self.to_pickle(**kwargs)),
-            ({'toml'}, lambda: self.to_toml(**kwargs).encode()),
-            ({'yaml', 'yml'}, lambda: self.to_yaml(all, **kwargs).encode()),
-        ]:
-            if type in types:
-                return dumps()
-        raise Exception(f'"{type}" is not a valid type string')
+    def to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: t.Any) -> bytes:
+        type = self._type_from_suffix(type_or_suffix)
+        if type not in self._types:
+            raise Exception(f'"{type}" is not a valid type string')
+        else:
+            return {
+                'json': lambda: self.to_json(**kwargs).encode(),
+                'pickle': lambda: self.to_pickle(**kwargs),
+                'toml': lambda: self.to_toml(**kwargs).encode(),
+                'yaml': lambda: self.to_yaml(all, **kwargs).encode(),
+            }[type]()
 
     def to_string(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> str:
         return self.to_bytes(type, all, **kwargs).decode()
 
     def to_path(self, path: Path, all: bool = False, **kwargs: t.Any) -> p.Path:
         path = p.Path(path)
-        path.write_bytes(self.to_bytes(path.suffix[1:], all, **kwargs))
+        path.write_bytes(self.to_bytes(path.suffix, all, **kwargs))
         return path
 
     def to_json(self, **kwargs: t.Any) -> str:
@@ -128,3 +129,8 @@ class Conversion:
     def to_yaml(self, all: bool = False, **kwargs: t.Any) -> str:
         kwargs = {'indent': 4, **kwargs}
         return (yaml.dump_all if all else yaml.dump)(self._document, **kwargs)
+
+    @classmethod
+    def _type_from_suffix(self, type_or_suffix: str) -> str:
+        type = type_or_suffix.lstrip('.')
+        return self._alias.get(type, type)  # assert _ in self._types
