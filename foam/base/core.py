@@ -120,12 +120,13 @@ class Foam:
         return list(map(lambda name: cls.from_remote_demo(name, timeout, warn, verbose), cls.list_demos()))
 
     @classmethod
-    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True) -> 'Self':
+    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True, type:  t.Optional[str] = None) -> 'Self':
         with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
-        self = cls.from_text(text, '.', path.suffix, warn=warn)
+        type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+        self = cls.from_text(text, '.', type_or_suffix, warn=warn)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -133,11 +134,12 @@ class Foam:
         return self
 
     @classmethod
-    def from_path(cls, path: Path, warn: bool = True) -> 'Self':
+    def from_path(cls, path: Path, warn: bool = True, type: t.Optional[str] = None) -> 'Self':
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
-            return cls.from_text(path.read_text(), path.parent, path.suffix, warn=warn)
+            type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+            return cls.from_text(path.read_text(), path.parent, type_or_suffix, warn=warn)
         elif path.is_dir():
             return cls.from_openfoam(path)
         else:

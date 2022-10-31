@@ -72,9 +72,10 @@ class Conversion:
         return cls.from_bytes(text.encode(), type, all)
 
     @classmethod
-    def from_path(cls, path: Path, all: bool = False) -> 'Self':
+    def from_path(cls, path: Path, all: bool = False, type: t.Optional[str] = None) -> 'Self':
         path = p.Path(path)
-        return cls.from_bytes(path.read_bytes(), path.suffix, all)
+        type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+        return cls.from_bytes(path.read_bytes(), type_or_suffix, all)
 
     @classmethod
     def from_json(cls, text: str) -> 'Self':
@@ -111,9 +112,10 @@ class Conversion:
     def to_string(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> str:
         return self.to_bytes(type, all, **kwargs).decode()
 
-    def to_path(self, path: Path, all: bool = False, **kwargs: t.Any) -> p.Path:
+    def to_path(self, path: Path, all: bool = False, type: t.Optional[str] = None, **kwargs: t.Any) -> p.Path:
         path = p.Path(path)
-        path.write_bytes(self.to_bytes(path.suffix, all, **kwargs))
+        type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+        path.write_bytes(self.to_bytes(type_or_suffix, all, **kwargs))
         return path
 
     def to_json(self, **kwargs: t.Any) -> str:

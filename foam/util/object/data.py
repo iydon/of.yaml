@@ -118,13 +118,14 @@ class Data:
         return cls.from_list([default() for _ in range(length)])
 
     @classmethod
-    def load(cls, *paths: Path) -> t.Iterator['Self']:
+    def load(cls, *paths: Path, type: t.Optional[str] = None) -> t.Iterator['Self']:
         for path in map(p.Path, paths):
-            yield cls.loads(path.read_bytes(), path.suffix)
+            type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+            yield cls.loads(path.read_bytes(), type_or_suffix)
 
     @classmethod
-    def load_from_path(cls, *parts: str) -> 'Self':
-        return next(cls.load(p.Path(*parts)))
+    def load_from_path(cls, *parts: str, type: t.Optional[str] = None) -> 'Self':
+        return next(cls.load(p.Path(*parts), type))
 
     @classmethod
     def loads(cls, content: bytes, type_or_suffix: str = 'yaml') -> 'Self':
@@ -133,6 +134,20 @@ class Data:
     @property
     def data(self) -> FoamItem:
         return self._data
+
+    def dump(self, *paths: Path, type: t.Optional[str] = None) -> 'Self':
+        for path in map(p.Path, paths):
+            type_or_suffix = path.suffix if type is None else type  # type or path.suffix
+            path.write_bytes(self.dumps(type_or_suffix))
+        return self
+
+    def dump_to_path(self, *parts: str, type: t.Optional[str] = None) -> 'Self':
+        return self.dump(p.Path(*parts), type)
+
+    def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
+        return Conversion \
+            .from_document(self._data) \
+            .to_bytes(type_or_suffix, all=True, **kwargs)
 
     def is_dict(self) -> bool:
         return isinstance(self._data, dict)
@@ -196,19 +211,6 @@ class Data:
 
     def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys[t.Any], t.Any]]:
         yield from self._items(self._data, with_list=with_list)
-
-    def dump(self, *paths: Path) -> 'Self':
-        for path in map(p.Path, paths):
-            path.write_bytes(self.dumps(path.suffix))
-        return self
-
-    def dump_to_path(self, *parts: str) -> 'Self':
-        return self.dump(p.Path(*parts))
-
-    def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
-        return Conversion \
-            .from_document(self._data) \
-            .to_bytes(type_or_suffix, all=True, **kwargs)
 
     def _items(
         self,
