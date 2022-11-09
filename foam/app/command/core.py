@@ -94,7 +94,7 @@ class Command:
     ) -> t.List[int]:
         '''Inspired by `runApplication` and `runParallel`
 
-        - Reference:
+        Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
         '''
         codes: t.List[int] = [-1] * len(commands)

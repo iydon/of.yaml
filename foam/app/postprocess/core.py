@@ -37,7 +37,7 @@ class PostProcess:
     def logs(self) -> Dict:
         '''Script extract data for each time-step from a log file for graphing
 
-        - Reference:
+        Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
         '''
         if self._logs is None:
@@ -244,7 +244,7 @@ class VTK:
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[Location[float], t.Dict[str, Array[0, 1]]]:
         '''
-        - Reference:
+        Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
         '''
         keys = keys or self.foam.fields

@@ -13,7 +13,7 @@ Path = t.Union[str, p.Path]
 
 class Word:
     '''
-    - Reference:
+    Reference:
         - http://www.gov.cn/zhengce/2020-12/26/content_5574414.htm
     '''
 

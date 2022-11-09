@@ -72,7 +72,7 @@ class Information:
     def search(self, *targets: str, process: bool = True) -> t.Union[str, t.Set[str]]:
         '''`foamSearch` wrapper
 
-        - Reference:
+        Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
         '''
@@ -94,7 +94,7 @@ class Information:
     def search_yaml(self, *targets: str, root: Path = '.') -> t.Dict[t.Hashable, t.Set[str]]:
         '''`foamSearch` in YAML
 
-        - Note:
+        Note:
             - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file
         '''
         from ...base.core import Foam

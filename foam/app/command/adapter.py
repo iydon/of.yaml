@@ -52,7 +52,7 @@ class AppBase(Default):
 
 class AppByTimeI(AppBase):
     '''
-    - solver:
+    solver:
         - multiphase:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/multiphase/cavitatingFoam/cavitatingFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/multiphase/driftFluxFoam/driftFluxFoam.C
@@ -118,7 +118,7 @@ class AppByTimeI(AppBase):
         - basic:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/laplacianFoam/laplacianFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/scalarTransportFoam/scalarTransportFoam.C
-    - utility:
+    utility:
         - postProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/postProcess/postProcess.C
         - parallelProcessing:
@@ -134,7 +134,7 @@ class AppByTimeI(AppBase):
 
 class AppByTimeII(AppBase):
     '''
-    - utility:
+    utility:
         - postProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK.C
     '''
@@ -147,7 +147,7 @@ class AppByTimeII(AppBase):
 
 class AppByIterationI(AppBase):
     '''
-    - solver:
+    solver:
         - electromagnetics:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/electromagnetics/electrostaticFoam/electrostaticFoam.C
     '''
@@ -160,7 +160,7 @@ class AppByIterationI(AppBase):
 
 class AppByIterationII(AppBase):
     '''
-    - solver:
+    solver:
         - stressAnalysis:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidEquilibriumDisplacementFoam/solidEquilibriumDisplacementFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidDisplacementFoam/solidDisplacementFoam.C
@@ -174,7 +174,7 @@ class AppByIterationII(AppBase):
 
 class AppByProcessor(AppBase):
     '''
-    - utility:
+    utility:
         - parallelProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
@@ -194,7 +194,7 @@ class AppByProcessor(AppBase):
 
 class AppByOther(AppBase):
     '''
-    - solver:
+    solver:
         - combustion:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/combustion/XiFoam/XiEngineFoam/XiEngineFoam.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/combustion/coldEngineFoam/coldEngineFoam.C
@@ -207,7 +207,7 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/financial/financialFoam/financialFoam.C
         - basic:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/basic/potentialFoam/potentialFoam.C
-    - utility:
+    utility:
         - postProcessing:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/steadyParticleTracks.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/lagrangian/particleTracks/particleTracks.C

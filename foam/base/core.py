@@ -235,7 +235,7 @@ class Foam:
     def application(self) -> str:
         '''Inspired by `getApplication`
 
-        - Reference:
+        Reference:
             - foamDictionary -disableFunctionEntries -entry application -value system/controlDict
         '''
         for key, value in self['foam']['system', 'controlDict'].items():
@@ -247,7 +247,7 @@ class Foam:
     def number_of_processors(self) -> int:
         '''Inspired by `getNumberOfProcessors`
 
-        - Reference:
+        Reference:
             - foamDictionary -disableFunctionEntries -entry numberOfSubdomains -value system/decomposeParDict
         '''
         try:
