@@ -55,7 +55,7 @@ class Data:
                 ans = ans[key]
             return ans
         elif isinstance(keys, list):
-            # TODO: DeprecationWarning
+            # TODO: throw DeprecationWarning
             return self.__getitem__(tuple(keys))
         else:
             return self._data[keys]
@@ -74,7 +74,7 @@ class Data:
                     raise Exception(f'Unknown type "{type(ans).__name__}"')
             ans[keys[-1]] = value
         elif isinstance(keys, list):
-            # TODO: DeprecationWarning
+            # TODO: throw DeprecationWarning
             self.__setitem__(tuple(keys), value)
         else:
             self._data[keys] = value

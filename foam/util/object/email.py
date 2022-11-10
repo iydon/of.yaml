@@ -146,7 +146,7 @@ class SMTP:
         return self
 
     def quit(self) -> None:
-        # NOTE: Lifetime of this instance ends after quit is called, so it will not return self
+        # NOTE: lifetime of this instance ends after quit is called, so it will not return self
         try:
             self._smtp.quit()
         except smtplib.SMTPServerDisconnected:
