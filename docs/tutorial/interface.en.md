@@ -265,7 +265,7 @@ CLASSES
      |  run(self, commands: List[Union[str, Dict[str, Any]]], suffix: str = '', overwrite: bool = False, exception: bool = True, parallel: bool = True, unsafe: bool = False) -> List[int]
      |      Inspired by `runApplication` and `runParallel`
      |
-     |      - Reference:
+     |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
      |
      |  which(self, command: str) -> Union[str, NoneType]
@@ -315,13 +315,13 @@ CLASSES
      |  __init__(self, document: Union[Dict[str, Any], List[Any]]) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
      |
-     |  to_bytes(self, type: str = 'json', all: bool = False, **kwargs: Any) -> bytes
+     |  to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: Any) -> bytes
      |
      |  to_document(self) -> Union[Dict[str, Any], List[Any]]
      |
      |  to_json(self, **kwargs: Any) -> str
      |
-     |  to_path(self, path: Union[str, pathlib.Path], all: bool = False, **kwargs: Any) -> pathlib.Path
+     |  to_path(self, path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None, **kwargs: Any) -> pathlib.Path
      |
      |  to_pickle(self, **kwargs: Any) -> bytes
      |
@@ -340,13 +340,13 @@ CLASSES
      |
      |  auto_from_string(text: str, all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_bytes(content: bytes, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  from_bytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
      |
      |  from_document(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
      |  from_json(text: str) -> 'Self' from builtins.type
      |
-     |  from_path(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |  from_path(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
      |  from_pickle(text: bytes) -> 'Self' from builtins.type
      |
@@ -364,16 +364,11 @@ CLASSES
      |
      |  __weakref__
      |      list of weak references to the object (if defined)
-     |
-     |  ----------------------------------------------------------------------
-     |  Data and other attributes defined here:
-     |
-     |  types = {'json', 'pickle', 'toml', 'yaml'}
 
     class Data(builtins.object)
      |  Data(data: Union[Dict[str, Any], List[Any]]) -> None
      |
-     |  Multi-key dictionary
+     |  Multi-key dictionary or list (not recommended)
      |
      |  Example:
      |      >>> data = Data.from_dict_keys(
@@ -416,19 +411,35 @@ CLASSES
      |
      |  contains(self, *keys: Any) -> bool
      |
-     |  dump(self, *paths: Union[str, pathlib.Path]) -> 'Self'
+     |  dump(self, *paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> 'Self'
      |
-     |  dump_to_path(self, *parts: str) -> 'Self'
+     |  dump_to_path(self, *parts: str, type: Union[str, NoneType] = None) -> 'Self'
      |
-     |  dumps(self, type: str = 'yaml', **kwargs: Any) -> bytes
+     |  dumps(self, type_or_suffix: str = 'yaml', **kwargs: Any) -> bytes
      |
      |  get(self, key: Any, default: Union[Any, NoneType] = None) -> Any
      |
+     |  gets(self, *keys: Any, default: Union[Any, NoneType] = None) -> Any
+     |
+     |  is_dict(self) -> bool
+     |
+     |  is_list(self) -> bool
+     |
+     |  is_other(self) -> bool
+     |
      |  items(self, with_list: bool = False) -> Iterator[Tuple[Union[Any, Tuple[Any, ...]], Any]]
      |
-     |  set_default(self, *keys: Any, default: Any = None) -> 'Self'
+     |  set_default(self, *keys: Any, default: Union[Any, NoneType] = None) -> 'Self'
      |
      |  set_via_dict(self, data: Dict[str, Any]) -> 'Self'
+     |
+     |  setdefault(self, key: Any, default: Union[Any, NoneType] = None) -> Any
+     |
+     |  to_any(self) -> Union[Dict[str, Any], List[Any]]
+     |
+     |  to_dict(self) -> Dict[str, Any]
+     |
+     |  to_list(self) -> List[Any]
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
@@ -441,13 +452,13 @@ CLASSES
      |
      |  from_list(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f772047c820>) -> 'Self' from builtins.type
+     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f88662e3160>) -> 'Self' from builtins.type
      |
-     |  load(*paths: Union[str, pathlib.Path]) -> Iterator[ForwardRef('Self')] from builtins.type
+     |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
      |
-     |  load_from_path(*parts: str) -> 'Self' from builtins.type
+     |  load_from_path(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
-     |  loads(content: bytes, type: str = 'yaml') -> 'Self' from builtins.type
+     |  loads(content: bytes, type_or_suffix: str = 'yaml') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -494,7 +505,7 @@ CLASSES
      |
      |  set_subject(self, value: str) -> 'Self'
      |
-     |  to_message(self) -> 'EmailMessage'
+     |  to_message(self) -> email.message.EmailMessage
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
@@ -602,25 +613,25 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  as_placeholder() -> 'Self' from builtins.type
+     |  default() -> 'Self' from builtins.type
      |
-     |  from_demo(name: str = 'cavity', warn: bool = False) -> 'Self' from builtins.type
+     |  from_demo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
      |
-     |  from_demos(warn: bool = False) -> List[ForwardRef('Self')] from builtins.type
+     |  from_demos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
      |
      |  from_openfoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |      From OpenFOAM directory
      |
-     |  from_path(path: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |  from_path(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |      Supported path mode: file, directory
      |
-     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False) -> 'Self' from builtins.type
+     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
      |
-     |  from_remote_demos(timeout: Union[float, NoneType] = None, warn: bool = False) -> List[ForwardRef('Self')] from builtins.type
+     |  from_remote_demos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
      |
-     |  from_remote_path(url: str, timeout: Union[float, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |  from_remote_path(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_text(text: Union[bytes, str], root: Union[str, pathlib.Path], suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |  from_text(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
      |      Supported formats: please refer to `Conversion`
      |
      |  from_yaml(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
@@ -673,22 +684,22 @@ CLASSES
      |  search(self, *targets: str, process: bool = True) -> Union[str, Set[str]]
      |      `foamSearch` wrapper
      |
-     |      - Reference:
+     |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
      |
      |  search_yaml(self, *targets: str, root: Union[str, pathlib.Path] = '.') -> Dict[Hashable, Set[str]]
      |      `foamSearch` in YAML
      |
-     |      - Note:
+     |      Note:
      |          - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |  default() -> 'Self' from builtins.type
      |
-     |  from_nothing() -> 'Self' from builtins.type
+     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -743,7 +754,7 @@ CLASSES
      |  logs
      |      Script extract data for each time-step from a log file for graphing
      |
-     |      - Reference:
+     |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
      |
      |  vtks
@@ -916,15 +927,15 @@ CLASSES
      |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[str, ForwardRef('_numpy.ndarray')]
      |
      |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, ForwardRef('_numpy.ndarray')]]
-     |      - Reference:
+     |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_file(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
-     |
      |  from_foam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |
+     |  from_path(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -1100,5 +1111,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.12.6
+    0.13.0
 ```
