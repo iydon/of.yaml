@@ -12,6 +12,14 @@ def dict_without_keys(data: dict, *keys: str) -> dict:
     return {key: data[key] for key in data.keys() ^ keys}
 
 
+def dry_run(recover: bool = False) -> None:
+    import subprocess
+
+    from ..util.object.popen import Origin, DryRun
+
+    subprocess.Popen = Origin if recover else DryRun
+
+
 def grammar() -> str:
     return (root/'static'/'grammar'/'openfoam.lark').read_text()
 

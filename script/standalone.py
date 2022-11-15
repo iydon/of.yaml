@@ -31,7 +31,7 @@ class show:
             3. remove redundant line breaks
         '''
         br = '\n'
-        pattern_im = re.compile(r'from \.[\w.]* import \w+')
+        pattern_im = re.compile(r'from \.[\w.]* import [\w, ]+')
         pattern_br = re.compile(fr'{br}{{3,}}')
         # step_1 = obj.replace(': Foam', ': \'Foam\'').replace(': t.Optional[Foam]', ': t.Optional[\'Foam\']')
         step_1 = pattern_im.sub('', obj)
@@ -108,6 +108,8 @@ Document = FoamItem = {base.type.FoamItem}
 FoamData = {base.type.FoamData}
 Path = {base.type.Path}
 
+Origin = subprocess.Popen
+
 _NOT_FOUND = object()
 
 class compat(types.ModuleType):
@@ -136,6 +138,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(util.decorator.Match)}
 {show.source(util.decorator.suppress)}
 {show.source(util.function.dict_without_keys)}
+{show.source(util.function.dry_run)}
 {show.source(util.object.case.CaseBase)}
 {show.source(util.object.case.CaseParameter)}
 {show.source(util.object.conversion.Conversion)}
@@ -143,6 +146,7 @@ shutil.copytree = compat.shutil.copytree
 {show.source(util.object.email.Envelope)}
 {show.source(util.object.email.SMTP)}
 {show.source(util.object.figure.Figure)}
+{show.source(util.object.popen.DryRun)}
 {show.source(util.object.timer.Timer)}
 {show.source(util.object.timer.TimerResult)}
 {show.source(util.object.version.Version)}
