@@ -9,6 +9,12 @@ import foam
 from foam import app, base, compat, parse, util
 
 
+raise DeprecationWarning(
+    'This feature is no longer supported since version 0.13.0, '
+    'please install ifoam module directly using a pip-like tool'
+)
+
+
 class show:
     @classmethod
     def source(cls, obj: object) -> str:
