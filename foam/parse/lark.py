@@ -10,6 +10,7 @@ from ..base.lib import lark
 from ..base.type import Dict, FoamData, List, Path
 from ..compat.functools import cached_property
 from ..util.function import grammar
+from ..util.implementation import Singleton
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -17,7 +18,7 @@ if t.TYPE_CHECKING:
     import lark as _lark
 
 
-class Lark:
+class Lark(Singleton):
     '''Lark is a parsing toolkit for Python
 
     TODO:
@@ -25,8 +26,6 @@ class Lark:
     '''
 
     order = ['meta', 'foam', 'static', 'other']
-
-    _instance = None
 
     def __init__(self, path: Path, embed: bool = True) -> None:
         self._root = p.Path(path)
@@ -37,9 +36,7 @@ class Lark:
 
     @classmethod
     def from_path(cls, path: Path, **kwargs: t.Any) -> 'Self':
-        if cls._instance is None:
-            cls._instance = cls(path, **kwargs)
-        return cls._instance
+        return cls.new(path, **kwargs)
 
     @property
     def meta(self) -> Dict:

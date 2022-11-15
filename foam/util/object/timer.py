@@ -18,7 +18,7 @@ class Timer:
 
     Example:
         >>> timer = Timer.default()
-        >>> with timer.new('1', '2', '3') as t:
+        >>> with timer.tic_toc('1', '2', '3') as t:
         ...     time.sleep(9)
         >>> print(float(t), timer['1', '2', '3'])
         9.00686868999037 9.00686868999037
@@ -96,7 +96,7 @@ class Timer:
         return self._cache
 
     @contextlib.contextmanager
-    def new(self, *labels: t.Hashable, builtin: bool = False) -> t.Iterator['TimerResult']:
+    def tic_toc(self, *labels: t.Hashable, builtin: bool = False) -> t.Iterator['TimerResult']:
         if labels in self._cache:
             w.warn(f'Label {labels} already exists')
         try:

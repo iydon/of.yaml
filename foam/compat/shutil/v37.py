@@ -2,7 +2,6 @@ __all__ = ['copytree']
 
 
 import shutil
-import sys
 
 
 def copytree(

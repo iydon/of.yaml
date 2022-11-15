@@ -17,8 +17,5 @@ elif version == (3, 9):
 elif version == (3, 10):
     cached_property = f.cached_property
     singledispatchmethod = f.singledispatchmethod
-elif version == (3, 11):
-    cached_property = f.cached_property
-    singledispatchmethod = f.singledispatchmethod
 else:
     raise Exception('Current version not supported')

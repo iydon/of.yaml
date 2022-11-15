@@ -5,12 +5,13 @@ import typing as t
 
 from ..base.type import Dict, List
 from ..compat.functools import singledispatchmethod
+from ..util.implementation import Singleton
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Case:
+class Case(Singleton):
     '''OpenFOAM case parser
 
     Example:
@@ -39,14 +40,6 @@ class Case:
         internalField uniform (0 0 0);
         boundaryField {movingWall {type fixedValue; value uniform (1 0 0);} fixedWalls {type noSlip;} frontAndBack {type empty;}}
     '''
-
-    _instance = None
-
-    @classmethod
-    def default(cls) -> 'Self':
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
 
     def data(self, data: Dict) -> t.Iterator[str]:
         for key, value in data.items():
