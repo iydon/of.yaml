@@ -56,7 +56,7 @@ class Conversion:
 
     @classmethod
     def from_bytes(cls, content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self':
-        type = cls._type_from_suffix(type_or_suffix)
+        type = cls.type_from_suffix(type_or_suffix)
         if type not in cls._types:
             raise Exception(f'"{type}" is not a valid type string')
         else:
@@ -94,11 +94,23 @@ class Conversion:
         document = list(yaml.load_all(text)) if all else yaml.load(text)
         return cls(document)
 
+    @classmethod
+    def type_from_suffix(self, type_or_suffix: str) -> str:
+        type = type_or_suffix.lstrip('.')
+        return self._alias.get(type, type)  # assert _ in self._types
+
+    @classmethod
+    def suffixes(cls, dot: bool = True) -> t.Set[str]:
+        ans = cls._types | cls._alias.keys()
+        if dot:
+            ans = set(map(lambda x: f'.{x}', ans))
+        return ans
+
     def to_document(self) -> Document:
         return self._document
 
     def to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: t.Any) -> bytes:
-        type = self._type_from_suffix(type_or_suffix)
+        type = self.type_from_suffix(type_or_suffix)
         if type not in self._types:
             raise Exception(f'"{type}" is not a valid type string')
         else:
@@ -131,8 +143,3 @@ class Conversion:
     def to_yaml(self, all: bool = False, **kwargs: t.Any) -> str:
         kwargs = {'indent': 4, **kwargs}
         return (yaml.dump_all if all else yaml.dump)(self._document, **kwargs)
-
-    @classmethod
-    def _type_from_suffix(self, type_or_suffix: str) -> str:
-        type = type_or_suffix.lstrip('.')
-        return self._alias.get(type, type)  # assert _ in self._types

@@ -8,6 +8,7 @@ import re
 import typing as t
 
 from ...base.type import Path
+from ...util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -97,6 +98,10 @@ class Information:
         Note:
             - `targets` should be as detailed as possible, as it is assumed that `targets` will only appear once in a file
         '''
+        return self.search_path(*targets, root=root, suffixes={'.yaml', '.yml'})
+
+    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[t.Set[str]] = None) -> t.Dict[t.Hashable, t.Set[str]]:
+        '''`foamSearch` in configuration'''
         from ...base.core import Foam
 
         assert targets
@@ -105,8 +110,9 @@ class Information:
         hashing = lambda string: string.lower().replace(' ', '')
         hashed_targets = tuple(map(hashing, targets))
         length = len(targets)
+        suffixes = suffixes or Conversion.suffixes(dot=True)
         for path in p.Path(root).rglob('*'):
-            if path.suffix in {'.yaml', '.yml'}:
+            if path.suffix in suffixes:
                 # try-except or try-except-else?
                 try:
                     foam = Foam.from_path(path, warn=False)
