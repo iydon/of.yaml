@@ -2,12 +2,12 @@ __all__ = ['Timer', 'TimerResult']
 
 
 import contextlib
-import functools as f
 import time
 import typing as t
 import warnings as w
 
 from ...base.type import Keys
+from ...compat.functools import cached_property
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -113,7 +113,7 @@ class Timer:
         time.sleep(seconds)
         return self
 
-    @f.cached_property
+    @cached_property
     def _result(self) -> type:
         return type('TimerResult', (), {
             '__slots__': ('_labels', ),

@@ -1,7 +1,6 @@
 __all__ = ['Lark']
 
 
-import functools as f
 import os
 import pathlib as p
 import re
@@ -9,6 +8,7 @@ import typing as t
 
 from ..base.lib import lark
 from ..base.type import Dict, FoamData, List, Path
+from ..compat.functools import cached_property
 from ..util.function import grammar
 
 if t.TYPE_CHECKING:
@@ -57,7 +57,7 @@ class Lark:
     def other(self) -> Dict:
         return {'pipeline': []}
 
-    @f.cached_property
+    @cached_property
     def lark(self) -> '_lark.Lark':
         kwargs = {
             'debug': False,

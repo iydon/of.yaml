@@ -8,6 +8,7 @@ import typing as t
 
 from ..base.lib import py7zr
 from ..base.type import Dict, Keys
+from ..compat.shutil import copytree
 from ..util.decorator import Match
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
@@ -76,7 +77,7 @@ class Static:
     def _(self, static: Dict) -> None:
         out, in_ = self._out(static['name']), self._in(static['data'])
         if in_.is_dir():
-            shutil.copytree(in_, out, dirs_exist_ok=True)
+            copytree(in_, out, dirs_exist_ok=True)
         elif in_.is_file():
             shutil.copyfile(in_, out)
         else:

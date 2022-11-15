@@ -1,10 +1,10 @@
 __all__ = ['Case']
 
 
-import functools as f
 import typing as t
 
 from ..base.type import Dict, List
+from ..compat.functools import singledispatchmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -58,7 +58,7 @@ class Case:
             key = f'"{key}"'
         return key
 
-    @f.singledispatchmethod
+    @singledispatchmethod
     def value(self, value: t.Any) -> str:
         raise Exception(f'Unknown type "{type(value).__name__}"')
 

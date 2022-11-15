@@ -1,7 +1,6 @@
 __all__ = ['Command']
 
 
-import functools as f
 import pathlib as p
 import shlex
 import shutil
@@ -11,6 +10,7 @@ import warnings as w
 
 from .adapter import Default, Apps
 from ...base.type import Dict
+from ...compat.functools import cached_property
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -54,7 +54,7 @@ class Command:
                 logs.add(path)
         return logs
 
-    @f.cached_property
+    @cached_property
     def macros(self) -> t.Dict[str, str]:
         '''Macros that can be used in the pipeline field'''
         macros = {

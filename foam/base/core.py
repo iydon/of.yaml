@@ -13,6 +13,7 @@ import urllib.request
 import warnings as w
 
 from .type import Dict, FoamData, Path
+from ..compat.functools import cached_property
 from ..parse import Parser
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
@@ -231,7 +232,7 @@ class Foam:
         shutil.rmtree(self.destination)
         self._dest = None
 
-    @f.cached_property
+    @cached_property
     def application(self) -> str:
         '''Inspired by `getApplication`
 
@@ -243,7 +244,7 @@ class Foam:
                 return value
         raise Exception('Application not found')
 
-    @f.cached_property
+    @cached_property
     def number_of_processors(self) -> int:
         '''Inspired by `getNumberOfProcessors`
 
@@ -255,11 +256,11 @@ class Foam:
         except Exception:
             return 1
 
-    @f.cached_property
+    @cached_property
     def pipeline(self) -> t.List[t.Union[str, Dict]]:
         return (self['other'] or {}).get('pipeline', [])
 
-    @f.cached_property
+    @cached_property
     def environ(self) -> t.Dict[str, str]:
         '''OpenFOAM environments'''
         return {
@@ -268,11 +269,11 @@ class Foam:
             if any(key.startswith(p) for p in ['FOAM_', 'WM_'])
         }
 
-    @f.cached_property
+    @cached_property
     def fields(self) -> t.Set[str]:
         return {v['FoamFile']['object'] for v in self['foam']['0'].values()}
 
-    @f.cached_property
+    @cached_property
     def ndim(self) -> t.Optional[int]:
         # TODO: verify that this method is reliable
         system = self['foam']['system']
