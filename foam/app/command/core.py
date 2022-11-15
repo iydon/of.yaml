@@ -125,7 +125,7 @@ class Command:
     def raw(self, command: str, output: bool = True) -> s.CompletedProcess:
         '''Execute raw command in case directory'''
         args = shlex.split(command)
-        return self._subprocess_run(args, cwd=self._foam._dest, capture_output=output)  # Deliberate use of the _dest
+        return s.run(args, cwd=self._foam._dest, capture_output=output)  # Deliberate use of the _dest
 
     def which(self, command: str) -> t.Optional[str]:
         stdout = self.raw(f'which {command}', output=True).stdout.decode().strip()
@@ -155,43 +155,3 @@ class Command:
     def _popen(self, args: t.List[str], unsafe: bool) -> s.Popen:
         cmd = ' '.join(args) if unsafe else args
         return s.Popen(cmd, cwd=self._foam.destination, shell=unsafe, stdout=s.PIPE)
-
-    def _subprocess_run(
-        self,
-        *popenargs: t.Union[str, t.List[str]],
-        capture_output: bool = False, check: bool = False,
-        input: t.Optional[int] = None, timeout: t.Optional[float] = None,
-        **kwargs: t.Any,
-    ) -> s.CompletedProcess:
-        '''
-        Reference:
-            - subprocess.run
-        '''
-        if input is not None:
-            if kwargs.get('stdin') is not None:
-                raise ValueError('stdin and input arguments may not both be used.')
-            kwargs['stdin'] = s.PIPE
-        if capture_output:
-            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
-                raise ValueError('stdout and stderr arguments may not be used '
-                                'with capture_output.')
-            kwargs['stdout'] = s.PIPE
-            kwargs['stderr'] = s.PIPE
-        with s.Popen(*popenargs, **kwargs) as process:
-            try:
-                stdout, stderr = process.communicate(input, timeout=timeout)
-            except s.TimeoutExpired as exc:
-                process.kill()
-                if getattr(s, '_mswindows', False):
-                    exc.stdout, exc.stderr = process.communicate()
-                else:
-                    process.wait()
-                raise
-            except:  # Including KeyboardInterrupt, communicate handled that.
-                process.kill()
-                # We don't call process.wait() as .__exit__ does that for us.
-                raise
-            retcode = process.poll()
-            if check and retcode:
-                raise s.CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
-        return s.CompletedProcess(process.args, retcode, stdout, stderr)

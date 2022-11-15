@@ -1,7 +1,8 @@
-__all__ = ['dict_without_keys', 'grammar', 'license']
+__all__ = ['dict_without_keys', 'dry_run', 'grammar', 'license']
 
 
 import pathlib as p
+import subprocess
 
 
 root = p.Path(__file__).parents[1]
@@ -13,8 +14,6 @@ def dict_without_keys(data: dict, *keys: str) -> dict:
 
 
 def dry_run(recover: bool = False) -> None:
-    import subprocess
-
     from ..util.object.popen import Origin, DryRun
 
     subprocess.Popen = Origin if recover else DryRun
