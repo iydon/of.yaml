@@ -7,7 +7,7 @@ In [1]: from foam import Foam
 
 In [2]: # core
 
-In [3]: foam = Foam.from_file('extra/tutorial/tutorials/7/incompressible/simpleFoam/airFoil2D.yaml')
+In [3]: foam = Foam.fromPath('extra/tutorial/tutorials/7/incompressible/simpleFoam/airFoil2D.yaml')
 
 In [4]: foam.meta
 Out[4]:
@@ -89,7 +89,7 @@ NAME
 
 DESCRIPTION
     Example:
-        >>> foam = Foam.from_remote_demo('cavity')
+        >>> foam = Foam.fromRemoteDemo('cavity')
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
         >>> foam.save('cavity')
         >>> foam.cmd.all_run()
@@ -102,9 +102,6 @@ PACKAGE CONTENTS
     namespace
     parse (package)
     util (package)
-
-SUBMODULES
-    _compat
 
 CLASSES
     abc.ABC(builtins.object)
@@ -258,7 +255,7 @@ CLASSES
      |  all_run(self, overwrite: bool = False, exception: bool = False, parallel: bool = True, unsafe: bool = True) -> List[int]
      |      Inspired by  `Allrun`
      |
-     |  macros = <foam.compat.functools.cached_property object>
+     |  macros = <functools.cached_property object>
      |  raw(self, command: str, output: bool = True) -> subprocess.CompletedProcess
      |      Execute raw command in case directory
      |
@@ -273,9 +270,13 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
      |
-     |  from_foam_without_asserting(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoamWithoutAsserting(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_foam_without_asserting = fromFoamWithoutAsserting(foam: 'Foam') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -302,7 +303,7 @@ CLASSES
      |
      |  Example:
      |      >>> data = {'a': 1, 'b': [2, 3], 'c': {'4': 5}}
-     |      >>> print(Conversion.from_document(data).to_yaml())
+     |      >>> print(Conversion.fromDocument(data).to_yaml())
      |      a: 1
      |      b:
      |      - 2
@@ -334,27 +335,55 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  auto_from_bytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
+     |  autoFromBytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
      |
-     |  auto_from_path(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |  autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
      |
-     |  auto_from_string(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  autoFromString(text: str, all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_bytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  auto_from_bytes = autoFromBytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_document(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  auto_from_path = autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_json(text: str) -> 'Self' from builtins.type
+     |  auto_from_string = autoFromString(text: str, all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_path(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
      |
-     |  from_pickle(text: bytes) -> 'Self' from builtins.type
+     |  fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
-     |  from_string(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  fromJSON(text: str) -> 'Self' from builtins.type
      |
-     |  from_toml(text: str) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_yaml(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  fromPickle(text: bytes) -> 'Self' from builtins.type
+     |
+     |  fromString(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |
+     |  fromTOML(text: str) -> 'Self' from builtins.type
+     |
+     |  fromYAML(text: str, all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_bytes = fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_document = fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |
+     |  from_json = fromJSON(text: str) -> 'Self' from builtins.type
+     |
+     |  from_path = fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_pickle = fromPickle(text: bytes) -> 'Self' from builtins.type
+     |
+     |  from_string = fromString(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |
+     |  from_toml = fromTOML(text: str) -> 'Self' from builtins.type
+     |
+     |  from_yaml = fromYAML(text: str, all: bool = False) -> 'Self' from builtins.type
+     |
+     |  suffixes(dot: bool = True) -> Set[str] from builtins.type
+     |
+     |  typeFromSuffix(type_or_suffix: str) -> str from builtins.type
+     |
+     |  type_from_suffix = typeFromSuffix(type_or_suffix: str) -> str from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Data descriptors defined here:
@@ -371,7 +400,7 @@ CLASSES
      |  Multi-key dictionary or list (not recommended)
      |
      |  Example:
-     |      >>> data = Data.from_dict_keys(
+     |      >>> data = Data.fromDictKeys(
      |      ...     ('left', 'x'), ('left', 'y'),
      |      ...     ('right', 'x'), ('right', 'y'),
      |      ...     default=list,
@@ -444,19 +473,31 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_any(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
-     |  from_dict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
+     |  fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_dict_keys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
+     |  fromDictKeys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
      |
-     |  from_list(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
+     |  fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length(length: int, default: Callable = <function Data.<lambda> at 0x7f88662e3160>) -> 'Self' from builtins.type
+     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fbab9e43af0>) -> 'Self' from builtins.type
+     |
+     |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |
+     |  from_dict = fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_dict_keys = fromDictKeys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
+     |
+     |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fbab9e43af0>) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
      |
-     |  load_from_path(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  load_from_path = loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
      |  loads(content: bytes, type_or_suffix: str = 'yaml') -> 'Self' from builtins.type
      |
@@ -530,14 +571,17 @@ CLASSES
      |  Matplotlib simple wrapper
      |
      |  Example:
-     |      >>> Figure.new(figsize=(4, 3)) \
+     |      >>> Figure.setRcParams(
+     |      ...     ('axes.unicode_minus', False),
+     |      ...     ('font.sans-serif', ['FandolHei']),
+     |      ... )
+     |      >>> Figure.new(figsize=(8, 6)) \
      |      ...     .plot([1, 2, 3], [3, 2, 1], label='a') \
      |      ...     .plot([1, 2, 3], [2, 1, 3], label='b') \
-     |      ...     .set(xlabel='x label', ylabel='y label', title='title') \
+     |      ...     .set_ax(xlabel='x label', ylabel='y label', title='title') \
      |      ...     .grid() \
      |      ...     .legend() \
      |      ...     .save('demo.png')
-     |      <foam.util.object.figure.Figure at ...>
      |
      |  Methods defined here:
      |
@@ -552,12 +596,16 @@ CLASSES
      |
      |  save(self, path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self'
      |
-     |  set(self, *args: Any, **kwargs: Any) -> 'Self'
+     |  set_ax(self, *args: Any, **kwargs: Any) -> 'Self'
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
      |  new(**kwargs: Any) -> 'Self' from builtins.type
+     |
+     |  setRcParams(*items: Tuple[str, Any]) -> 'Self' from builtins.type
+     |
+     |  set_rc_params = setRcParams(*items: Tuple[str, Any]) -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Data descriptors defined here:
@@ -571,6 +619,8 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Data and other attributes defined here:
      |
+     |  DEFAULT = {'legend': {'bbox_to_anchor': (1.01, 1), 'borderaxespad': 0,...
+     |
      |  __annotations__ = {'_ax': '_axes.SubplotBase', '_fig': '_figure.Figure...
 
     class Foam(builtins.object)
@@ -579,7 +629,7 @@ CLASSES
      |  Convert multiple dictionary type data to OpenFOAM test case
      |
      |  Example:
-     |      >>> foam = Foam.from_remote_demo('cavity')
+     |      >>> foam = Foam.fromRemoteDemo('cavity')
      |      >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
      |      >>> foam.save('cavity')
      |      >>> foam.cmd.all_run()
@@ -597,14 +647,14 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
-     |  application = <foam.compat.functools.cached_property object>
+     |  application = <functools.cached_property object>
      |  copy(self) -> 'Self'
      |
-     |  environ = <foam.compat.functools.cached_property object>
-     |  fields = <foam.compat.functools.cached_property object>
-     |  ndim = <foam.compat.functools.cached_property object>
-     |  number_of_processors = <foam.compat.functools.cached_property object>
-     |  pipeline = <foam.compat.functools.cached_property object>
+     |  environ = <functools.cached_property object>
+     |  fields = <functools.cached_property object>
+     |  ndim = <functools.cached_property object>
+     |  number_of_processors = <functools.cached_property object>
+     |  pipeline = <functools.cached_property object>
      |  reset(self) -> 'Self'
      |
      |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> 'Self'
@@ -615,28 +665,51 @@ CLASSES
      |
      |  default() -> 'Self' from builtins.type
      |
-     |  from_demo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
      |
-     |  from_demos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
      |
-     |  from_openfoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |      From OpenFOAM directory
      |
-     |  from_path(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |      Supported path mode: file, directory
      |
-     |  from_remote_demo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
      |
-     |  from_remote_demos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
      |
-     |  from_remote_path(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_text(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |  fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
      |      Supported formats: please refer to `Conversion`
      |
-     |  from_yaml(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |  fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
      |
-     |  list_demos() -> List[str] from builtins.type
+     |  from_demo = fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |
+     |  from_demos = fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |
+     |  from_openfoam = fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |      From OpenFOAM directory
+     |
+     |  from_path = fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |      Supported path mode: file, directory
+     |
+     |  from_remote_demo = fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |
+     |  from_remote_demos = fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |
+     |  from_remote_path = fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |
+     |  from_text = fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |      Supported formats: please refer to `Conversion`
+     |
+     |  from_yaml = fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |
+     |  listDemos() -> List[str] from builtins.type
+     |
+     |  list_demos = listDemos() -> List[str] from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -688,6 +761,9 @@ CLASSES
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
      |
+     |  search_path(self, *targets: str, root: Union[str, pathlib.Path] = '.', suffixes: Union[Set[str], NoneType] = None) -> Dict[Hashable, Set[str]]
+     |      `foamSearch` in configuration
+     |
      |  search_yaml(self, *targets: str, root: Union[str, pathlib.Path] = '.') -> Dict[Hashable, Set[str]]
      |      `foamSearch` in YAML
      |
@@ -699,7 +775,9 @@ CLASSES
      |
      |  default() -> 'Self' from builtins.type
      |
-     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -746,7 +824,9 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_foam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |
+     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -830,7 +910,7 @@ CLASSES
      |
      |  Example:
      |      >>> timer = Timer.default()
-     |      >>> with timer.new('1', '2', '3') as t:
+     |      >>> with timer.tic_toc('1', '2', '3') as t:
      |      ...     time.sleep(9)
      |      >>> print(float(t), timer['1', '2', '3'])
      |      9.00686868999037 9.00686868999037
@@ -856,9 +936,9 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
-     |  new(self, *labels: Hashable, builtin: bool = False) -> Iterator[ForwardRef('TimerResult')]
-     |
      |  reset(self) -> 'Self'
+     |
+     |  tic_toc(self, *labels: Hashable, builtin: bool = False) -> Iterator[ForwardRef('TimerResult')]
      |
      |  wait(self, seconds: float) -> 'Self'
      |
@@ -872,13 +952,22 @@ CLASSES
      |  monotonic() -> 'Self' from builtins.type
      |      Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
      |
-     |  perf_counter() -> 'Self' from builtins.type
+     |  perfCounter() -> 'Self' from builtins.type
      |      Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
      |
-     |  process_time() -> 'Self' from builtins.type
+     |  perf_counter = perfCounter() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
+     |
+     |  processTime() -> 'Self' from builtins.type
      |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
      |
-     |  thread_time() -> 'Self' from builtins.type
+     |  process_time = processTime() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
+     |
+     |  threadTime() -> 'Self' from builtins.type
+     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
+     |
+     |  thread_time = threadTime() -> 'Self' from builtins.type
      |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
      |
      |  time() -> 'Self' from builtins.type
@@ -933,9 +1022,13 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  from_foam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |  fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
      |
-     |  from_path(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |
+     |  from_foam = fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |
+     |  from_path = fromPath(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -971,7 +1064,7 @@ CLASSES
      |  Version named tuple
      |
      |  Example:
-     |      >>> version = Version.from_string('1.2.x')
+     |      >>> version = Version.fromString('1.2.x')
      |      >>> version.major, version.minor, version.other, version.micro
      |      (1, 2, 'x', None)
      |      >>> version.to_string()
@@ -1013,7 +1106,9 @@ CLASSES
      |  _make(iterable) from builtins.type
      |      Make a new Version object from a sequence or iterable
      |
-     |  from_string(version: str) -> 'Self' from builtins.type
+     |  fromString(version: str) -> 'Self' from builtins.type
+     |
+     |  from_string = fromString(version: str) -> 'Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Static methods defined here:
@@ -1111,5 +1206,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.13.0
+    0.13.1
 ```

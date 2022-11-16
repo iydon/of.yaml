@@ -90,7 +90,7 @@ Save the following demo code as a separate file (e.g. `demo.py`).
 ```python
 from foam import Foam
 
-foam = Foam.from_demo('cavity')
+foam = Foam.fromDemo('cavity')
 foam['foam']['system', 'controlDict', 'endTime'] = 1.0
 foam.save('cavity')
 foam.cmd.all_run()
@@ -101,7 +101,7 @@ Running the demo code in the virtual environment results in the following output
 ```sh
 $ python demo.py
 
-Foam.from_file('.../of.yaml/foam/demo/7/cavity.yaml', warn=False)
+Foam.fromPath('.../of.yaml/foam/demo/7/cavity.yaml', warn=False)
 Running blockMesh on .../of.yaml/cavity using 1 processes if in parallel
 Running icoFoam on .../of.yaml/cavity using 1 processes if in parallel
 100%|█████████████████████████████████████| 1.0/1.0 [00:02<00:00,  2.24s/it]
