@@ -15,6 +15,7 @@ import warnings as w
 from .type import Dict, FoamData, Path
 from ..compat.functools import cached_property
 from ..parse import Parser
+from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 from ..util.object.version import Version
@@ -31,13 +32,13 @@ class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case
 
     Example:
-        >>> foam = Foam.from_remote_demo('cavity')
+        >>> foam = Foam.fromRemoteDemo('cavity')
         >>> foam['foam']['system', 'controlDict', 'endTime'] = 1.0
         >>> foam.save('cavity')
         >>> foam.cmd.all_run()
     '''
 
-    __version__ = Version.from_string('0.13.0')
+    __version__ = Version.fromString('0.13.0')
 
     def __init__(self, data: FoamData, root: Path, warn: bool = True) -> None:
         self._list = data
@@ -53,7 +54,7 @@ class Foam:
             openfoam = set(map(str, self.meta.get('openfoam', [])))
             if str(self.environ['WM_PROJECT_VERSION']) not in openfoam:
                 w.warn(f'OpenFOAM version mismatch: {root}')
-            version = Version.from_string(str(self.meta.get('version', '0.0.0')))
+            version = Version.fromString(str(self.meta.get('version', '0.0.0')))
             if self.__version__ < version:
                 w.warn('Forward compatibility is not yet guaranteed')
             elif self.__version__ > version:
@@ -61,7 +62,7 @@ class Foam:
 
     def __getitem__(self, key: str) -> t.Optional[Data]:
         try:
-            return Data.from_any(self._list[self.meta['order'].index(key)])
+            return Data.fromAny(self._list[self.meta['order'].index(key)])
         except ValueError:
             return None
 
@@ -72,7 +73,7 @@ class Foam:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod
-    def list_demos(cls) -> t.List[str]:
+    def listDemos(cls) -> t.List[str]:
         root = p.Path(__file__).parents[1] / 'static' / 'demo' / os.environ['WM_PROJECT_VERSION']
         return sorted(
             path.stem
@@ -81,53 +82,53 @@ class Foam:
         )
 
     @classmethod
-    def from_demo(cls, name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self':
+    def fromDemo(cls, name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         path = p.Path(__file__).parents[1] / 'static' / 'demo' / version / name
         try:
-            self = cls.from_path(path, warn=warn)
+            self = cls.fromPath(path, warn=warn)
         except FileNotFoundError:
-            raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.list_demos()}')
+            raise FileNotFoundError(f'No such demo: "{name[:-5]}" not in {cls.listDemos()}')
         else:
             if verbose:
-                print(f'Foam.from_path(\'{path.as_posix()}\', warn={warn})')
+                print(f'Foam.fromPath(\'{path.as_posix()}\', warn={warn})')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
 
     @classmethod
-    def from_demos(cls, warn: bool = False, verbose: bool = True) -> t.List['Self']:
-        return list(map(lambda name: cls.from_demo(name, warn, verbose), cls.list_demos()))
+    def fromDemos(cls, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+        return list(map(lambda name: cls.fromDemo(name, warn, verbose), cls.listDemos()))
 
     @classmethod
-    def from_remote_demo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> 'Self':
+    def fromRemoteDemo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> 'Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
         try:
-            self = cls.from_remote_path(url, timeout, warn=warn)
+            self = cls.fromRemotePath(url, timeout, warn=warn)
         except Exception:  # urllib.error.URLError
             raise FileNotFoundError(f'No such demo: "{url}"')
         else:
             if verbose:
-                print(f'Foam.from_remote_path(\'{url}\', warn={warn})')
+                print(f'Foam.fromRemotePath(\'{url}\', warn={warn})')
             self.meta.setdefault('openfoam', []).append(version)
             self.meta['version'] = cls.__version__.to_string()
             return self
 
     @classmethod
-    def from_remote_demos(cls, timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> t.List['Self']:
-        return list(map(lambda name: cls.from_remote_demo(name, timeout, warn, verbose), cls.list_demos()))
+    def fromRemoteDemos(cls, timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+        return list(map(lambda name: cls.fromRemoteDemo(name, timeout, warn, verbose), cls.listDemos()))
 
     @classmethod
-    def from_remote_path(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True, type:  t.Optional[str] = None) -> 'Self':
+    def fromRemotePath(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True, type:  t.Optional[str] = None) -> 'Self':
         with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
         path = p.Path(split_url.path)
         type_or_suffix = path.suffix if type is None else type  # type or path.suffix
-        self = cls.from_text(text, '.', type_or_suffix, warn=warn)
+        self = cls.fromText(text, '.', type_or_suffix, warn=warn)
         self.parser.url.set_split_url(split_url)
         for old in self['static'] or []:
             types = tuple(old.get('type', []))
@@ -135,24 +136,24 @@ class Foam:
         return self
 
     @classmethod
-    def from_path(cls, path: Path, warn: bool = True, type: t.Optional[str] = None) -> 'Self':
+    def fromPath(cls, path: Path, warn: bool = True, type: t.Optional[str] = None) -> 'Self':
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
             type_or_suffix = path.suffix if type is None else type  # type or path.suffix
-            return cls.from_text(path.read_text(), path.parent, type_or_suffix, warn=warn)
+            return cls.fromText(path.read_text(), path.parent, type_or_suffix, warn=warn)
         elif path.is_dir():
-            return cls.from_openfoam(path)
+            return cls.fromOpenFoam(path)
         else:
             raise Exception(f'Mode "{path.stat().st_mode}" is not supported')
 
     @classmethod
-    def from_openfoam(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromOpenFoam(cls, path: Path, **kwargs: t.Any) -> 'Self':
         '''From OpenFOAM directory'''
-        return Parser.to_foam(path, **kwargs)
+        return Parser.toFoam(path, **kwargs)
 
     @classmethod
-    def from_text(
+    def fromText(
         cls,
         text: t.Union[bytes, str], root: Path,
         type_or_suffix: t.Optional[str] = None, warn: bool = True,
@@ -160,14 +161,14 @@ class Foam:
         '''Supported formats: please refer to `Conversion`'''
         content = text if isinstance(text, bytes) else text.encode()
         if type_or_suffix is not None:
-            data = Conversion.from_bytes(content, type_or_suffix, all=True).to_document()
+            data = Conversion.fromBytes(content, type_or_suffix, all=True).to_document()
         else:
-            data = Conversion.auto_from_bytes(content, all=True).to_document()
+            data = Conversion.autoFromBytes(content, all=True).to_document()
         return cls(data, root, warn=warn)
 
     @classmethod
-    def from_yaml(cls, text: str, root: Path, warn: bool = True) -> 'Self':
-        data = Conversion.from_string(text, 'yaml', all=True).to_document()
+    def fromYAML(cls, text: str, root: Path, warn: bool = True) -> 'Self':
+        data = Conversion.fromString(text, 'yaml', all=True).to_document()
         return cls(data, root, warn=warn)
 
     @classmethod
@@ -176,18 +177,18 @@ class Foam:
 
     @property
     def data(self) -> Data:
-        return Data.from_list(self._list)
+        return Data.fromList(self._list)
 
     @property
     def meta(self) -> Data:
         '''Meta information'''
-        return Data.from_dict(self._list[0])
+        return Data.fromDict(self._list[0])
 
     @property
     def parser(self) -> Parser:
         '''All parsers'''
         if self._parser is None:
-            self._parser = Parser.from_foam(self)
+            self._parser = Parser.fromFoam(self)
         return self._parser
 
     @property
@@ -196,7 +197,7 @@ class Foam:
         from ..app.command.core import Command
 
         if self._cmd is None:
-            self._cmd = Command.from_foam(self)
+            self._cmd = Command.fromFoam(self)
         return self._cmd
 
     @property
@@ -205,7 +206,7 @@ class Foam:
         from ..app.information.core import Information
 
         if self._info is None:
-            self._info = Information.from_foam(self)
+            self._info = Information.fromFoam(self)
         return self._info
 
     @property
@@ -214,7 +215,7 @@ class Foam:
         from ..app.postprocess.core import PostProcess
 
         if self._post is None:
-            self._post = PostProcess.from_foam(self)
+            self._post = PostProcess.fromFoam(self)
         return self._post
 
     @property
@@ -355,3 +356,14 @@ class Foam:
         # TODO: use "prefix" will cause some of the `Command` methods to fail
         prefix = '.'  # (self['other'] or {}).get('directory', '.')
         return self.destination / prefix / p.Path(*parts)
+
+    list_demos = deprecated_classmethod(listDemos)
+    from_demo = deprecated_classmethod(fromDemo)
+    from_demos = deprecated_classmethod(fromDemos)
+    from_remote_demo = deprecated_classmethod(fromRemoteDemo)
+    from_remote_demos = deprecated_classmethod(fromRemoteDemos)
+    from_remote_path = deprecated_classmethod(fromRemotePath)
+    from_path = deprecated_classmethod(fromPath)
+    from_openfoam = deprecated_classmethod(fromOpenFoam, 'from_openfoam')
+    from_text = deprecated_classmethod(fromText)
+    from_yaml = deprecated_classmethod(fromYAML, 'from_yaml')

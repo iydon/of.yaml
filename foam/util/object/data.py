@@ -6,6 +6,7 @@ import typing as t
 
 from .conversion import Conversion
 from ...base.type import Dict, FoamItem, Keys, List, Path
+from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -15,7 +16,7 @@ class Data:
     '''Multi-key dictionary or list (not recommended)
 
     Example:
-        >>> data = Data.from_dict_keys(
+        >>> data = Data.fromDictKeys(
         ...     ('left', 'x'), ('left', 'y'),
         ...     ('right', 'x'), ('right', 'y'),
         ...     default=list,
@@ -95,27 +96,27 @@ class Data:
         return self._data.__str__()
 
     @classmethod
-    def from_any(cls, data: FoamItem) -> 'Self':
+    def fromAny(cls, data: FoamItem) -> 'Self':
         return cls(data)
 
     @classmethod
-    def from_dict(cls, data: t.Optional[Dict] = None) -> 'Self':
+    def fromDict(cls, data: t.Optional[Dict] = None) -> 'Self':
         return cls({} if data is None else data)
 
     @classmethod
-    def from_dict_keys(cls, *keys: t.Hashable, default: t.Callable = dict) -> 'Self':
-        self = cls.from_dict()
+    def fromDictKeys(cls, *keys: t.Hashable, default: t.Callable = dict) -> 'Self':
+        self = cls.fromDict()
         for key in keys:
             self.__setitem__(key, default())
         return self
 
     @classmethod
-    def from_list(cls, data: t.Optional[List] = None) -> 'Self':
+    def fromList(cls, data: t.Optional[List] = None) -> 'Self':
         return cls([] if data is None else data)
 
     @classmethod
-    def from_list_length(cls, length: int, default: t.Callable = lambda: None) -> 'Self':
-        return cls.from_list([default() for _ in range(length)])
+    def fromListLength(cls, length: int, default: t.Callable = lambda: None) -> 'Self':
+        return cls.fromList([default() for _ in range(length)])
 
     @classmethod
     def load(cls, *paths: Path, type: t.Optional[str] = None) -> t.Iterator['Self']:
@@ -124,12 +125,12 @@ class Data:
             yield cls.loads(path.read_bytes(), type_or_suffix)
 
     @classmethod
-    def load_from_path(cls, *parts: str, type: t.Optional[str] = None) -> 'Self':
+    def loadFromPath(cls, *parts: str, type: t.Optional[str] = None) -> 'Self':
         return next(cls.load(p.Path(*parts), type))
 
     @classmethod
     def loads(cls, content: bytes, type_or_suffix: str = 'yaml') -> 'Self':
-        return cls.from_any(Conversion.from_bytes(content, type_or_suffix, all=True).to_document())
+        return cls.fromAny(Conversion.fromBytes(content, type_or_suffix, all=True).to_document())
 
     @property
     def data(self) -> FoamItem:
@@ -146,7 +147,7 @@ class Data:
 
     def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
         return Conversion \
-            .from_document(self._data) \
+            .fromDocument(self._data) \
             .to_bytes(type_or_suffix, all=True, **kwargs)
 
     def is_dict(self) -> bool:
@@ -205,7 +206,7 @@ class Data:
         return self.__getitem__(keys)
 
     def set_via_dict(self, data: Dict) -> 'Self':
-        for keys, value in self.__class__.from_dict(data).items():
+        for keys, value in self.__class__.fromDict(data).items():
             self.__setitem__(keys, value)
         return self
 
@@ -224,3 +225,10 @@ class Data:
                 yield from self._items(value, with_list, keys+(key, ))
         else:
             yield keys, data
+
+    from_any = deprecated_classmethod(fromAny)
+    from_dict = deprecated_classmethod(fromDict)
+    from_dict_keys = deprecated_classmethod(fromDictKeys)
+    from_list = deprecated_classmethod(fromList)
+    from_list_length = deprecated_classmethod(fromListLength)
+    load_from_path = deprecated_classmethod(loadFromPath)

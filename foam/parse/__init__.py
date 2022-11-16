@@ -8,6 +8,7 @@ from .lark import Lark
 from .static import Static
 from .url import Url
 from ..base.type import Path
+from ..util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -24,17 +25,20 @@ class Parser:
         self.url = url
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         return cls(
             Case.default(),
-            Static.from_foam(foam),
-            Url.from_foam(foam),
+            Static.fromFoam(foam),
+            Url.fromFoam(foam),
         )
 
     @classmethod
-    def to_foam(cls, path: Path, **kwargs: t.Any) -> 'Foam':
+    def toFoam(cls, path: Path, **kwargs: t.Any) -> 'Foam':
         from ..base.core import Foam
 
-        data = Lark.from_path(path, **kwargs).to_foam_data()
+        data = Lark.fromPath(path, **kwargs).to_foam_data()
         data[0]['version'] = Foam.__version__.to_string()
         return Foam(data, path)
+
+    from_foam = deprecated_classmethod(fromFoam)
+    to_foam = deprecated_classmethod(toFoam)

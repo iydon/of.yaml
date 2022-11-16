@@ -1,4 +1,4 @@
-__all__ = ['classproperty', 'Match', 'suppress']
+__all__ = ['Match', 'classproperty', 'message', 'suppress']
 
 
 import contextlib
@@ -86,7 +86,7 @@ class suppress:
 
         @classmethod
         @contextlib.contextmanager
-        def context_without_previous(cls) -> t.Iterator[io.StringIO]:
+        def contextWithoutPrevious(cls) -> t.Iterator[io.StringIO]:
             with io.StringIO() as target, cls.__redirect__(target):
                 try:
                     yield target
@@ -95,40 +95,44 @@ class suppress:
 
         @classmethod
         @contextlib.contextmanager
-        def context_with_previous(cls) -> t.Iterator[io.StringIO]:
-            with cls.context_without_previous() as target:
+        def contextWithPrevious(cls) -> t.Iterator[io.StringIO]:
+            with cls.contextWithoutPrevious() as target:
                 try:
                     yield target
                 finally:
                     cls._previous = target.getvalue()
 
-        context = context_without_previous
-
         @classmethod
-        def decorator_without_previous(cls, func: t.Callable) -> t.Callable:
+        def decoratorWithoutPrevious(cls, func: t.Callable) -> t.Callable:
 
             @f.wraps(func)
             def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-                with cls.context_without_previous():
+                with cls.contextWithoutPrevious():
                     return func(*args, **kwargs)
 
             return wrapper
 
         @classmethod
-        def decorator_with_previous(cls, func: t.Callable) -> t.Callable:
+        def decoratorWithPrevious(cls, func: t.Callable) -> t.Callable:
 
             @f.wraps(func)
             def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
-                with cls.context_with_previous():
+                with cls.contextWithPrevious():
                     return func(*args, **kwargs)
 
             return wrapper
-
-        decorator = decorator_with_previous
 
         @classproperty
         def previous(cls) -> str:
             return cls._previous
+
+        context_without_previous = contextWithoutPrevious
+        context_with_previous = contextWithPrevious
+        decorator_without_previous = decoratorWithoutPrevious
+        decorator_with_previous = decoratorWithPrevious
+
+        context = contextWithoutPrevious
+        decorator = decoratorWithPrevious
 
     class stderr(_base):
         '''Std Err'''
@@ -139,3 +143,17 @@ class suppress:
         '''Std Out'''
 
         __redirect__ = contextlib.redirect_stdout
+
+
+def message(msg: str = '') -> t.Callable:
+    
+    def decorate(func: t.Callable) -> t.Callable:
+
+        @f.wraps(func)
+        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            print(msg)
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorate

@@ -7,9 +7,6 @@ from ..base.type import Dict, List
 from ..compat.functools import singledispatchmethod
 from ..util.implementation import Singleton
 
-if t.TYPE_CHECKING:
-    from typing_extensions import Self
-
 
 class Case(Singleton):
     '''OpenFOAM case parser

@@ -8,6 +8,7 @@ import re
 import typing as t
 
 from ...base.type import Path
+from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
@@ -25,7 +26,7 @@ class Information:
         self._cmd: t.Optional['Command'] = None
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @classmethod
@@ -40,7 +41,7 @@ class Information:
         from ..command.core import Command
 
         if self._cmd is None:
-            self._cmd = Command.from_foam_without_asserting(self._foam)
+            self._cmd = Command.fromFoamWithoutAsserting(self._foam)
         return self._cmd
 
     @property
@@ -115,7 +116,7 @@ class Information:
             if path.suffix in suffixes:
                 # try-except or try-except-else?
                 try:
-                    foam = Foam.from_path(path, warn=False)
+                    foam = Foam.fromPath(path, warn=False)
                     for keys, _ in foam['foam'].items(with_list=False):
                         hashed_keys = tuple(map(hashing, keys))
                         if hashed_keys[-length:] == hashed_targets:
@@ -138,3 +139,5 @@ class Information:
                 if self.environ['FOAM_APPBIN'] in (self.cmd.which(command) or '')
             }
         return commands
+
+    from_foam = deprecated_classmethod(fromFoam)

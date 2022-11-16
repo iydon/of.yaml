@@ -7,7 +7,7 @@ import pathlib as p
 import typing as t
 
 from .data import Data
-from ..function import dict_without_keys
+from ..function import deprecated_classmethod, dict_without_keys
 from ...base.type import Dict, Path
 
 if t.TYPE_CHECKING:
@@ -71,7 +71,7 @@ class CaseBase(abc.ABC):
     def __init__(self, **kwargs: t.Any) -> None:
         from ...base.core import Foam
 
-        self._foam = Foam.from_path(self.tempalte)
+        self._foam = Foam.fromPath(self.tempalte)
         self._kwargs = kwargs
         self._optional = self.optional() or {}
         self._required = self.required(**kwargs) or {}
@@ -128,7 +128,7 @@ class CaseBase(abc.ABC):
             return self.__class__(**self._kwargs)
 
     def set_from_path(self, *parts: str) -> 'Self':
-        parameter = CaseParameter.load_from_path(*parts)
+        parameter = CaseParameter.loadFromPath(*parts)
         self.set_optional(**parameter.optional)
         self.set_required(**parameter.required)
         return self
@@ -156,8 +156,8 @@ class CaseParameter(t.NamedTuple):
     required: Dict
 
     @classmethod
-    def load_from_path(cls, *parts: str) -> 'Self':
-        data = Data.load_from_path(*parts)
+    def loadFromPath(cls, *parts: str) -> 'Self':
+        data = Data.loadFromPath(*parts)
         return cls(optional=data.get('optional', {}), required=data.get('required', {}))
 
     def dump(self, *paths: Path) -> 'Self':
@@ -169,4 +169,6 @@ class CaseParameter(t.NamedTuple):
         return self
 
     def _data(self) -> 'Data':
-        return Data.from_dict({'optional': self.optional, 'required': self.required})
+        return Data.fromDict({'optional': self.optional, 'required': self.required})
+
+    load_from_path = deprecated_classmethod(loadFromPath)

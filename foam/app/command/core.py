@@ -11,6 +11,7 @@ import warnings as w
 from .adapter import Default, Apps
 from ...base.type import Dict
 from ...compat.functools import cached_property
+from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
@@ -25,12 +26,12 @@ class Command:
         self._foam = foam
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         foam.destination  # assert dest is not None
-        return cls.from_foam_without_asserting(foam)
+        return cls.fromFoamWithoutAsserting(foam)
 
     @classmethod
-    def from_foam_without_asserting(cls, foam: 'Foam') -> 'Self':
+    def fromFoamWithoutAsserting(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
@@ -155,3 +156,6 @@ class Command:
     def _popen(self, args: t.List[str], unsafe: bool) -> s.Popen:
         cmd = ' '.join(args) if unsafe else args
         return s.Popen(cmd, cwd=self._foam.destination, shell=unsafe, stdout=s.PIPE)
+
+    from_foam = deprecated_classmethod(fromFoam)
+    from_foam_without_asserting = deprecated_classmethod(fromFoamWithoutAsserting)

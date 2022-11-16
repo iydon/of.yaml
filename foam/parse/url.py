@@ -8,6 +8,7 @@ import urllib.request
 
 from ..base.type import Dict, Keys
 from ..util.decorator import Match
+from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
@@ -20,8 +21,8 @@ class Url:
     '''Merge remote multiple files into a single file
 
     Example:
-        >>> foam = Foam.from_demo('cavity')
-        Foam.from_path('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
+        >>> foam = Foam.fromDemo('cavity')
+        Foam.fromPath('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
         >>> foam.save('case')
 
         >>> data = {
@@ -30,7 +31,7 @@ class Url:
         ...     'permission': None,
         ...     'data': 'static/airFoil2D-polyMesh.7z',
         ... }
-        >>> url = Url.from_foam(foam)
+        >>> url = Url.fromFoam(foam)
         >>> url.set_url('https://raw.githubusercontent.com/iydon/of.yaml-tutorial/main/tutorials/7/incompressible/simpleFoam/airFoil2D.yaml')
         >>> url[tuple(data['type'])](data)
         {'name': 'constant/polyMesh',
@@ -53,7 +54,7 @@ class Url:
         return lambda *args, **kwargs: method(self, *args, **kwargs)
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
@@ -115,7 +116,9 @@ class Url:
     def _path_foam(self, static: Dict) -> Dict:
         url = self.url_from_path(self.root/static['data'])
         self._foam['foam'][static['name'].split('/')] = Conversion \
-            .from_bytes(self._urlopen(url), static['type'][2], all=False) \
+            .fromBytes(self._urlopen(url), static['type'][2], all=False) \
             .to_document()
         static.update({'type': []})
         return static
+
+    from_foam = deprecated_classmethod(fromFoam)

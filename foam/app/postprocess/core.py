@@ -6,6 +6,7 @@ import warnings as w
 
 from ...base.lib import numpy, vtkmodules
 from ...base.type import Array, Dict, Location, Path
+from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     import vtkmodules as _vtkmodules
@@ -24,13 +25,13 @@ class PostProcess:
         self._logs: t.Optional[Dict] = None
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @property
     def vtks(self) -> t.List['VTK']:
         if self._vtks is None:
-            self._vtks = list(VTK.from_foam(self._foam))
+            self._vtks = list(VTK.fromFoam(self._foam))
         return self._vtks
 
     @property
@@ -51,7 +52,7 @@ class PostProcess:
         return self._logs
 
     def vtks_set(self, **kwargs: t.Any) -> t.List['VTK']:
-        self._vtks = list(VTK.from_foam(self._foam, **kwargs))
+        self._vtks = list(VTK.fromFoam(self._foam, **kwargs))
         return self._vtks
 
     def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array[1, 2]]:
@@ -93,6 +94,8 @@ class PostProcess:
                         .setdefault(time, value)
         return ans
 
+    from_foam = deprecated_classmethod(fromFoam)
+
 
 class VTK:
     '''OpenFOAM VTK post-processing'''
@@ -129,7 +132,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def from_path(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'Self':
         reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
@@ -141,7 +144,7 @@ class VTK:
         return self
 
     @classmethod
-    def from_foam(
+    def fromFoam(
         cls,
         foam: 'Foam', options: str = '', overwrite: bool = False,
         **kwargs: t.Any,
@@ -156,7 +159,7 @@ class VTK:
             if path.is_file() and path.suffix=='.vtk'
         ]
         for path in sorted(paths, key=lambda p: int(p.stem.rsplit('_', maxsplit=1)[-1])):
-            yield cls.from_path(path, foam=foam, **kwargs)
+            yield cls.fromPath(path, foam=foam, **kwargs)
 
     @property
     def foam(self) -> 'Foam':
@@ -262,3 +265,6 @@ class VTK:
 
     def _to_numpy(self, array: '_vtkmodules.vtkCommonCore.vtkDataArray') -> Array[1, 2]:
         return vtkmodules.vtk_to_numpy(array)
+
+    from_path = deprecated_classmethod(fromPath)
+    from_foam = deprecated_classmethod(fromFoam)

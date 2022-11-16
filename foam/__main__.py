@@ -20,7 +20,7 @@ class DEFAULT:
 
 def _cnv(src: p.Path, dst: p.Path, version: str, exist_ok: bool) -> bool:
     try:
-        foam = Foam.from_path(src)
+        foam = Foam.fromPath(src)
     except Exception as e:
         click.echo(f'{e!r}: {src}')
         return False

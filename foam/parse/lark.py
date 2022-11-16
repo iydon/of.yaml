@@ -9,7 +9,7 @@ import typing as t
 from ..base.lib import lark
 from ..base.type import Dict, FoamData, List, Path
 from ..compat.functools import cached_property
-from ..util.function import grammar
+from ..util.function import deprecated_classmethod, grammar
 from ..util.implementation import Singleton
 
 if t.TYPE_CHECKING:
@@ -22,7 +22,7 @@ class Lark(Singleton):
     '''Lark is a parsing toolkit for Python
 
     TODO:
-        - unit-test (Lark, Foam.from_openfoam)
+        - unit-test (Lark, Foam.fromOpenFoam)
     '''
 
     order = ['meta', 'foam', 'static', 'other']
@@ -35,7 +35,7 @@ class Lark(Singleton):
         self._static = []
 
     @classmethod
-    def from_path(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'Self':
         return cls.new(path, **kwargs)
 
     @property
@@ -108,3 +108,5 @@ class Lark(Singleton):
             data = path.as_posix()
             type = ['path', 'raw']
         return {'name': name, 'type': type, 'permission': permission, 'data': data}
+
+    from_path = deprecated_classmethod(fromPath)

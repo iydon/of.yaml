@@ -66,17 +66,17 @@ class Timer:
         return cls(time.monotonic)
 
     @classmethod
-    def perf_counter(cls) -> 'Self':
+    def perfCounter(cls) -> 'Self':
         '''Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.perf_counter)
 
     @classmethod
-    def process_time(cls) -> 'Self':
+    def processTime(cls) -> 'Self':
         '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.process_time)
 
     @classmethod
-    def thread_time(cls) -> 'Self':
+    def threadTime(cls) -> 'Self':
         '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.'''
         return cls(time.thread_time)
 
@@ -123,6 +123,10 @@ class Timer:
             '__str__': lambda this: f'<TimerResult @ ({", ".join(map(repr, this._labels))})>',
             'value': property(lambda this: this.__float__()),
         })
+
+    perf_counter = perfCounter
+    process_time = processTime
+    thread_time = threadTime
 
 
 class TimerResult:

@@ -3,6 +3,8 @@ __all__ = ['Version']
 
 import typing as t
 
+from ..function import deprecated_classmethod
+
 if t.TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -11,7 +13,7 @@ class Version(t.NamedTuple):
     '''Version named tuple
 
     Example:
-        >>> version = Version.from_string('1.2.x')
+        >>> version = Version.fromString('1.2.x')
         >>> version.major, version.minor, version.other, version.micro
         (1, 2, 'x', None)
         >>> version.to_string()
@@ -29,13 +31,13 @@ class Version(t.NamedTuple):
         return other.__lt__(self)
 
     def __repr__(self) -> str:
-        return f'Version.from_string({self.to_string()!r})'
+        return f'Version.fromString({self.to_string()!r})'
 
     def __str__(self) -> str:
         return self.to_string()
 
     @classmethod
-    def from_string(cls, version: str) -> 'Self':
+    def fromString(cls, version: str) -> 'Self':
         parts = version.split('.', maxsplit=2)
         if len(parts) == 2:
             major, minor = parts
@@ -63,3 +65,5 @@ class Version(t.NamedTuple):
         if self.other is not None:
             version += f'.{self.other}'
         return version
+
+    from_string = deprecated_classmethod(fromString)

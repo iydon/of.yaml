@@ -10,6 +10,7 @@ from ..base.lib import py7zr
 from ..base.type import Dict, Keys
 from ..compat.shutil import copytree
 from ..util.decorator import Match
+from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 
@@ -23,8 +24,8 @@ class Static:
     '''OpenFOAM static parser
 
     Example:
-        >>> foam = Foam.from_demo('cavity')
-        Foam.from_path('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
+        >>> foam = Foam.fromDemo('cavity')
+        Foam.fromPath('.../of.yaml/foam/static/demo/7/cavity.yaml', warn=False)
         >>> foam.save('case')
 
         >>> data = {
@@ -33,7 +34,7 @@ class Static:
         ...     'permission': 777,
         ...     'data': 'echo hello world!\n',
         ... }
-        >>> static = Static.from_foam(foam)
+        >>> static = Static.fromFoam(foam)
         >>> static[tuple(data['type'])](data)
     '''
 
@@ -49,7 +50,7 @@ class Static:
             raise Exception(f'Unknown types "{keys}"')
 
     @classmethod
-    def from_foam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'Self':
         return cls(foam)
 
     @match.register()
@@ -110,10 +111,12 @@ class Static:
         return self._foam._root / data
 
     def _path_foam(self, static: Dict) -> None:
-        data = Data.from_dict()
+        data = Data.fromDict()
         out, in_ = self._foam._path(), self._in(static['data'])
         data[static['name'].split('/')] = Conversion \
-            .from_bytes(in_.read_bytes(), static['type'][2], all=False) \
+            .fromBytes(in_.read_bytes(), static['type'][2], all=False) \
             .to_document()
         self._foam.__class__([{'order': ['meta', 'foam']}, data._data], in_.parent, warn=False) \
             .save(out, paraview=False)
+
+    from_foam = deprecated_classmethod(fromFoam)
