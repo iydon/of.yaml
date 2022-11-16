@@ -1,4 +1,4 @@
-__all__ = ['Default', 'Apps']
+__all__ = ['Apps', 'Default']
 
 
 import re
