@@ -1,10 +1,9 @@
 import json
 import os
 import pathlib as p
-import timeit
 import typing as t
 
-from foam import Foam
+from foam import Foam, Timer
 
 
 def is_valid(foam: Foam, threshold: t.Optional[int] = None) -> bool:
@@ -26,9 +25,10 @@ repeat = 7
 n_time = 19
 
 bench = {}
+timer = Timer.default()
 root = p.Path('extra', 'tutorial', 'tutorials', os.environ['WM_PROJECT_VERSION'])
 for path in root.rglob('*.yaml'):
-    foam = Foam.fromPath(path).save(f'case/{path.stem}')
+    foam = Foam.fromPath(path).save(f'/home/iydon/Desktop/case/{path.stem}')
     control = foam['foam']['system', 'controlDict']
     if control['startFrom']=='startTime' and control['stopAt']=='endTime' and is_valid(foam, 4):
         key = path.as_posix()
@@ -40,10 +40,9 @@ for path in root.rglob('*.yaml'):
                 lambda: foam.cmd.all_run(),
             ]):
                 foam.cmd.all_clean()
-                tic = timeit.default_timer()
-                func()
-                toc = timeit.default_timer()
-                bench[key][ith][jth] = toc - tic
-                print(path, toc-tic)
+                with timer.tic_toc(key, ith, jth) as t:
+                    func()
+                bench[key][ith][jth] = float(t)
+                print(path, float(t))
 with open('bench.json', 'w') as f:
     json.dump(bench, f)

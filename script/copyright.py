@@ -7,6 +7,9 @@ from docx.shared import Pt, RGBColor
 from pygments.lexers import guess_lexer_for_filename
 from pygments.styles import get_style_by_name
 
+if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 Path = t.Union[str, p.Path]
 
@@ -16,8 +19,6 @@ class Word:
     Reference:
         - http://www.gov.cn/zhengce/2020-12/26/content_5574414.htm
     '''
-
-    Self = __qualname__
 
     def __init__(
         self,
@@ -35,7 +36,7 @@ class Word:
         font.size = Pt(font_size)
 
     @classmethod
-    def from_config(cls, *args: t.Any, **kwargs: t.Any) -> Self:
+    def fromConfig(cls, *args: t.Any, **kwargs: t.Any) -> 'Self':
         return cls(*args, **kwargs)
 
     @property
@@ -47,7 +48,7 @@ class Word:
         path: Path, plain: bool = False,
         style: t.Optional[str] = None, page_break: t.Optional[bool] = None,
         title: t.Optional[str] = None,
-    ) -> Self:
+    ) -> 'Self':
         if plain:
             return self._add_plain(path, page_break, title)
         path = p.Path(path).absolute()
@@ -74,7 +75,7 @@ class Word:
             self._doc.add_page_break()
         return self
 
-    def save(self, path: Path) -> Self:
+    def save(self, path: Path) -> 'Self':
         self._doc.save(path)
         return self
 
@@ -82,7 +83,7 @@ class Word:
         self,
         path: Path,
         page_break: t.Optional[bool] = None, title: t.Optional[str] = None,
-    ) -> Self:
+    ) -> 'Self':
         path = p.Path(path).absolute()
         self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 1)
         self._doc.add_paragraph(self._strip(path.read_text()))
@@ -97,7 +98,7 @@ class Word:
 if __name__ == '__main__':
     is_valid = lambda path: 'type: [embed, 7z]' not in path.read_text()
 
-    word = Word.from_config(root='.', style='friendly', page_break=False, font_size=7)
+    word = Word.fromConfig(root='.', style='friendly', page_break=False, font_size=7)
     word.add(word.root/'pyproject.toml')
     word.add(word.root/'foam.py')
     for path in (word.root/'foam').rglob('*.py'):

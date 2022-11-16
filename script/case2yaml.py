@@ -9,12 +9,14 @@ import typing as t
 
 import foam
 
+if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 Path = t.Union[str, p.Path]
 
 
 class Case:
-    Self = __qualname__
     version = foam.__version__.to_string()
     keys = [('0', ), ('constant', ), ('system', )]
 
@@ -31,10 +33,10 @@ class Case:
         return f'<Case from "{self._origin}" to "{self._target}">'
 
     @classmethod
-    def from_path(cls, path: Path, threshold: int = 1024) -> Self:
+    def fromPath(cls, path: Path, threshold: int = 1024) -> 'Self':
         return cls(path, threshold)
 
-    def save(self) -> Self:
+    def save(self) -> 'Self':
         parts = self._part_meta(), self._part_foam(), self._part_static(), self._part_other()
         text = '---\n' + '\n---\n'.join(map(self._post_process, parts)) + '\n'
         self._target.write_text(text)
@@ -159,5 +161,5 @@ class Case:
 
 if __name__ == '__main__':
     path = input('(path) >>> ')
-    case = Case.from_path(path=path, threshold=16*1024).save()
+    case = Case.fromPath(path=path, threshold=16*1024).save()
     print(case.readme())
