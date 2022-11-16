@@ -5,8 +5,8 @@ import pathlib as p
 import typing as t
 
 from .conversion import Conversion
+from ..function import deprecated_classmethod
 from ...base.type import Dict, FoamItem, Keys, List, Path
-from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self

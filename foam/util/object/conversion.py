@@ -6,9 +6,9 @@ import pathlib as p
 import pickle
 import typing as t
 
+from ..function import deprecated_classmethod
 from ...base.lib import tomlkit, yaml
 from ...base.type import Document, Path
-from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
     from typing_extensions import Self
