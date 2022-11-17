@@ -28,7 +28,7 @@ bench = {}
 timer = Timer.default()
 root = p.Path('extra', 'tutorial', 'tutorials', os.environ['WM_PROJECT_VERSION'])
 for path in root.rglob('*.yaml'):
-    foam = Foam.fromPath(path).save(f'/home/iydon/Desktop/case/{path.stem}')
+    foam = Foam.fromPath(path).save(f'case/{path.stem}')
     control = foam['foam']['system', 'controlDict']
     if control['startFrom']=='startTime' and control['stopAt']=='endTime' and is_valid(foam, 4):
         key = path.as_posix()
