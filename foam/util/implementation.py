@@ -12,7 +12,7 @@ if t.TYPE_CHECKING:
 class Singleton(Protocol):
     '''Singleton'''
 
-    _instances = {}
+    __instances = {}
 
     @classmethod
     def default(cls) -> 'Self':
@@ -20,11 +20,11 @@ class Singleton(Protocol):
 
     @classmethod
     def new(cls, *args: t.Any, **kwargs: t.Any) -> 'Self':
-        key = cls._hash(*args, **kwargs)
-        if key not in cls._instances:
-            cls._instances[key] = cls(*args, **kwargs)
-        return cls._instances[key]
+        key = cls.__hash(*args, **kwargs)
+        if key not in cls.__instances:
+            cls.__instances[key] = cls(*args, **kwargs)
+        return cls.__instances[key]
 
     @classmethod
-    def _hash(cls, *args: t.Any, **kwargs: t.Any) -> str:
+    def __hash(cls, *args: t.Any, **kwargs: t.Any) -> str:
         return repr(args) + repr(kwargs)
