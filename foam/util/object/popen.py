@@ -1,4 +1,4 @@
-__all_ = ['Origin', 'DryRun']
+__all__ = ['DryRun', 'Origin']
 
 
 import subprocess
