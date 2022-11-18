@@ -61,6 +61,7 @@ class Envelope:
 
     def set_date(self, value: t.Optional[float]) -> 'Self':
         self._header['Date'] = email.utils.formatdate(value, localtime=True, usegmt=False)
+        return self
 
     def set_content(self, value: str, html: bool = False) -> 'Self':
         self._applies[0] = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
@@ -68,6 +69,18 @@ class Envelope:
 
     def set_content_by_path(self, value: Path, html: bool = False) -> 'Self':
         return self.set_content(p.Path(value).read_text(), html)
+
+    def set_html(self, value: str) -> 'Self':
+        return self.set_content(value, html=True)
+
+    def set_html_by_path(self, value: Path) -> 'Self':
+        return self.set_content_by_path(value, html=True)
+
+    def set_text(self, value: str) -> 'Self':
+        return self.set_content(value, html=False)
+
+    def set_text_by_path(self, value: Path) -> 'Self':
+        return self.set_content_by_path(value, html=False)
 
     def set_subject(self, value: str) -> 'Self':
         self._header['Subject'] = value
