@@ -6,7 +6,7 @@ import copy
 import pathlib as p
 import typing as t
 
-from .data import Data
+from ..object.data import Data
 from ..function import deprecated_classmethod, dict_without_keys
 from ...base.type import Dict, Path
 
