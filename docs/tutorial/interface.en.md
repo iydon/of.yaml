@@ -99,13 +99,11 @@ PACKAGE CONTENTS
     app (package)
     base (package)
     compat (package)
-    namespace
+    namespace (package)
     parse (package)
     util (package)
 
 CLASSES
-    abc.ABC(builtins.object)
-        foam.util.object.case.CaseBase
     builtins.object
         foam.app.command.core.Command
         foam.app.information.core.Information
@@ -114,130 +112,8 @@ CLASSES
         foam.base.core.Foam
         foam.util.object.conversion.Conversion
         foam.util.object.data.Data
-        foam.util.object.email.Envelope
-        foam.util.object.email.SMTP
-        foam.util.object.figure.Figure
-        foam.util.object.timer.Timer
     builtins.tuple(builtins.object)
         foam.util.object.version.Version
-
-    class CaseBase(abc.ABC)
-     |  CaseBase(**kwargs: Any) -> None
-     |
-     |  Case abstract class
-     |
-     |  Example:
-     |      ```
-     |      class CaseCavity(CaseBase):
-     |          __template__ = 'foam/static/demo/7/cavity.yaml'
-     |
-     |          @property
-     |          def t(self) -> float:
-     |              return self._required['t']
-     |
-     |          def optional(self):
-     |              pass
-     |
-     |          def required(self, t: float, dt: float):
-     |              return self.dict_without_keys(vars(), 'self')
-     |
-     |          def finalize(self, foam, optional, required):
-     |              foam['foam'].set_via_dict({
-     |                  'system': {
-     |                      'controlDict': {
-     |                          'endTime': self.t,
-     |                          'deltaT': required['dt'],
-     |                      },
-     |                  },
-     |              })
-     |      ```
-     |
-     |      >>> case_template = CaseCavity.new(t=0.3, dt=0.005)
-     |      >>> print(case_template)
-     |      CaseCavity(t=0.3, dt=0.005) \
-     |          .set_optional() \
-     |          .set_optional(t=0.3, dt=0.005)
-     |      >>> for t in [0.3, 0.4, 0.5]:
-     |      ...     parts = 'case', str(t)
-     |      ...     case = case_template \
-     |      ...         .copy(deepcopy=False) \
-     |      ...         .set_required(t=t) \
-     |      ...         .save(*parts)
-     |      ...     case.parameter.dump_to_path(*parts, 'meta.json')
-     |      ...     codes = case.foam.cmd.all_run(overwrite=False)
-     |      ...     print(codes)
-     |      [0, 0]
-     |      [0, 0]
-     |      [0, 0]
-     |
-     |  Method resolution order:
-     |      CaseBase
-     |      abc.ABC
-     |      builtins.object
-     |
-     |  Methods defined here:
-     |
-     |  __init__(self, **kwargs: Any) -> None
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  __repr__(self) -> str
-     |      Return repr(self).
-     |
-     |  copy(self, deepcopy: bool = False) -> 'Self'
-     |
-     |  finalize(self, foam: 'Foam', optional: Dict[str, Any], required: Dict[str, Any]) -> Union[ForwardRef('Foam'), NoneType]
-     |      Convert class properties to case parameters
-     |
-     |  optional(self) -> Union[Dict[str, Any], NoneType]
-     |      Initialize optional properties
-     |
-     |  required(self, **kwargs: Any) -> Union[Dict[str, Any], NoneType]
-     |      Initialize required properties
-     |
-     |  save(self, *parts: str) -> 'Self'
-     |
-     |  set_from_path(self, *parts: str) -> 'Self'
-     |
-     |  set_optional(self, **kwargs: Any) -> 'Self'
-     |
-     |  set_required(self, **kwargs: Any) -> 'Self'
-     |
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |
-     |  new(**kwargs: Any) -> 'Self' from abc.ABCMeta
-     |
-     |  ----------------------------------------------------------------------
-     |  Static methods defined here:
-     |
-     |  dict_without_keys(data: dict, *keys: str) -> dict
-     |
-     |  ----------------------------------------------------------------------
-     |  Readonly properties defined here:
-     |
-     |  data
-     |
-     |  foam
-     |
-     |  parameter
-     |
-     |  tempalte
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-     |
-     |  ----------------------------------------------------------------------
-     |  Data and other attributes defined here:
-     |
-     |  __abstractmethods__ = frozenset({'finalize', 'optional', 'required'})
-     |
-     |  __template__ = None
 
     class Command(builtins.object)
      |  Command(foam: 'Foam') -> None
@@ -481,7 +357,7 @@ CLASSES
      |
      |  fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fbab9e43af0>) -> 'Self' from builtins.type
+     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7f2e2a7a11f0>) -> 'Self' from builtins.type
      |
      |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
@@ -491,7 +367,7 @@ CLASSES
      |
      |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fbab9e43af0>) -> 'Self' from builtins.type
+     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7f2e2a7a11f0>) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
      |
@@ -514,114 +390,6 @@ CLASSES
      |
      |  __weakref__
      |      list of weak references to the object (if defined)
-
-    class Envelope(builtins.object)
-     |  Envelope(*to_addresses: str) -> None
-     |
-     |  Envelope
-     |
-     |  Reference:
-     |      - https://github.com/tomekwojcik/envelopes
-     |
-     |  Methods defined here:
-     |
-     |  __init__(self, *to_addresses: str) -> None
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  add_attachment(self, path: Union[str, pathlib.Path], type: Union[str, NoneType] = None, **kwargs: Any) -> 'Self'
-     |      Reference:
-     |          - https://docs.python.org/zh-cn/3/library/email.examples.html
-     |
-     |  send(self) -> None
-     |
-     |  send_by(self, *smtps: 'SMTP') -> 'Self'
-     |
-     |  set(self, **kwargs: str) -> 'Self'
-     |
-     |  set_content(self, value: str, html: bool = False) -> 'Self'
-     |
-     |  set_content_by_path(self, value: Union[str, pathlib.Path], html: bool = False) -> 'Self'
-     |
-     |  set_date(self, value: Union[float, NoneType]) -> 'Self'
-     |
-     |  set_subject(self, value: str) -> 'Self'
-     |
-     |  to_message(self) -> email.message.EmailMessage
-     |
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |
-     |  auto(smtp: 'SMTP') -> 'Self' from builtins.type
-     |      Auto-delivered envelope
-     |
-     |  to(*addresses: str) -> 'Self' from builtins.type
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-
-    class Figure(builtins.object)
-     |  Figure(**kwargs: Any) -> None
-     |
-     |  Matplotlib simple wrapper
-     |
-     |  Example:
-     |      >>> Figure.setRcParams(
-     |      ...     ('axes.unicode_minus', False),
-     |      ...     ('font.sans-serif', ['FandolHei']),
-     |      ... )
-     |      >>> Figure.new(figsize=(8, 6)) \
-     |      ...     .plot([1, 2, 3], [3, 2, 1], label='a') \
-     |      ...     .plot([1, 2, 3], [2, 1, 3], label='b') \
-     |      ...     .set_ax(xlabel='x label', ylabel='y label', title='title') \
-     |      ...     .grid() \
-     |      ...     .legend() \
-     |      ...     .save('demo.png')
-     |
-     |  Methods defined here:
-     |
-     |  __init__(self, **kwargs: Any) -> None
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  grid(self, *args: Any, **kwargs: Any) -> 'Self'
-     |
-     |  legend(self, *args: Any, **kwargs: Any) -> 'Self'
-     |
-     |  plot(self, *args: Any, **kwargs: Any) -> 'Self'
-     |
-     |  save(self, path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self'
-     |
-     |  set_ax(self, *args: Any, **kwargs: Any) -> 'Self'
-     |
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |
-     |  new(**kwargs: Any) -> 'Self' from builtins.type
-     |
-     |  setRcParams(*items: Tuple[str, Any]) -> 'Self' from builtins.type
-     |
-     |  set_rc_params = setRcParams(*items: Tuple[str, Any]) -> 'Self' from builtins.type
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-     |
-     |  ----------------------------------------------------------------------
-     |  Data and other attributes defined here:
-     |
-     |  DEFAULT = {'legend': {'bbox_to_anchor': (1.01, 1), 'borderaxespad': 0,...
-     |
-     |  __annotations__ = {'_ax': '_axes.SubplotBase', '_fig': '_figure.Figure...
 
     class Foam(builtins.object)
      |  Foam(data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
@@ -848,149 +616,6 @@ CLASSES
      |  __weakref__
      |      list of weak references to the object (if defined)
 
-    class SMTP(builtins.object)
-     |  SMTP(domain: str, host: str, port: int, ssl: bool = True) -> None
-     |
-     |  SMTP wrapper
-     |
-     |  Example:
-     |      >>> with SMTP.aio('163', username, password, ssl=False) as smtp:
-     |      ...     smtp.envelope \
-     |      ...         .to('liangiydon@gmail.com') \
-     |      ...         .set_subject('SMTP Test') \
-     |      ...         .set_content('Here is the <a href="http://www.python.org">link</a> you wanted.', html=True) \
-     |      ...         .add_attachment(__file__) \
-     |      ...         .send()
-     |
-     |  Methods defined here:
-     |
-     |  __enter__(self) -> 'Self'
-     |
-     |  __exit__(self, type, value, traceback) -> None
-     |
-     |  __init__(self, domain: str, host: str, port: int, ssl: bool = True) -> None
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  login(self, username: str, password: str) -> 'Self'
-     |
-     |  quit(self) -> None
-     |
-     |  send(self, *envelopes: 'Envelope') -> 'Self'
-     |
-     |  wait(self, seconds: float) -> 'Self'
-     |
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |
-     |  __class_getitem__(key: str) -> 'Self' from builtins.type
-     |
-     |  aio(mail: str, username: str, password: str, ssl: bool = True) -> 'Self' from builtins.type
-     |      All-in-one
-     |
-     |  ----------------------------------------------------------------------
-     |  Readonly properties defined here:
-     |
-     |  envelope
-     |
-     |  sender
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-
-    class Timer(builtins.object)
-     |  Timer(func: Callable) -> None
-     |
-     |  Timer
-     |
-     |  Example:
-     |      >>> timer = Timer.default()
-     |      >>> with timer.tic_toc('1', '2', '3') as t:
-     |      ...     time.sleep(9)
-     |      >>> print(float(t), timer['1', '2', '3'])
-     |      9.00686868999037 9.00686868999037
-     |
-     |  Reference:
-     |      - https://docs.python.org/3/library/time.html
-     |      - https://stackoverflow.com/questions/5849800/what-is-the-python-equivalent-of-matlabs-tic-and-toc-functions
-     |
-     |  Methods defined here:
-     |
-     |  __enter__(self) -> 'Self'
-     |
-     |  __exit__(self, type, value, traceback) -> None
-     |
-     |  __getitem__(self, labels: Union[Hashable, Tuple[Hashable, ...]]) -> float
-     |
-     |  __init__(self, func: Callable) -> None
-     |      Initialize self.  See help(type(self)) for accurate signature.
-     |
-     |  __repr__(self) -> str
-     |      Return repr(self).
-     |
-     |  __str__(self) -> str
-     |      Return str(self).
-     |
-     |  reset(self) -> 'Self'
-     |
-     |  tic_toc(self, *labels: Hashable, builtin: bool = False) -> Iterator[ForwardRef('TimerResult')]
-     |
-     |  wait(self, seconds: float) -> 'Self'
-     |
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |
-     |  best() -> 'Self' from builtins.type
-     |
-     |  default() -> 'Self' from builtins.type
-     |
-     |  monotonic() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-     |
-     |  perfCounter() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-     |
-     |  perf_counter = perfCounter() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-     |
-     |  processTime() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-     |
-     |  process_time = processTime() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.
-     |
-     |  threadTime() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
-     |
-     |  thread_time = threadTime() -> 'Self' from builtins.type
-     |      Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.
-     |
-     |  time() -> 'Self' from builtins.type
-     |      Return the time in seconds since the epoch as a floating point number. The specific date of the epoch and the handling of leap seconds is platform dependent. On Windows and most Unix systems, the epoch is January 1, 1970, 00:00:00 (UTC) and leap seconds are not counted towards the time in seconds since the epoch. This is commonly referred to as Unix time. To find out what the epoch is on a given platform, look at gmtime(0).
-     |
-     |      Note that even though the time is always returned as a floating point number, not all systems provide time with a better precision than 1 second. While this function normally returns non-decreasing values, it can return a lower value than a previous call if the system clock has been set back between the two calls.
-     |
-     |      The number returned by time() may be converted into a more common time format (i.e. year, month, day, hour, etc…) in UTC by passing it to gmtime() function or in local time by passing it to the localtime() function. In both cases a struct_time object is returned, from which the components of the calendar date may be accessed as attributes.
-     |
-     |  ----------------------------------------------------------------------
-     |  Readonly properties defined here:
-     |
-     |  cache
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-
     class VTK(builtins.object)
      |  VTK(reader: '_vtkmodules.vtkIOLegacy.vtkDataReader', foam: Union[ForwardRef('Foam'), NoneType] = None, point: bool = True, cell: bool = True) -> None
      |
@@ -1202,9 +827,9 @@ FUNCTIONS
     __import__ lambda name
 
 DATA
-    __all__ = ['Command', 'Information', 'PostProcess', 'VTK', 'Foam', 'Ca...
+    __all__ = ['Command', 'Conversion', 'Data', 'Foam', 'Information', 'Po...
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.13.1
+    0.13.2
 ```
