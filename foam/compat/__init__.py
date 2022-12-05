@@ -1,4 +1,4 @@
-__all__ = ['functools', 'shutil']
+__all__ = ['functools', 'shutil', 'typing']
 
 
-from . import functools, shutil
+from . import functools, shutil, typing
