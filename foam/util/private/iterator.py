@@ -1,0 +1,75 @@
+__all__ = ['Iterator']
+
+
+import copy
+import functools as f
+import operator as op
+import typing as t
+
+from ..function import deprecated_classmethod
+
+if t.TYPE_CHECKING:
+    from typing_extensions import Self
+
+
+class Iterator:
+    '''Iterator (map, filter, reduce)
+
+    Example:
+        >>> i1 = Iterator.fromList([-2, -1, 0, 1, 2])
+        >>> i2 = i1.filter(bool).map(lambda x: (x, x+1))
+        >>> print(i2.copy().collect_as_dict())
+        {-2: -1, -1: 0, 1: 2, 2: 3}
+        >>> i3 = i2.map(lambda x: x[0]*x[1])
+        >>> print(i3.copy().reduce_with_operator('add'))
+        10
+    '''
+
+    def __init__(self, iterator: t.Iterator) -> None:
+        self._iterator = iterator
+
+    def __iter__(self) -> t.Iterator:
+        return self._iterator
+
+    @classmethod
+    def fromDict(cls, iterable: t.Dict) -> 'Self':
+        return cls(iter(iterable.items()))
+
+    @classmethod
+    def fromIter(cls, iterable: t.Iterable) -> None:
+        return cls(iter(iterable))
+
+    @classmethod
+    def fromList(cls, iterable: t.List) -> 'Self':
+        return cls(iter(iterable))
+
+    def collect(self, func: t.Callable) -> t.Any:
+        return func(func(self._iterator))
+
+    def collect_as_dict(self) -> t.Dict:
+        return self.collect(dict)
+
+    def collect_as_list(self) -> t.List:
+        return self.collect(list)
+
+    def copy(self) -> 'Self':
+        return copy.deepcopy(self)
+
+    def filter(self, func: t.Optional[t.Callable] = None) -> 'Self':
+        return self._new(filter(func, self._iterator))
+
+    def map(self, func: t.Callable) -> 'Self':
+        return self._new(map(func, self._iterator))
+
+    def reduce(self, func: t.Callable) -> t.Any:
+        return f.reduce(func, self._iterator)
+
+    def reduce_with_operator(self, attr: str) -> t.Any:
+        return self.reduce(getattr(op, attr))
+
+    def _new(self, iterator: t.Iterator) -> 'Self':
+        return self.__class__(iterator)
+
+    from_dict = deprecated_classmethod(fromDict)
+    from_iter = deprecated_classmethod(fromIter)
+    from_list = deprecated_classmethod(fromList)
