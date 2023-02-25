@@ -357,7 +357,7 @@ CLASSES
      |
      |  fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7f2e2a7a11f0>) -> 'Self' from builtins.type
+     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fb53df811f0>) -> 'Self' from builtins.type
      |
      |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
@@ -367,7 +367,7 @@ CLASSES
      |
      |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7f2e2a7a11f0>) -> 'Self' from builtins.type
+     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fb53df811f0>) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
      |
@@ -831,5 +831,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.13.2
+    0.13.3
 ```
