@@ -36,7 +36,7 @@ class Iterator:
         return cls(iter(iterable.items()))
 
     @classmethod
-    def fromIter(cls, iterable: t.Iterable) -> None:
+    def fromIter(cls, iterable: t.Iterable) -> 'Self':
         return cls(iter(iterable))
 
     @classmethod

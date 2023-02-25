@@ -77,12 +77,10 @@ class CaseBase(abc.ABC):
         self._required = self.required(**kwargs) or {}
 
     def __repr__(self) -> str:
-        kwargs = ', '.join(f'{k}={v!r}' for k, v in self._kwargs.items())
-        optional = ', '.join(f'{k}={v!r}' for k, v in self._optional.items())
-        required = ', '.join(f'{k}={v!r}' for k, v in self._required.items())
-        return f'{self.__class__.__name__}({kwargs}) \\\n' \
-            f'    .set_optional({optional}) \\\n' \
-            f'    .set_optional({required})'
+        func = lambda d: ', '.join(f'{k}={v!r}' for k, v in d.items())
+        return f'{self.__class__.__name__}({func(self._kwargs)}) \\\n' \
+            f'    .set_optional({func(self._optional)}) \\\n' \
+            f'    .set_required({func(self._required)})'
 
     @classmethod
     def new(cls, **kwargs: t.Any) -> 'Self':
@@ -125,13 +123,15 @@ class CaseBase(abc.ABC):
         if deepcopy:
             return copy.deepcopy(self)
         else:
-            return self.__class__(**self._kwargs)
+            return self.__class__(**self._kwargs) \
+                .set_optional(self._optional) \
+                .set_required(self._required)
 
     def set_from_path(self, *parts: str) -> 'Self':
         parameter = CaseParameter.loadFromPath(*parts)
-        self.set_optional(**parameter.optional)
-        self.set_required(**parameter.required)
-        return self
+        return self \
+            .set_optional(**parameter.optional) \
+            .set_required(**parameter.required)
 
     def set_optional(self, **kwargs: t.Any) -> 'Self':
         self._optional.update(kwargs)
@@ -165,8 +165,7 @@ class CaseParameter(t.NamedTuple):
         return self
 
     def dump_to_path(self, *parts: str) -> 'Self':
-        self._data().dump_to_path(*parts)
-        return self
+        return self.dump(p.Path(*parts))
 
     def _data(self) -> 'Data':
         return Data.fromDict({'optional': self.optional, 'required': self.required})

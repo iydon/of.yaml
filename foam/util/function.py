@@ -11,8 +11,8 @@ from .decorator import message
 root = p.Path(__file__).parents[1]
 
 
-def deprecated_classmethod(cls_meth: classmethod, old: t.Optional[str] = None) -> classmethod:
-    func = cls_meth.__func__
+def deprecated_classmethod(method: classmethod, old: t.Optional[str] = None) -> classmethod:
+    func = method.__func__
     new = func.__name__
     if old is None:
         replace = lambda char: f'_{char.lower()}' if char.isupper() else char
@@ -21,8 +21,7 @@ def deprecated_classmethod(cls_meth: classmethod, old: t.Optional[str] = None) -
     return classmethod(message(msg)(func))
 
 
-def dict_without_keys(data: dict, *keys: str) -> dict:
-    # dict := t.Dict[t.Hashable, t.Any]
+def dict_without_keys(data: t.Dict[t.Hashable, t.Any], *keys: str) -> dict:
     return {key: data[key] for key in data.keys() ^ keys}
 
 

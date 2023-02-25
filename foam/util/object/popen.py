@@ -27,7 +27,7 @@ class DryRun:
     def __exit__(self, type, value, traceback) -> None:
         pass
 
-    def communicate(self, *args: t.Any, **kwargs: t.Any) -> None:
+    def communicate(self, *args: t.Any, **kwargs: t.Any) -> t.Tuple[bytes, bytes]:
         print(f'Popen.communicate({self._repr(*args, **kwargs)})')
         return (b'', b'')
 

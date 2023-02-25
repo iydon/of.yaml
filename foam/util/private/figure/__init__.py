@@ -64,28 +64,23 @@ class Figure:
     @property
     def mpl(self) -> '_mpl.AddOn':
         if self._mpl is None:
-            self.register_matplotlib()
+            from .mpl import AddOn
+
+            self._mpl = AddOn.new(self)
         return self._mpl
 
     @property
     def sns(self) -> '_sns.AddOn':
         if self._sns is None:
-            self.register_seaborn()
+            from .sns import AddOn
+
+            self._sns = AddOn.new(self)
+
         return self._sns
 
     def save(self, path: Path, **kwargs: t.Any) -> 'Self':
         kwargs = {'bbox_inches': 'tight', 'transparent': False, **kwargs}
         self._fig.savefig(p.Path(path).as_posix(), **kwargs)
         return self
-
-    def register_matplotlib(self) -> 'Self':
-        from .mpl import AddOn
-
-        self._mpl = AddOn.new(self)
-
-    def register_seaborn(self) -> 'Self':
-        from .sns import AddOn
-
-        self._sns = AddOn.new(self)
 
     set_rc_params = deprecated_classmethod(setRcParams)
