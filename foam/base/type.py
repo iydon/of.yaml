@@ -10,11 +10,15 @@ if t.TYPE_CHECKING:
     from typing_extensions import Self
 
 
+T = t.TypeVar('T')
+
 Dict = t.Dict[str, t.Any]
 List = t.List[t.Any]
 Document = FoamItem = t.Union[Dict, List]
 FoamData = t.List[FoamItem]
 Path = t.Union[str, p.Path]
+TupleSequence = t.Tuple[T, ...]  # https://github.com/python/mypy/issues/184
+Keys = t.Union[T, TupleSequence[T]]  # https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
 
 
 class Array:
@@ -34,16 +38,6 @@ class Array:
             return '_numpy.ndarray'
 
 
-class Keys:
-    '''
-    TODO:
-        - https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
-    '''
-
-    def __class_getitem__(cls, T: type) -> type:
-        return t.Union[T, TupleSequence[T]]
-
-
 class Location:
     '''Location 3D'''
 
@@ -53,13 +47,3 @@ class Location:
     @classmethod
     def cast(cls, location: 'Self', T: type) -> 'Self':
         return tuple(map(T, location))
-
-
-class TupleSequence:
-    '''
-    Reference:
-        - https://github.com/python/mypy/issues/184
-    '''
-
-    def __class_getitem__(cls, T: type) -> type:
-        return t.Tuple[T, ...]

@@ -104,10 +104,11 @@ class Data:
         return cls({} if data is None else data)
 
     @classmethod
-    def fromDictKeys(cls, *keys: t.Hashable, default: t.Callable = dict) -> 'Self':
+    def fromDictKeys(cls, *keys: t.Hashable, default: t.Optional[t.Callable] = None) -> 'Self':
+        func = default or dict
         self = cls.fromDict()
         for key in keys:
-            self.__setitem__(key, default())
+            self.__setitem__(key, func())
         return self
 
     @classmethod
@@ -115,8 +116,9 @@ class Data:
         return cls([] if data is None else data)
 
     @classmethod
-    def fromListLength(cls, length: int, default: t.Callable = lambda: None) -> 'Self':
-        return cls.fromList([default() for _ in range(length)])
+    def fromListLength(cls, length: int, default: t.Optional[t.Callable] = None) -> 'Self':
+        func = default or (lambda: None)
+        return cls.fromList([func() for _ in range(length)])
 
     @classmethod
     def load(cls, *paths: Path, type: t.Optional[str] = None) -> t.Iterator['Self']:

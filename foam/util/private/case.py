@@ -124,8 +124,8 @@ class CaseBase(abc.ABC):
             return copy.deepcopy(self)
         else:
             return self.__class__(**self._kwargs) \
-                .set_optional(self._optional) \
-                .set_required(self._required)
+                .set_optional(**self._optional) \
+                .set_required(**self._required)
 
     def set_from_path(self, *parts: str) -> 'Self':
         parameter = CaseParameter.loadFromPath(*parts)

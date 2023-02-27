@@ -353,21 +353,21 @@ CLASSES
      |
      |  fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  fromDictKeys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
+     |  fromDictKeys(*keys: Hashable, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
      |
      |  fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fb53df811f0>) -> 'Self' from builtins.type
+     |  fromListLength(length: int, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
      |
      |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
      |
      |  from_dict = fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_dict_keys = fromDictKeys(*keys: Hashable, default: Callable = <class 'dict'>) -> 'Self' from builtins.type
+     |  from_dict_keys = fromDictKeys(*keys: Hashable, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
      |
      |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
      |
-     |  from_list_length = fromListLength(length: int, default: Callable = <function Data.<lambda> at 0x7fb53df811f0>) -> 'Self' from builtins.type
+     |  from_list_length = fromListLength(length: int, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
      |
      |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
      |
@@ -831,5 +831,5 @@ DATA
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.13.3
+    0.13.4
 ```
