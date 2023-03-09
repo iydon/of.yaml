@@ -10,7 +10,7 @@ import typing as t
 import foam
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 Path = t.Union[str, p.Path]
@@ -33,10 +33,10 @@ class Case:
         return f'<Case from "{self._origin}" to "{self._target}">'
 
     @classmethod
-    def fromPath(cls, path: Path, threshold: int = 1024) -> 'Self':
+    def fromPath(cls, path: Path, threshold: int = 1024) -> 'te.Self':
         return cls(path, threshold)
 
-    def save(self) -> 'Self':
+    def save(self) -> 'te.Self':
         parts = self._part_meta(), self._part_foam(), self._part_static(), self._part_other()
         text = '---\n' + '\n---\n'.join(map(self._post_process, parts)) + '\n'
         self._target.write_text(text)

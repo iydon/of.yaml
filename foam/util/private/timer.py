@@ -10,7 +10,7 @@ from ...base.type import Keys
 from ...compat.functools import cached_property
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Timer:
@@ -32,10 +32,10 @@ class Timer:
         self._func = func
         self._cache = {}
 
-    def __enter__(self) -> 'Self':
+    def __enter__(self) -> 'te.Self':
         return self
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type: t.Any, value: t.Any, traceback: t.Any) -> None:
         pass
 
     def __getitem__(self, labels: Keys[t.Hashable]) -> float:
@@ -50,38 +50,38 @@ class Timer:
         return f'<Timer @ time.{self._func.__name__}>'
 
     @classmethod
-    def best(cls) -> 'Self':
+    def best(cls) -> 'te.Self':
         names = {'monotonic', 'perf_counter', 'process_time', 'thread_time', 'time'}
         order = lambda info: (info.resolution, not info.monotonic, info.adjustable)
         key = lambda name: order(time.get_clock_info(name))
         return getattr(cls, min(names, key=key))()
 
     @classmethod
-    def default(cls) -> 'Self':
+    def default(cls) -> 'te.Self':
         return cls.perf_counter()
 
     @classmethod
-    def monotonic(cls) -> 'Self':
+    def monotonic(cls) -> 'te.Self':
         '''Return the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards. The clock is not affected by system clock updates. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.monotonic)
 
     @classmethod
-    def perfCounter(cls) -> 'Self':
+    def perfCounter(cls) -> 'te.Self':
         '''Return the value (in fractional seconds) of a performance counter, i.e. a clock with the highest available resolution to measure a short duration. It does include time elapsed during sleep and is system-wide. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.perf_counter)
 
     @classmethod
-    def processTime(cls) -> 'Self':
+    def processTime(cls) -> 'te.Self':
         '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current process. It does not include time elapsed during sleep. It is process-wide by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls is valid.'''
         return cls(time.process_time)
 
     @classmethod
-    def threadTime(cls) -> 'Self':
+    def threadTime(cls) -> 'te.Self':
         '''Return the value (in fractional seconds) of the sum of the system and user CPU time of the current thread. It does not include time elapsed during sleep. It is thread-specific by definition. The reference point of the returned value is undefined, so that only the difference between the results of two calls in the same thread is valid.'''
         return cls(time.thread_time)
 
     @classmethod
-    def time(cls) -> 'Self':
+    def time(cls) -> 'te.Self':
         '''
         Return the time in seconds since the epoch as a floating point number. The specific date of the epoch and the handling of leap seconds is platform dependent. On Windows and most Unix systems, the epoch is January 1, 1970, 00:00:00 (UTC) and leap seconds are not counted towards the time in seconds since the epoch. This is commonly referred to as Unix time. To find out what the epoch is on a given platform, look at gmtime(0).
 
@@ -105,11 +105,11 @@ class Timer:
         finally:
             self._cache[labels] -= self._func()
 
-    def reset(self) -> 'Self':
+    def reset(self) -> 'te.Self':
         self._cache.clear()
         return self
 
-    def wait(self, seconds: float) -> 'Self':
+    def wait(self, seconds: float) -> 'te.Self':
         time.sleep(seconds)
         return self
 

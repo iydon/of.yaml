@@ -8,7 +8,7 @@ from pygments.lexers import guess_lexer_for_filename
 from pygments.styles import get_style_by_name
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 Path = t.Union[str, p.Path]
@@ -36,7 +36,7 @@ class Word:
         font.size = Pt(font_size)
 
     @classmethod
-    def fromConfig(cls, *args: t.Any, **kwargs: t.Any) -> 'Self':
+    def fromConfig(cls, *args: t.Any, **kwargs: t.Any) -> 'te.Self':
         return cls(*args, **kwargs)
 
     @property
@@ -48,7 +48,7 @@ class Word:
         path: Path, plain: bool = False,
         style: t.Optional[str] = None, page_break: t.Optional[bool] = None,
         title: t.Optional[str] = None,
-    ) -> 'Self':
+    ) -> 'te.Self':
         if plain:
             return self._add_plain(path, page_break, title)
         path = p.Path(path).absolute()
@@ -75,7 +75,7 @@ class Word:
             self._doc.add_page_break()
         return self
 
-    def save(self, path: Path) -> 'Self':
+    def save(self, path: Path) -> 'te.Self':
         self._doc.save(path)
         return self
 
@@ -83,7 +83,7 @@ class Word:
         self,
         path: Path,
         page_break: t.Optional[bool] = None, title: t.Optional[str] = None,
-    ) -> 'Self':
+    ) -> 'te.Self':
         path = p.Path(path).absolute()
         self._doc.add_heading(title or path.relative_to(self._root).as_posix(), 1)
         self._doc.add_paragraph(self._strip(path.read_text()))

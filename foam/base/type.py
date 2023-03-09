@@ -5,9 +5,9 @@ import pathlib as p
 import typing as t
 
 if t.TYPE_CHECKING:
-    import numpy as _numpy
+    import typing_extensions as te
 
-    from typing_extensions import Self
+    import numpy as _numpy
 
 
 T = t.TypeVar('T')
@@ -45,5 +45,5 @@ class Location:
         return t.Tuple[T, T, T]
 
     @classmethod
-    def cast(cls, location: 'Self', T: type) -> 'Self':
+    def cast(cls, location: 'te.Self', T: type) -> 'te.Self':
         return tuple(map(T, location))

@@ -11,7 +11,7 @@ from ..base.type import Path
 from ..util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ..base.core import Foam
 
@@ -25,7 +25,7 @@ class Parser:
         self.url = url
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         return cls(
             Case.default(),
             Static.fromFoam(foam),

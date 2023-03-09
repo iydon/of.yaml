@@ -11,7 +11,7 @@ from ..function import deprecated_classmethod, dict_without_keys
 from ...base.type import Dict, Path
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ...base.core import Foam
 
@@ -32,7 +32,7 @@ class CaseBase(abc.ABC):
                 pass
 
             def required(self, t: float, dt: float):
-                return self.dict_without_keys(vars(), 'self')
+                return self.dict_without_keys(vars(), 'te.self')
 
             def finalize(self, foam, optional, required):
                 foam['foam'].set_via_dict({
@@ -83,7 +83,7 @@ class CaseBase(abc.ABC):
             f'    .set_required({func(self._required)})'
 
     @classmethod
-    def new(cls, **kwargs: t.Any) -> 'Self':
+    def new(cls, **kwargs: t.Any) -> 'te.Self':
         return cls(**kwargs)
 
     @abc.abstractmethod
@@ -119,7 +119,7 @@ class CaseBase(abc.ABC):
     def parameter(self) -> 'CaseParameter':
         return CaseParameter(self._optional, self._required)
 
-    def copy(self, deepcopy: bool = False) -> 'Self':
+    def copy(self, deepcopy: bool = False) -> 'te.Self':
         if deepcopy:
             return copy.deepcopy(self)
         else:
@@ -127,21 +127,21 @@ class CaseBase(abc.ABC):
                 .set_optional(**self._optional) \
                 .set_required(**self._required)
 
-    def set_from_path(self, *parts: str) -> 'Self':
+    def set_from_path(self, *parts: str) -> 'te.Self':
         parameter = CaseParameter.loadFromPath(*parts)
         return self \
             .set_optional(**parameter.optional) \
             .set_required(**parameter.required)
 
-    def set_optional(self, **kwargs: t.Any) -> 'Self':
+    def set_optional(self, **kwargs: t.Any) -> 'te.Self':
         self._optional.update(kwargs)
         return self
 
-    def set_required(self, **kwargs: t.Any) -> 'Self':
+    def set_required(self, **kwargs: t.Any) -> 'te.Self':
         self._required.update(kwargs)
         return self
 
-    def save(self, *parts: str) -> 'Self':
+    def save(self, *parts: str) -> 'te.Self':
         foam = self.finalize(self._foam, self._optional, self._required)
         if foam is not None:
             self._foam = foam
@@ -156,15 +156,15 @@ class CaseParameter(t.NamedTuple):
     required: Dict
 
     @classmethod
-    def loadFromPath(cls, *parts: str) -> 'Self':
+    def loadFromPath(cls, *parts: str) -> 'te.Self':
         data = Data.loadFromPath(*parts)
         return cls(optional=data.get('optional', {}), required=data.get('required', {}))
 
-    def dump(self, *paths: Path) -> 'Self':
+    def dump(self, *paths: Path) -> 'te.Self':
         self._data().dump(*paths)
         return self
 
-    def dump_to_path(self, *parts: str) -> 'Self':
+    def dump_to_path(self, *parts: str) -> 'te.Self':
         return self.dump(p.Path(*parts))
 
     def _data(self) -> 'Data':

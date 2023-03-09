@@ -4,6 +4,8 @@ __all__ = ['classproperty', 'lark', 'matplotlib', 'numpy', 'py7zr', 'tomlkit', '
 import typing as t
 
 if t.TYPE_CHECKING:
+    import typing_extensions as te
+
     import lark as _lark
     import matplotlib as _matplotlib
     import matplotlib.figure as _figure
@@ -14,8 +16,6 @@ if t.TYPE_CHECKING:
     import tqdm as _tqdm
     import vtkmodules as _vtkmodules
     import yaml as _yaml
-
-    from typing_extensions import Self
 
 
 class classproperty:
@@ -34,7 +34,7 @@ class classproperty:
     def __get__(self, instance: t.Any, cls: t.Optional[type] = None) -> t.Any:
         return self.fget(cls)
 
-    def getter(self, method: t.Callable) -> 'Self':
+    def getter(self, method: t.Callable) -> 'te.Self':
         self.fget = method
         return self
 

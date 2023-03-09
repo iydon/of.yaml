@@ -7,7 +7,7 @@ import typing as t
 from ...base.lib import tqdm
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ...base.core import Foam
 
@@ -18,7 +18,7 @@ class Default:
     def __init__(self, foam: 'Foam') -> None:
         pass
 
-    def __enter__(self) -> 'Self':
+    def __enter__(self) -> 'te.Self':
         return self
 
     def __exit__(self, type, value, traceback) -> None:

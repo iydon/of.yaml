@@ -12,7 +12,7 @@ import typing as t
 from ...base.type import Path
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Envelope:
@@ -29,16 +29,16 @@ class Envelope:
         self._applies = [lambda msg: None]
 
     @classmethod
-    def auto(cls, smtp: 'SMTP') -> 'Self':  # type?
+    def auto(cls, smtp: 'SMTP') -> type:
         '''Auto-delivered envelope'''
         cls._smtp = smtp
         return cls
 
     @classmethod
-    def to(cls, *addresses: str) -> 'Self':
+    def to(cls, *addresses: str) -> 'te.Self':
         return cls(*addresses)
 
-    def add_attachment(self, path: Path, type: t.Optional[str] = None, **kwargs: t.Any) -> 'Self':
+    def add_attachment(self, path: Path, type: t.Optional[str] = None, **kwargs: t.Any) -> 'te.Self':
         '''
         Reference:
             - https://docs.python.org/zh-cn/3/library/email.examples.html
@@ -54,35 +54,35 @@ class Envelope:
         self._applies.append(lambda msg: msg.add_attachment(content, **kwargs))
         return self
 
-    def set(self, **kwargs: str) -> 'Self':
+    def set(self, **kwargs: str) -> 'te.Self':
         for key, value in kwargs.items():
             getattr(self, f'set_{key}')(value)
         return self
 
-    def set_date(self, value: t.Optional[float]) -> 'Self':
+    def set_date(self, value: t.Optional[float]) -> 'te.Self':
         self._header['Date'] = email.utils.formatdate(value, localtime=True, usegmt=False)
         return self
 
-    def set_content(self, value: str, html: bool = False) -> 'Self':
+    def set_content(self, value: str, html: bool = False) -> 'te.Self':
         self._applies[0] = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
         return self
 
-    def set_content_by_path(self, value: Path, html: bool = False) -> 'Self':
+    def set_content_by_path(self, value: Path, html: bool = False) -> 'te.Self':
         return self.set_content(p.Path(value).read_text(), html)
 
-    def set_html(self, value: str) -> 'Self':
+    def set_html(self, value: str) -> 'te.Self':
         return self.set_content(value, html=True)
 
-    def set_html_by_path(self, value: Path) -> 'Self':
+    def set_html_by_path(self, value: Path) -> 'te.Self':
         return self.set_content_by_path(value, html=True)
 
-    def set_text(self, value: str) -> 'Self':
+    def set_text(self, value: str) -> 'te.Self':
         return self.set_content(value, html=False)
 
-    def set_text_by_path(self, value: Path) -> 'Self':
+    def set_text_by_path(self, value: Path) -> 'te.Self':
         return self.set_content_by_path(value, html=False)
 
-    def set_subject(self, value: str) -> 'Self':
+    def set_subject(self, value: str) -> 'te.Self':
         self._header['Subject'] = value
         return self
 
@@ -96,7 +96,7 @@ class Envelope:
             apply(msg)
         return msg
 
-    def send_by(self, *smtps: 'SMTP') -> 'Self':
+    def send_by(self, *smtps: 'SMTP') -> 'te.Self':
         for smtp in smtps:
             smtp.send(self)
         return self
@@ -125,13 +125,13 @@ class SMTP:
         self._smtp = (smtplib.SMTP_SSL if ssl else smtplib.SMTP)(host, port)
         self._username = None
 
-    def __enter__(self) -> 'Self':
+    def __enter__(self) -> 'te.Self':
         return self
 
     def __exit__(self, type, value, traceback) -> None:
         self._smtp.__exit__(type, value, traceback)
 
-    def __class_getitem__(cls, key: str) -> 'Self':
+    def __class_getitem__(cls, key: str) -> 'te.Self':
         # TODO: look forward to adding more
         return {
             '163': lambda ssl: cls('163.com', 'smtp.163.com', 25, ssl),  # mail.163.com
@@ -139,7 +139,7 @@ class SMTP:
         }[key]
 
     @classmethod
-    def aio(cls, mail: str, username: str, password: str, ssl: bool = True) -> 'Self':
+    def aio(cls, mail: str, username: str, password: str, ssl: bool = True) -> 'te.Self':
         '''All-in-one'''
         return cls[mail](ssl).login(username, password)
 
@@ -153,7 +153,7 @@ class SMTP:
     def envelope(self) -> 'Envelope':
         return Envelope.auto(self)
 
-    def login(self, username: str, password: str) -> 'Self':
+    def login(self, username: str, password: str) -> 'te.Self':
         self._username = username
         self._smtp.login(username, password)
         return self
@@ -165,13 +165,13 @@ class SMTP:
         except smtplib.SMTPServerDisconnected:
             pass
 
-    def send(self, *envelopes: 'Envelope') -> 'Self':
+    def send(self, *envelopes: 'Envelope') -> 'te.Self':
         for envelope in envelopes:
             msg = envelope.to_message()
             msg['From'] = self.sender
             self._smtp.send_message(msg)
         return self
 
-    def wait(self, seconds: float) -> 'Self':
+    def wait(self, seconds: float) -> 'te.Self':
         time.sleep(seconds)
         return self

@@ -9,9 +9,9 @@ from ...base.type import Array, Dict, Location, Path
 from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
-    import vtkmodules as _vtkmodules
+    import typing_extensions as te
 
-    from typing_extensions import Self
+    import vtkmodules as _vtkmodules
 
     from ...base.core import Foam
 
@@ -25,7 +25,7 @@ class PostProcess:
         self._logs: t.Optional[Dict] = None
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         return cls(foam)
 
     @property
@@ -132,7 +132,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
         reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
@@ -148,7 +148,7 @@ class VTK:
         cls,
         foam: 'Foam', options: str = '', overwrite: bool = False,
         **kwargs: t.Any,
-    ) -> t.Iterator['Self']:
+    ) -> t.Iterator['te.Self']:
         foam.destination  # assert dest is not None
         for name in ['writeCellCentres', 'writeCellVolumes']:
             foam.cmd.run([f'postProcess -func {name}'], suffix=f'.{name}', overwrite=overwrite, exception=False, unsafe=True)

@@ -9,7 +9,7 @@ import typing as t
 from ..function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Iterator:
@@ -32,15 +32,15 @@ class Iterator:
         return self._iterator
 
     @classmethod
-    def fromDict(cls, iterable: t.Dict) -> 'Self':
+    def fromDict(cls, iterable: t.Dict) -> 'te.Self':
         return cls(iter(iterable.items()))
 
     @classmethod
-    def fromIter(cls, iterable: t.Iterable) -> 'Self':
+    def fromIter(cls, iterable: t.Iterable) -> 'te.Self':
         return cls(iter(iterable))
 
     @classmethod
-    def fromList(cls, iterable: t.List) -> 'Self':
+    def fromList(cls, iterable: t.List) -> 'te.Self':
         return cls(iter(iterable))
 
     def collect(self, func: t.Callable) -> t.Any:
@@ -52,13 +52,13 @@ class Iterator:
     def collect_as_list(self) -> t.List:
         return self.collect(list)
 
-    def copy(self) -> 'Self':
+    def copy(self) -> 'te.Self':
         return copy.deepcopy(self)
 
-    def filter(self, func: t.Optional[t.Callable] = None) -> 'Self':
+    def filter(self, func: t.Optional[t.Callable] = None) -> 'te.Self':
         return self._new(filter(func, self._iterator))
 
-    def map(self, func: t.Callable) -> 'Self':
+    def map(self, func: t.Callable) -> 'te.Self':
         return self._new(map(func, self._iterator))
 
     def reduce(self, func: t.Callable) -> t.Any:
@@ -67,7 +67,7 @@ class Iterator:
     def reduce_with_operator(self, attr: str) -> t.Any:
         return self.reduce(getattr(op, attr))
 
-    def _new(self, iterator: t.Iterator) -> 'Self':
+    def _new(self, iterator: t.Iterator) -> 'te.Self':
         return self.__class__(iterator)
 
     from_dict = deprecated_classmethod(fromDict)

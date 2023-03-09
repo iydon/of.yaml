@@ -15,7 +15,7 @@ from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ..base.core import Foam
 
@@ -50,7 +50,7 @@ class Static:
             raise Exception(f'Unknown types "{keys}"')
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         return cls(foam)
 
     @match.register()

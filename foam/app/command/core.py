@@ -14,7 +14,7 @@ from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ...base.core import Foam
 
@@ -26,12 +26,12 @@ class Command:
         self._foam = foam
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         foam.destination  # assert dest is not None
         return cls.fromFoamWithoutAsserting(foam)
 
     @classmethod
-    def fromFoamWithoutAsserting(cls, foam: 'Foam') -> 'Self':
+    def fromFoamWithoutAsserting(cls, foam: 'Foam') -> 'te.Self':
         return cls(foam)
 
     @property

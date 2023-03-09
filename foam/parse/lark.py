@@ -13,7 +13,7 @@ from ..util.function import deprecated_classmethod, grammar
 from ..util.implementation import Singleton
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     import lark as _lark
 
@@ -35,7 +35,7 @@ class Lark(Singleton):
         self._static = []
 
     @classmethod
-    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
         return cls.new(path, **kwargs)
 
     @property

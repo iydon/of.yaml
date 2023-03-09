@@ -6,7 +6,7 @@ import typing as t
 from ..compat.typing import Protocol
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Singleton(Protocol):
@@ -15,11 +15,11 @@ class Singleton(Protocol):
     __instances = {}
 
     @classmethod
-    def default(cls) -> 'Self':
+    def default(cls) -> 'te.Self':
         return cls.new()
 
     @classmethod
-    def new(cls, *args: t.Any, **kwargs: t.Any) -> 'Self':
+    def new(cls, *args: t.Any, **kwargs: t.Any) -> 'te.Self':
         key = cls.__hash(*args, **kwargs)
         if key not in cls.__instances:
             cls.__instances[key] = cls(*args, **kwargs)

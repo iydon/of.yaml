@@ -4,7 +4,7 @@ __all__ = ['AddOn']
 import typing as t
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from . import Figure
 
@@ -24,7 +24,7 @@ class AddOn:
         self._ret = None
 
     @classmethod
-    def new(cls, *args: t.Any, **kwargs: t.Any) -> 'Self':
+    def new(cls, *args: t.Any, **kwargs: t.Any) -> 'te.Self':
         return cls(*args, **kwargs)
 
     @property

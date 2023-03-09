@@ -10,7 +10,7 @@ from ..base.lib import classproperty
 from ..base.type import Keys, TupleSequence
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Match:
@@ -48,7 +48,7 @@ class Match:
         return self._methods[keys]
 
     @classmethod
-    def default(cls) -> 'Self':
+    def default(cls) -> 'te.Self':
         return cls()
 
     def get(self, *keys: str, default: t.Optional[t.Callable] = None) -> t.Optional[t.Callable]:

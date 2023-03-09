@@ -12,7 +12,7 @@ from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ..base.core import Foam
 
@@ -54,7 +54,7 @@ class Url:
         return lambda *args, **kwargs: method(self, *args, **kwargs)
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         return cls(foam)
 
     @property
@@ -69,12 +69,12 @@ class Url:
     def url(self) -> str:
         return urllib.parse.urlunsplit(self._url)
 
-    def set_url(self, url: str) -> 'Self':
+    def set_url(self, url: str) -> 'te.Self':
         self._url = urllib.parse.urlsplit(url)
         self._path = p.Path(self._url.path)
         return self
 
-    def set_split_url(self, split_url: urllib.parse.SplitResult) -> 'Self':
+    def set_split_url(self, split_url: urllib.parse.SplitResult) -> 'te.Self':
         self._url = split_url
         self._path = p.Path(split_url.path)
         return self

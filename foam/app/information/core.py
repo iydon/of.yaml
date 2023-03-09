@@ -12,7 +12,7 @@ from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ..command.core import Command
     from ...base.core import Foam
@@ -26,11 +26,11 @@ class Information:
         self._cmd: t.Optional['Command'] = None
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'Self':
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
         return cls(foam)
 
     @classmethod
-    def default(cls) -> 'Self':
+    def default(cls) -> 'te.Self':
         from ...base.core import Foam
 
         return cls(Foam.default())

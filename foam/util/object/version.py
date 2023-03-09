@@ -6,7 +6,7 @@ import typing as t
 from ..function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Version(t.NamedTuple):
@@ -24,10 +24,10 @@ class Version(t.NamedTuple):
     minor: int
     other: t.Optional[str]
 
-    def __lt__(self, other: 'Self') -> bool:
+    def __lt__(self, other: 'te.Self') -> bool:
         return (self.major, self.minor) < (other.major, other.minor)
 
-    def __gt__(self, other: 'Self') -> bool:
+    def __gt__(self, other: 'te.Self') -> bool:
         return other.__lt__(self)
 
     def __repr__(self) -> str:
@@ -37,7 +37,7 @@ class Version(t.NamedTuple):
         return self.to_string()
 
     @classmethod
-    def fromString(cls, version: str) -> 'Self':
+    def fromString(cls, version: str) -> 'te.Self':
         parts = version.split('.', maxsplit=2)
         if len(parts) == 2:
             major, minor = parts

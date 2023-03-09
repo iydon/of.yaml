@@ -9,7 +9,7 @@ from ..function import deprecated_classmethod
 from ...base.type import Dict, FoamItem, Keys, List, Path
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Data:
@@ -96,15 +96,15 @@ class Data:
         return self._data.__str__()
 
     @classmethod
-    def fromAny(cls, data: FoamItem) -> 'Self':
+    def fromAny(cls, data: FoamItem) -> 'te.Self':
         return cls(data)
 
     @classmethod
-    def fromDict(cls, data: t.Optional[Dict] = None) -> 'Self':
+    def fromDict(cls, data: t.Optional[Dict] = None) -> 'te.Self':
         return cls({} if data is None else data)
 
     @classmethod
-    def fromDictKeys(cls, *keys: t.Hashable, default: t.Optional[t.Callable] = None) -> 'Self':
+    def fromDictKeys(cls, *keys: t.Hashable, default: t.Optional[t.Callable] = None) -> 'te.Self':
         func = default or dict
         self = cls.fromDict()
         for key in keys:
@@ -112,39 +112,39 @@ class Data:
         return self
 
     @classmethod
-    def fromList(cls, data: t.Optional[List] = None) -> 'Self':
+    def fromList(cls, data: t.Optional[List] = None) -> 'te.Self':
         return cls([] if data is None else data)
 
     @classmethod
-    def fromListLength(cls, length: int, default: t.Optional[t.Callable] = None) -> 'Self':
+    def fromListLength(cls, length: int, default: t.Optional[t.Callable] = None) -> 'te.Self':
         func = default or (lambda: None)
         return cls.fromList([func() for _ in range(length)])
 
     @classmethod
-    def load(cls, *paths: Path, type: t.Optional[str] = None) -> t.Iterator['Self']:
+    def load(cls, *paths: Path, type: t.Optional[str] = None) -> t.Iterator['te.Self']:
         for path in map(p.Path, paths):
             type_or_suffix = path.suffix if type is None else type  # type or path.suffix
             yield cls.loads(path.read_bytes(), type_or_suffix)
 
     @classmethod
-    def loadFromPath(cls, *parts: str, type: t.Optional[str] = None) -> 'Self':
+    def loadFromPath(cls, *parts: str, type: t.Optional[str] = None) -> 'te.Self':
         return next(cls.load(p.Path(*parts), type))
 
     @classmethod
-    def loads(cls, content: bytes, type_or_suffix: str = 'yaml') -> 'Self':
+    def loads(cls, content: bytes, type_or_suffix: str = 'yaml') -> 'te.Self':
         return cls.fromAny(Conversion.fromBytes(content, type_or_suffix, all=True).to_document())
 
     @property
     def data(self) -> FoamItem:
         return self._data
 
-    def dump(self, *paths: Path, type: t.Optional[str] = None) -> 'Self':
+    def dump(self, *paths: Path, type: t.Optional[str] = None) -> 'te.Self':
         for path in map(p.Path, paths):
             type_or_suffix = path.suffix if type is None else type  # type or path.suffix
             path.write_bytes(self.dumps(type_or_suffix))
         return self
 
-    def dump_to_path(self, *parts: str, type: t.Optional[str] = None) -> 'Self':
+    def dump_to_path(self, *parts: str, type: t.Optional[str] = None) -> 'te.Self':
         return self.dump(p.Path(*parts), type)
 
     def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
@@ -202,12 +202,12 @@ class Data:
         # TODO: retained due to compatibility needs
         return self._data.setdefault(key, default)
 
-    def set_default(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> 'Self':
+    def set_default(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> 'te.Self':
         if keys not in self:
             self.__setitem__(keys, default)
         return self.__getitem__(keys)
 
-    def set_via_dict(self, data: Dict) -> 'Self':
+    def set_via_dict(self, data: Dict) -> 'te.Self':
         for keys, value in self.__class__.fromDict(data).items():
             self.__setitem__(keys, value)
         return self

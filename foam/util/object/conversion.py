@@ -11,7 +11,7 @@ from ...base.lib import tomlkit, yaml
 from ...base.type import Document, Path
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
 
 class Conversion:
@@ -35,7 +35,7 @@ class Conversion:
         self._document = document
 
     @classmethod
-    def autoFromBytes(cls, content: bytes, all: bool = False) -> 'Self':
+    def autoFromBytes(cls, content: bytes, all: bool = False) -> 'te.Self':
         for type in cls._types:
             try:
                 return cls.fromBytes(content, type, all)
@@ -44,19 +44,19 @@ class Conversion:
         raise Exception('Unable to recognize content type')
 
     @classmethod
-    def autoFromString(cls, text: str, all: bool = False) -> 'Self':
+    def autoFromString(cls, text: str, all: bool = False) -> 'te.Self':
         return cls.autoFromBytes(text.encode(), all)
 
     @classmethod
-    def autoFromPath(cls, path: Path, all: bool = False) -> 'Self':
+    def autoFromPath(cls, path: Path, all: bool = False) -> 'te.Self':
         return cls.autoFromBytes(p.Path(path).read_bytes(), all)
 
     @classmethod
-    def fromDocument(cls, document: Document) -> 'Self':
+    def fromDocument(cls, document: Document) -> 'te.Self':
         return cls(document)
 
     @classmethod
-    def fromBytes(cls, content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self':
+    def fromBytes(cls, content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'te.Self':
         type = cls.typeFromSuffix(type_or_suffix)
         if type not in cls._types:
             raise Exception(f'"{type}" is not a valid type string')
@@ -69,29 +69,29 @@ class Conversion:
             }[type](content)
 
     @classmethod
-    def fromString(cls, text: str, type: str = 'json', all: bool = False) -> 'Self':
+    def fromString(cls, text: str, type: str = 'json', all: bool = False) -> 'te.Self':
         return cls.fromBytes(text.encode(), type, all)
 
     @classmethod
-    def fromPath(cls, path: Path, all: bool = False, type: t.Optional[str] = None) -> 'Self':
+    def fromPath(cls, path: Path, all: bool = False, type: t.Optional[str] = None) -> 'te.Self':
         path = p.Path(path)
         type_or_suffix = path.suffix if type is None else type  # type or path.suffix
         return cls.fromBytes(path.read_bytes(), type_or_suffix, all)
 
     @classmethod
-    def fromJSON(cls, text: str) -> 'Self':
+    def fromJSON(cls, text: str) -> 'te.Self':
         return cls(json.loads(text))
 
     @classmethod
-    def fromPickle(cls, text: bytes) -> 'Self':
+    def fromPickle(cls, text: bytes) -> 'te.Self':
         return cls(pickle.loads(text))
 
     @classmethod
-    def fromTOML(cls, text: str) -> 'Self':
+    def fromTOML(cls, text: str) -> 'te.Self':
         return cls(tomlkit.loads(text))
 
     @classmethod
-    def fromYAML(cls, text: str, all: bool = False) -> 'Self':
+    def fromYAML(cls, text: str, all: bool = False) -> 'te.Self':
         document = list(yaml.load_all(text)) if all else yaml.load(text)
         return cls(document)
 

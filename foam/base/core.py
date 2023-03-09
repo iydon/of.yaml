@@ -21,7 +21,7 @@ from ..util.object.data import Data
 from ..util.object.version import Version
 
 if t.TYPE_CHECKING:
-    from typing_extensions import Self
+    import typing_extensions as te
 
     from ..app.command.core import Command
     from ..app.information.core import Information
@@ -82,7 +82,7 @@ class Foam:
         )
 
     @classmethod
-    def fromDemo(cls, name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self':
+    def fromDemo(cls, name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'te.Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         path = p.Path(__file__).parents[1] / 'static' / 'demo' / version / name
@@ -98,11 +98,11 @@ class Foam:
             return self
 
     @classmethod
-    def fromDemos(cls, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+    def fromDemos(cls, warn: bool = False, verbose: bool = True) -> t.List['te.Self']:
         return list(map(lambda name: cls.fromDemo(name, warn, verbose), cls.listDemos()))
 
     @classmethod
-    def fromRemoteDemo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> 'Self':
+    def fromRemoteDemo(cls, name: str = 'cavity', timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> 'te.Self':
         version = os.environ['WM_PROJECT_VERSION']
         name = name if name.endswith('.yaml') else f'{name}.yaml'
         url = f'https://raw.githubusercontent.com/iydon/of.yaml/main/foam/static/demo/{version}/{name}'
@@ -118,11 +118,11 @@ class Foam:
             return self
 
     @classmethod
-    def fromRemoteDemos(cls, timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> t.List['Self']:
+    def fromRemoteDemos(cls, timeout: t.Optional[float] = None, warn: bool = False, verbose: bool = True) -> t.List['te.Self']:
         return list(map(lambda name: cls.fromRemoteDemo(name, timeout, warn, verbose), cls.listDemos()))
 
     @classmethod
-    def fromRemotePath(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True, type:  t.Optional[str] = None) -> 'Self':
+    def fromRemotePath(cls, url: str, timeout: t.Optional[float] = None, warn: bool = True, type:  t.Optional[str] = None) -> 'te.Self':
         with urllib.request.urlopen(url, timeout=timeout) as f:
             text = f.read()
         split_url = urllib.parse.urlsplit(url)
@@ -136,7 +136,7 @@ class Foam:
         return self
 
     @classmethod
-    def fromPath(cls, path: Path, warn: bool = True, type: t.Optional[str] = None) -> 'Self':
+    def fromPath(cls, path: Path, warn: bool = True, type: t.Optional[str] = None) -> 'te.Self':
         '''Supported path mode: file, directory'''
         path = p.Path(path)
         if path.is_file():
@@ -148,7 +148,7 @@ class Foam:
             raise Exception(f'Mode "{path.stat().st_mode}" is not supported')
 
     @classmethod
-    def fromOpenFoam(cls, path: Path, **kwargs: t.Any) -> 'Self':
+    def fromOpenFoam(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
         '''From OpenFOAM directory'''
         return Parser.toFoam(path, **kwargs)
 
@@ -157,7 +157,7 @@ class Foam:
         cls,
         text: t.Union[bytes, str], root: Path,
         type_or_suffix: t.Optional[str] = None, warn: bool = True,
-    ) -> 'Self':
+    ) -> 'te.Self':
         '''Supported formats: please refer to `Conversion`'''
         content = text if isinstance(text, bytes) else text.encode()
         if type_or_suffix is not None:
@@ -167,12 +167,12 @@ class Foam:
         return cls(data, root, warn=warn)
 
     @classmethod
-    def fromYAML(cls, text: str, root: Path, warn: bool = True) -> 'Self':
+    def fromYAML(cls, text: str, root: Path, warn: bool = True) -> 'te.Self':
         data = Conversion.fromString(text, 'yaml', all=True).to_document()
         return cls(data, root, warn=warn)
 
     @classmethod
-    def default(cls) -> 'Self':
+    def default(cls) -> 'te.Self':
         return cls([{}], '', warn=False)
 
     @property
@@ -293,12 +293,12 @@ class Foam:
             count = min(count, len(grids)-grids.count('1'))
         return count
 
-    def copy(self) -> 'Self':
+    def copy(self) -> 'te.Self':
         other = self.__class__(copy.deepcopy(self._list), self._root)
         other._dest = self._dest
         return other
 
-    def save(self, dest: Path, paraview: bool = True) -> 'Self':
+    def save(self, dest: Path, paraview: bool = True) -> 'te.Self':
         '''Persist case to hard disk'''
         self._dest = p.Path(dest)
         self._dest.mkdir(parents=True, exist_ok=True)
@@ -308,7 +308,7 @@ class Foam:
             self._write(self._dest/'paraview.foam', '')
         return self
 
-    def reset(self) -> 'Self':
+    def reset(self) -> 'te.Self':
         self._dest = self._cmd = self._info = self._post = None
         for obj in gc.get_objects():
             if isinstance(obj, f._lru_cache_wrapper):
