@@ -6,6 +6,7 @@ import subprocess
 import typing as t
 
 from .decorator import message
+from ..base.type import DictAny2
 
 
 root = p.Path(__file__).parents[1]
@@ -21,7 +22,7 @@ def deprecated_classmethod(method: classmethod, old: t.Optional[str] = None) -> 
     return classmethod(message(msg)(func))
 
 
-def dict_without_keys(data: t.Dict[t.Hashable, t.Any], *keys: str) -> dict:
+def dict_without_keys(data: DictAny2, *keys: str) -> dict:
     return {key: data[key] for key in data.keys() ^ keys}
 
 

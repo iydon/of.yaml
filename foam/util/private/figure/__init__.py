@@ -6,7 +6,7 @@ import typing as t
 
 from ...function import deprecated_classmethod
 from ....base.lib import matplotlib
-from ....base.type import Path
+from ....base.type import Any, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -15,6 +15,9 @@ if t.TYPE_CHECKING:
     import matplotlib.figure as _figure
 
     from . import mpl as _mpl, sns as _sns
+
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
 
 
 class Figure:
@@ -38,16 +41,16 @@ class Figure:
     _ax: '_axes.SubplotBase'
     _fig: '_figure.Figure'
 
-    def __init__(self, **kwargs: t.Any) -> None:
+    def __init__(self, **kwargs: 'Kwargs') -> None:
         self._fig, self._ax = matplotlib.pyplot.subplots(1, 1, **kwargs)
         self._mpl = self._sns = None
 
     @classmethod
-    def new(cls, **kwargs: t.Any) -> 'te.Self':
+    def new(cls, **kwargs: 'Kwargs') -> 'te.Self':
         return cls(**kwargs)
 
     @classmethod
-    def setRcParams(cls, *items: t.Tuple[str, t.Any]) -> 'te.Self':
+    def setRcParams(cls, *items: t.Tuple[str, Any]) -> 'te.Self':
         # Type annotation of return value should actually be type
         for key, value in items:
             matplotlib.pyplot.rcParams[key] = value
@@ -78,7 +81,7 @@ class Figure:
 
         return self._sns
 
-    def save(self, path: Path, **kwargs: t.Any) -> 'te.Self':
+    def save(self, path: Path, **kwargs: 'Kwargs') -> 'te.Self':
         kwargs = {'bbox_inches': 'tight', 'transparent': False, **kwargs}
         self._fig.savefig(p.Path(path).as_posix(), **kwargs)
         return self

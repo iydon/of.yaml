@@ -8,12 +8,15 @@ import typing as t
 
 from ..object.data import Data
 from ..function import deprecated_classmethod, dict_without_keys
-from ...base.type import Dict, Path
+from ...base.type import DictStrAny, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
     from ...base.core import Foam
+
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
 
 
 class CaseBase(abc.ABC):
@@ -68,7 +71,7 @@ class CaseBase(abc.ABC):
 
     dict_without_keys = staticmethod(dict_without_keys)
 
-    def __init__(self, **kwargs: t.Any) -> None:
+    def __init__(self, **kwargs: 'Kwargs') -> None:
         from ...base.core import Foam
 
         self._foam = Foam.fromPath(self.tempalte)
@@ -83,21 +86,21 @@ class CaseBase(abc.ABC):
             f'    .set_required({func(self._required)})'
 
     @classmethod
-    def new(cls, **kwargs: t.Any) -> 'te.Self':
+    def new(cls, **kwargs: 'Kwargs') -> 'te.Self':
         return cls(**kwargs)
 
     @abc.abstractmethod
-    def optional(self) -> t.Optional[Dict]:
+    def optional(self) -> t.Optional[DictStrAny]:
         '''Initialize optional properties'''
         pass
 
     @abc.abstractmethod
-    def required(self, **kwargs: t.Any) -> t.Optional[Dict]:
+    def required(self, **kwargs: 'Kwargs') -> t.Optional[DictStrAny]:
         '''Initialize required properties'''
         pass
 
     @abc.abstractmethod
-    def finalize(self, foam: 'Foam', optional: Dict, required: Dict) -> t.Optional['Foam']:
+    def finalize(self, foam: 'Foam', optional: DictStrAny, required: DictStrAny) -> t.Optional['Foam']:
         '''Convert class properties to case parameters'''
         pass
 
@@ -133,11 +136,11 @@ class CaseBase(abc.ABC):
             .set_optional(**parameter.optional) \
             .set_required(**parameter.required)
 
-    def set_optional(self, **kwargs: t.Any) -> 'te.Self':
+    def set_optional(self, **kwargs: 'Kwargs') -> 'te.Self':
         self._optional.update(kwargs)
         return self
 
-    def set_required(self, **kwargs: t.Any) -> 'te.Self':
+    def set_required(self, **kwargs: 'Kwargs') -> 'te.Self':
         self._required.update(kwargs)
         return self
 
@@ -152,8 +155,8 @@ class CaseBase(abc.ABC):
 class CaseParameter(t.NamedTuple):
     '''Parameter for case'''
 
-    optional: Dict
-    required: Dict
+    optional: DictStrAny
+    required: DictStrAny
 
     @classmethod
     def loadFromPath(cls, *parts: str) -> 'te.Self':

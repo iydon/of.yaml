@@ -6,7 +6,7 @@ import typing as t
 import urllib.parse
 import urllib.request
 
-from ..base.type import Dict, Keys
+from ..base.type import DictStrAny, Keys
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
@@ -85,35 +85,35 @@ class Url:
         return urllib.parse.urlunsplit(parts)
 
     @match.register('path', 'raw')
-    def _(self, static: Dict) -> Dict:
+    def _(self, static: DictStrAny) -> DictStrAny:
         # TODO: directory
         url = self.url_from_path(self.root/static['data'])
         static.update({'type': ['embed', 'binary'], 'data': self._urlopen(url)})
         return static
 
     @match.register('path', '7z')
-    def _(self, static: Dict) -> Dict:
+    def _(self, static: DictStrAny) -> DictStrAny:
         url = self.url_from_path(self.root/static['data'])
         static.update({'type': ['embed', '7z'], 'data': self._urlopen(url)})
         return static
 
     @match.register('path', 'foam', 'json')
-    def _(self, static: Dict) -> Dict:
+    def _(self, static: DictStrAny) -> DictStrAny:
         return self._path_foam(static)
 
     @match.register('path', 'foam', 'toml')
-    def _(self, static: Dict) -> Dict:
+    def _(self, static: DictStrAny) -> DictStrAny:
         return self._path_foam(static)
 
     @match.register('path', 'foam', 'yaml')
-    def _(self, static: Dict) -> Dict:
+    def _(self, static: DictStrAny) -> DictStrAny:
         return self._path_foam(static)
 
     def _urlopen(self, url: str) -> bytes:
         with urllib.request.urlopen(url) as f:
             return f.read()
 
-    def _path_foam(self, static: Dict) -> Dict:
+    def _path_foam(self, static: DictStrAny) -> DictStrAny:
         url = self.url_from_path(self.root/static['data'])
         self._foam['foam'][static['name'].split('/')] = Conversion \
             .fromBytes(self._urlopen(url), static['type'][2], all=False) \

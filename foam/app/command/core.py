@@ -9,7 +9,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...base.type import Dict
+from ...base.type import Any, DictStr, DictStrAny, ListFloat, ListInt, ListStr
 from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
 
@@ -35,7 +35,7 @@ class Command:
         return cls(foam)
 
     @property
-    def times(self) -> t.List[float]:
+    def times(self) -> ListFloat:
         '''Time directories'''
         times = []
         for path in self._foam.destination.iterdir():
@@ -56,7 +56,7 @@ class Command:
         return logs
 
     @cached_property
-    def macros(self) -> t.Dict[str, str]:
+    def macros(self) -> DictStr[str]:
         '''Macros that can be used in the pipeline field'''
         macros = {
             '__app__': self._foam.application,
@@ -72,7 +72,7 @@ class Command:
         self,
         overwrite: bool = False, exception: bool = False,
         parallel: bool = True, unsafe: bool = True,
-    ) -> t.List[int]:
+    ) -> ListInt:
         '''Inspired by  `Allrun`'''
         if not self._foam.pipeline:
             assert (self._foam.destination/'Allrun').exists()
@@ -89,16 +89,16 @@ class Command:
 
     def run(
         self,
-        commands: t.List[t.Union[str, Dict]],
+        commands: t.List[t.Union[str, DictStrAny]],
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
-    ) -> t.List[int]:
+    ) -> ListInt:
         '''Inspired by `runApplication` and `runParallel`
 
         Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/tools/RunFunctions
         '''
-        codes: t.List[int] = [-1] * len(commands)
+        codes: ListInt = [-1] * len(commands)
         for ith, command in enumerate(commands):
             option = self._command(command, suffix=suffix, overwrite=overwrite, exception=exception, parallel=parallel)
             raws = self._split(option['command'], False)
@@ -137,14 +137,14 @@ class Command:
             command = command.replace(old, new)
         return command
 
-    def _split(self, command: str, parallel: bool, replace: bool = True) -> t.List[str]:
+    def _split(self, command: str, parallel: bool, replace: bool = True) -> ListStr:
         if parallel and '__app__' in command:
             command = f'mpirun -np __procs__ {command} -parallel'
         if replace:
             command = self._replace(command)
         return shlex.split(command)
 
-    def _command(self, command: t.Union[str, Dict], **kwargs: t.Any) -> Dict:
+    def _command(self, command: t.Union[str, DictStrAny], **kwargs: Any) -> DictStrAny:
         if isinstance(command, str):
             return {'command': command, **kwargs}
         elif isinstance(command, dict):
@@ -153,7 +153,7 @@ class Command:
         else:
             raise Exception('`command` does not currently support variables other than `str`, `dict`')
 
-    def _popen(self, args: t.List[str], unsafe: bool) -> s.Popen:
+    def _popen(self, args: ListStr, unsafe: bool) -> s.Popen:
         cmd = ' '.join(args) if unsafe else args
         return s.Popen(cmd, cwd=self._foam.destination, shell=unsafe, stdout=s.PIPE)
 

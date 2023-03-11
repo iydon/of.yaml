@@ -7,7 +7,7 @@ import shutil
 import typing as t
 
 from ..base.lib import py7zr
-from ..base.type import Dict, Keys
+from ..base.type import DictStrAny, Keys
 from ..compat.shutil import copytree
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
@@ -54,28 +54,28 @@ class Static:
         return cls(foam)
 
     @match.register()
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         # do nothing
         pass
 
     @match.register('embed', 'text')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         out = self._out(static['name'])
         self._foam._write(out, static['data'], static.get('permission', None))
 
     @match.register('embed', 'binary')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         out = self._out(static['name'])
         out.write_bytes(static['data'])
 
     @match.register('embed', '7z')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         out = self._out(static['name'])
         with py7zr.SevenZipFile(io.BytesIO(static['data']), mode='r') as z:
             z.extractall(path=out.parent)
 
     @match.register('path', 'raw')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         out, in_ = self._out(static['name']), self._in(static['data'])
         if in_.is_dir():
             copytree(in_, out, dirs_exist_ok=True)
@@ -85,21 +85,21 @@ class Static:
             raise Exception('Target is neither a file nor a directory')
 
     @match.register('path', '7z')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         out, in_ = self._out(static['name']), self._in(static['data'])
         with py7zr.SevenZipFile(in_, mode='r') as z:
             z.extractall(path=out.parent)
 
     @match.register('path', 'foam', 'json')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         self._path_foam(static)
 
     @match.register('path', 'foam', 'toml')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         self._path_foam(static)
 
     @match.register('path', 'foam', 'yaml')
-    def _(self, static: Dict) -> None:
+    def _(self, static: DictStrAny) -> None:
         self._path_foam(static)
 
     def _out(self, name: str) -> p.Path:
@@ -110,7 +110,7 @@ class Static:
     def _in(self, data: str) -> p.Path:
         return self._foam._root / data
 
-    def _path_foam(self, static: Dict) -> None:
+    def _path_foam(self, static: DictStrAny) -> None:
         data = Data.fromDict()
         out, in_ = self._foam._path(), self._in(static['data'])
         data[static['name'].split('/')] = Conversion \

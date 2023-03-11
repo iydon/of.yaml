@@ -1,24 +1,45 @@
-__all__ = ['Array', 'Dict', 'Document', 'FoamData', 'FoamItem', 'Keys', 'List', 'Location', 'Path', 'TupleSequence']
+__all__ = [
+    'Ta', 'Tb', 'Tc',
+    #
+    'DictAny', 'DictFloat', 'DictStr', 'TupleSeq', 'Keys', 'Location',
+    #
+    'Any', 'DictAny2', 'DictStr2', 'DictStrAny', 'DictStrFloat', 'Document', 'FoamItem', 'FoamItems',
+    'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path',
+    #
+    'Array',
+]
 
 
 import pathlib as p
 import typing as t
 
 if t.TYPE_CHECKING:
-    import typing_extensions as te
-
     import numpy as _numpy
 
 
-T = t.TypeVar('T')
+T1, T2, T3 = t.TypeVar('T1'), t.TypeVar('T2'), t.TypeVar('T3')
+Ta, Tb, Tc = t.TypeVar('Ta'), t.TypeVar('Tb'), t.TypeVar('Tc')
 
-Dict = t.Dict[str, t.Any]
-List = t.List[t.Any]
-Document = FoamItem = t.Union[Dict, List]
-FoamData = t.List[FoamItem]
+DictAny = t.Dict[t.Hashable, T1]
+DictFloat = t.Dict[float, T1]
+DictStr = t.Dict[str, T1]
+TupleSeq = t.Tuple[T1, ...]  # https://github.com/python/mypy/issues/184
+Keys = t.Union[T1, TupleSeq[T1]]  # https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
+Location = t.Tuple[T1, T1, T1]
+
+Any = t.Any
+DictAny2 = DictAny[Any]
+DictStr2 = DictStr[str]
+DictStrAny = DictStr[Any]
+DictStrFloat = DictStr[float]
+ListAny = t.List[Any]
+ListFloat = t.List[float]
+ListInt = t.List[int]
+ListStr = t.List[str]
 Path = t.Union[str, p.Path]
-TupleSequence = t.Tuple[T, ...]  # https://github.com/python/mypy/issues/184
-Keys = t.Union[T, TupleSequence[T]]  # https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
+
+Document = FoamItem = t.Union[DictStrAny, ListAny]
+FoamItems = t.List[FoamItem]
 
 
 class Array:
@@ -36,14 +57,3 @@ class Array:
             return '_numpy.number'
         else:
             return '_numpy.ndarray'
-
-
-class Location:
-    '''Location 3D'''
-
-    def __class_getitem__(cls, T: type) -> type:
-        return t.Tuple[T, T, T]
-
-    @classmethod
-    def cast(cls, location: 'te.Self', T: type) -> 'te.Self':
-        return tuple(map(T, location))

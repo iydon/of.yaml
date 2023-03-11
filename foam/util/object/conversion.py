@@ -13,6 +13,9 @@ from ...base.type import Document, Path
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class Conversion:
     '''Conversion between object and bytes/string
@@ -110,7 +113,7 @@ class Conversion:
     def to_document(self) -> Document:
         return self._document
 
-    def to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: t.Any) -> bytes:
+    def to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: 'Kwargs') -> bytes:
         type = self.typeFromSuffix(type_or_suffix)
         if type not in self._types:
             raise Exception(f'"{type}" is not a valid type string')
@@ -122,26 +125,26 @@ class Conversion:
                 'yaml': lambda: self.to_yaml(all, **kwargs).encode(),
             }[type]()
 
-    def to_string(self, type: str = 'json', all: bool = False, **kwargs: t.Any) -> str:
+    def to_string(self, type: str = 'json', all: bool = False, **kwargs: 'Kwargs') -> str:
         return self.to_bytes(type, all, **kwargs).decode()
 
-    def to_path(self, path: Path, all: bool = False, type: t.Optional[str] = None, **kwargs: t.Any) -> p.Path:
+    def to_path(self, path: Path, all: bool = False, type: t.Optional[str] = None, **kwargs: 'Kwargs') -> p.Path:
         path = p.Path(path)
         type_or_suffix = path.suffix if type is None else type  # type or path.suffix
         path.write_bytes(self.to_bytes(type_or_suffix, all, **kwargs))
         return path
 
-    def to_json(self, **kwargs: t.Any) -> str:
+    def to_json(self, **kwargs: 'Kwargs') -> str:
         kwargs = {'ensure_ascii': False, **kwargs}
         return json.dumps(self._document, **kwargs)
 
-    def to_pickle(self, **kwargs: t.Any) -> bytes:
+    def to_pickle(self, **kwargs: 'Kwargs') -> bytes:
         return pickle.dumps(self._document, **kwargs)
 
-    def to_toml(self, **kwargs: t.Any) -> str:
+    def to_toml(self, **kwargs: 'Kwargs') -> str:
         return tomlkit.dumps(self._document, **kwargs)
 
-    def to_yaml(self, all: bool = False, **kwargs: t.Any) -> str:
+    def to_yaml(self, all: bool = False, **kwargs: 'Kwargs') -> str:
         kwargs = {'indent': 4, **kwargs}
         return (yaml.dump_all if all else yaml.dump)(self._document, **kwargs)
 

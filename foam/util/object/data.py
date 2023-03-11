@@ -6,10 +6,14 @@ import typing as t
 
 from .conversion import Conversion
 from ..function import deprecated_classmethod
-from ...base.type import Dict, FoamItem, Keys, List, Path
+from ...base.type import Any, DictStrAny, FoamItem, Keys, ListAny, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
+
+    P = te.ParamSpec('P')
+    Args = te.ParamSpecArgs(P)
+    Kwargs = te.ParamSpecKwargs(P)
 
 
 class Data:
@@ -35,7 +39,7 @@ class Data:
     def __init__(self, data: FoamItem) -> None:
         self._data = data
 
-    def __contains__(self, keys: Keys[t.Any]) -> bool:
+    def __contains__(self, keys: Keys[Any]) -> bool:
         if isinstance(keys, tuple):
             ans = self._data
             for key in keys:
@@ -49,7 +53,7 @@ class Data:
         else:
             return self._data.__contains__(keys)
 
-    def __getitem__(self, keys: Keys[t.Any]) -> t.Any:
+    def __getitem__(self, keys: Keys[Any]) -> Any:
         if isinstance(keys, tuple):
             ans = self._data
             for key in keys:
@@ -61,7 +65,7 @@ class Data:
         else:
             return self._data[keys]
 
-    def __setitem__(self, keys: Keys[t.Any], value: t.Any) -> None:
+    def __setitem__(self, keys: Keys[Any], value: Any) -> None:
         if isinstance(keys, tuple):
             assert keys
 
@@ -83,7 +87,7 @@ class Data:
     def __bool__(self) -> bool:
         return bool(self._data)  # 'list' object has no attribute '__bool__'
 
-    def __iter__(self) -> t.Iterator[t.Any]:
+    def __iter__(self) -> t.Iterator[Any]:
         return self._data.__iter__()
 
     def __len__(self) -> int:
@@ -100,7 +104,7 @@ class Data:
         return cls(data)
 
     @classmethod
-    def fromDict(cls, data: t.Optional[Dict] = None) -> 'te.Self':
+    def fromDict(cls, data: t.Optional[DictStrAny] = None) -> 'te.Self':
         return cls({} if data is None else data)
 
     @classmethod
@@ -112,7 +116,7 @@ class Data:
         return self
 
     @classmethod
-    def fromList(cls, data: t.Optional[List] = None) -> 'te.Self':
+    def fromList(cls, data: t.Optional[ListAny] = None) -> 'te.Self':
         return cls([] if data is None else data)
 
     @classmethod
@@ -147,7 +151,7 @@ class Data:
     def dump_to_path(self, *parts: str, type: t.Optional[str] = None) -> 'te.Self':
         return self.dump(p.Path(*parts), type)
 
-    def dumps(self, type_or_suffix: str = 'yaml', **kwargs: t.Any) -> bytes:
+    def dumps(self, type_or_suffix: str = 'yaml', **kwargs: 'Kwargs') -> bytes:
         return Conversion \
             .fromDocument(self._data) \
             .to_bytes(type_or_suffix, all=True, **kwargs)
@@ -164,23 +168,23 @@ class Data:
     def to_any(self) -> FoamItem:
         return self._data
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> DictStrAny:
         assert self.is_dict()
 
         return self._data
 
-    def to_list(self) -> List:
+    def to_list(self) -> ListAny:
         assert self.is_list()
 
         return self._data
 
-    def contains(self, *keys: t.Any) -> bool:
+    def contains(self, *keys: 'Args') -> bool:
         try:
             return self.__contains__(keys)
         except Exception:
             return False
 
-    def get(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+    def get(self, key: Any, default: t.Optional[Any] = None) -> Any:
         # TODO: retained due to compatibility needs
         if isinstance(self._data, dict):
             return self._data.get(key, default)
@@ -192,33 +196,33 @@ class Data:
         else:
             raise Exception(f'Unknown type "{type(self._data).__name__}"')
 
-    def gets(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+    def gets(self, *keys: 'Args', default: t.Optional[Any] = None) -> Any:
         try:
             return self.__getitem__(keys)
         except (IndexError, KeyError, TypeError):
             return default
 
-    def setdefault(self, key: t.Any, default: t.Optional[t.Any] = None) -> t.Any:
+    def setdefault(self, key: Any, default: t.Optional[Any] = None) -> Any:
         # TODO: retained due to compatibility needs
         return self._data.setdefault(key, default)
 
-    def set_default(self, *keys: t.Any, default: t.Optional[t.Any] = None) -> 'te.Self':
+    def set_default(self, *keys: 'Args', default: t.Optional[Any] = None) -> 'te.Self':
         if keys not in self:
             self.__setitem__(keys, default)
         return self.__getitem__(keys)
 
-    def set_via_dict(self, data: Dict) -> 'te.Self':
+    def set_via_dict(self, data: DictStrAny) -> 'te.Self':
         for keys, value in self.__class__.fromDict(data).items():
             self.__setitem__(keys, value)
         return self
 
-    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys[t.Any], t.Any]]:
+    def items(self, with_list: bool = False) -> t.Iterator[t.Tuple[Keys[Any], Any]]:
         yield from self._items(self._data, with_list=with_list)
 
     def _items(
         self,
-        data: t.Any, with_list: bool = False, keys: Keys[t.Any] = (),
-    ) -> t.Iterator[t.Tuple[Keys[t.Any], t.Any]]:
+        data: Any, with_list: bool = False, keys: Keys[Any] = (),
+    ) -> t.Iterator[t.Tuple[Keys[Any], Any]]:
         if isinstance(data, dict):
             for key, value in data.items():
                 yield from self._items(value, with_list, keys+(key, ))

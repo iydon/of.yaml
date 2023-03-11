@@ -6,7 +6,7 @@ import time
 import typing as t
 import warnings as w
 
-from ...base.type import Keys
+from ...base.type import DictStrFloat, Keys
 from ...compat.functools import cached_property
 
 if t.TYPE_CHECKING:
@@ -35,7 +35,7 @@ class Timer:
     def __enter__(self) -> 'te.Self':
         return self
 
-    def __exit__(self, type: t.Any, value: t.Any, traceback: t.Any) -> None:
+    def __exit__(self, type, value, traceback) -> None:
         pass
 
     def __getitem__(self, labels: Keys[t.Hashable]) -> float:
@@ -92,7 +92,7 @@ class Timer:
         return cls(time.time)
 
     @property
-    def cache(self) -> t.Dict[str, float]:
+    def cache(self) -> DictStrFloat:
         return self._cache
 
     @contextlib.contextmanager

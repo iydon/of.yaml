@@ -15,6 +15,9 @@ if t.TYPE_CHECKING:
 
     from ..base.core import Foam
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class Parser:
     '''All parsers'''
@@ -33,7 +36,7 @@ class Parser:
         )
 
     @classmethod
-    def toFoam(cls, path: Path, **kwargs: t.Any) -> 'Foam':
+    def toFoam(cls, path: Path, **kwargs: 'Kwargs') -> 'Foam':
         from ..base.core import Foam
 
         data = Lark.fromPath(path, **kwargs).to_foam_data()

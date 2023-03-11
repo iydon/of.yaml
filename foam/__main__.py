@@ -8,7 +8,7 @@ import click
 
 from foam import Foam
 from foam.base.lib import tqdm
-from foam.base.type import TupleSequence
+from foam.base.type import TupleSeq
 
 
 class DEFAULT:
@@ -48,7 +48,7 @@ def cli() -> None:
 @click.option('-d', '--directory', default=DEFAULT.DIRECTORY, help='Destination directory')
 @click.option('-v', '--version', default=DEFAULT.OPENFOAM, help='OpenFOAM version')
 @click.option('-o', '--exist-ok', is_flag=True, help='If `exist_ok` then do not overwrite')
-def cnv(paths: TupleSequence[str], directory: str = DEFAULT.DIRECTORY, version: str = DEFAULT.OPENFOAM, exist_ok: bool = True) -> None:
+def cnv(paths: TupleSeq[str], directory: str = DEFAULT.DIRECTORY, version: str = DEFAULT.OPENFOAM, exist_ok: bool = True) -> None:
     dst = p.Path(directory, version)
     for path in paths:
         src = p.Path(path)

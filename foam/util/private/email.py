@@ -14,6 +14,9 @@ from ...base.type import Path
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class Envelope:
     '''Envelope
@@ -38,7 +41,7 @@ class Envelope:
     def to(cls, *addresses: str) -> 'te.Self':
         return cls(*addresses)
 
-    def add_attachment(self, path: Path, type: t.Optional[str] = None, **kwargs: t.Any) -> 'te.Self':
+    def add_attachment(self, path: Path, type: t.Optional[str] = None, **kwargs: 'Kwargs') -> 'te.Self':
         '''
         Reference:
             - https://docs.python.org/zh-cn/3/library/email.examples.html

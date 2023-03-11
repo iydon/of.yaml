@@ -7,6 +7,7 @@ import operator as op
 import typing as t
 
 from ..function import deprecated_classmethod
+from ...base.type import Any, DictAny2, ListAny
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -32,7 +33,7 @@ class Iterator:
         return self._iterator
 
     @classmethod
-    def fromDict(cls, iterable: t.Dict) -> 'te.Self':
+    def fromDict(cls, iterable: DictAny2) -> 'te.Self':
         return cls(iter(iterable.items()))
 
     @classmethod
@@ -40,16 +41,16 @@ class Iterator:
         return cls(iter(iterable))
 
     @classmethod
-    def fromList(cls, iterable: t.List) -> 'te.Self':
+    def fromList(cls, iterable: ListAny) -> 'te.Self':
         return cls(iter(iterable))
 
-    def collect(self, func: t.Callable) -> t.Any:
-        return func(func(self._iterator))
+    def collect(self, func: t.Callable) -> Any:
+        return func(self._iterator)
 
-    def collect_as_dict(self) -> t.Dict:
+    def collect_as_dict(self) -> DictAny2:
         return self.collect(dict)
 
-    def collect_as_list(self) -> t.List:
+    def collect_as_list(self) -> ListAny:
         return self.collect(list)
 
     def copy(self) -> 'te.Self':
@@ -61,10 +62,10 @@ class Iterator:
     def map(self, func: t.Callable) -> 'te.Self':
         return self._new(map(func, self._iterator))
 
-    def reduce(self, func: t.Callable) -> t.Any:
+    def reduce(self, func: t.Callable) -> Any:
         return f.reduce(func, self._iterator)
 
-    def reduce_with_operator(self, attr: str) -> t.Any:
+    def reduce_with_operator(self, attr: str) -> Any:
         return self.reduce(getattr(op, attr))
 
     def _new(self, iterator: t.Iterator) -> 'te.Self':

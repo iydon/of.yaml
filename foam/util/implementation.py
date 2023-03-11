@@ -8,6 +8,8 @@ from ..compat.typing import Protocol
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
+    P = te.ParamSpec('P')
+
 
 class Singleton(Protocol):
     '''Singleton'''
@@ -19,12 +21,12 @@ class Singleton(Protocol):
         return cls.new()
 
     @classmethod
-    def new(cls, *args: t.Any, **kwargs: t.Any) -> 'te.Self':
+    def new(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> 'te.Self':
         key = cls.__hash(*args, **kwargs)
         if key not in cls.__instances:
             cls.__instances[key] = cls(*args, **kwargs)
         return cls.__instances[key]
 
     @classmethod
-    def __hash(cls, *args: t.Any, **kwargs: t.Any) -> str:
+    def __hash(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> str:
         return repr(args) + repr(kwargs)

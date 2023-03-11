@@ -5,7 +5,7 @@ import typing as t
 import warnings as w
 
 from ...base.lib import numpy, vtkmodules
-from ...base.type import Array, Dict, Location, Path
+from ...base.type import Array, DictAny2, DictFloat, DictStr, Location, Path
 from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
@@ -15,6 +15,9 @@ if t.TYPE_CHECKING:
 
     from ...base.core import Foam
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class PostProcess:
     '''OpenFOAM post-processing'''
@@ -22,7 +25,7 @@ class PostProcess:
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
         self._vtks: t.Optional[t.List['VTK']] = None
-        self._logs: t.Optional[Dict] = None
+        self._logs: t.Optional[DictAny2] = None
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':
@@ -35,7 +38,7 @@ class PostProcess:
         return self._vtks
 
     @property
-    def logs(self) -> Dict:
+    def logs(self) -> DictStr[Array[2]]:
         '''Script extract data for each time-step from a log file for graphing
 
         Reference:
@@ -51,11 +54,11 @@ class PostProcess:
             }
         return self._logs
 
-    def vtks_set(self, **kwargs: t.Any) -> t.List['VTK']:
+    def vtks_set(self, **kwargs: 'Kwargs') -> t.List['VTK']:
         self._vtks = list(VTK.fromFoam(self._foam, **kwargs))
         return self._vtks
 
-    def centroid(self, key: str, structured: bool = False) -> t.Dict[float, Array[1, 2]]:
+    def centroid(self, key: str, structured: bool = False) -> DictFloat[Array[1, 2]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             ans[time] = vtk.centroid(key, structured)
@@ -64,7 +67,7 @@ class PostProcess:
     def centroids(
         self,
         keys: t.Optional[t.Set[str]] = None, structured: bool = False,
-    ) -> t.Dict[str, t.Dict[float, Array[1, 2]]]:
+    ) -> DictStr[DictFloat[Array[1, 2]]]:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self._foam.fields)
@@ -74,15 +77,15 @@ class PostProcess:
         self,
         location: Location[float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[str, t.Dict[float, Array[0, 1]]]:
-        location = Location.cast(location, float)
+    ) -> DictStr[DictFloat[Array[0, 1]]]:
+        location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
     def probes(
         self,
         *locations: Location[float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[Location[float], t.Dict[str, t.Dict[float, Array[0, 1]]]]:
+    ) -> t.Dict[Location[float], DictStr[DictFloat[Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -132,7 +135,7 @@ class VTK:
         raise NotImplementedError
 
     @classmethod
-    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
+    def fromPath(cls, path: Path, **kwargs: 'Kwargs') -> 'te.Self':
         reader = vtkmodules.vtkGenericDataObjectReader()
         reader.SetFileName(str(path))
         for attr in dir(reader):
@@ -147,7 +150,7 @@ class VTK:
     def fromFoam(
         cls,
         foam: 'Foam', options: str = '', overwrite: bool = False,
-        **kwargs: t.Any,
+        **kwargs: 'Kwargs',
     ) -> t.Iterator['te.Self']:
         foam.destination  # assert dest is not None
         for name in ['writeCellCentres', 'writeCellVolumes']:
@@ -180,13 +183,13 @@ class VTK:
         return self._cells
 
     @property
-    def point_fields(self) -> t.Dict[str, Array[1, 2]]:
+    def point_fields(self) -> DictStr[Array[1, 2]]:
         assert self._point_fields is not None
 
         return self._point_fields
 
     @property
-    def cell_fields(self) -> t.Dict[str, Array[1, 2]]:
+    def cell_fields(self) -> DictStr[Array[1, 2]]:
         assert self._cell_fields is not None
 
         return self._cell_fields
@@ -224,28 +227,28 @@ class VTK:
     def centroids(
         self,
         keys: t.Optional[t.Set[str]] = None, structured: bool = False,
-    ) -> t.Dict[str, Array[1, 2]]:
+    ) -> DictStr[Array[1, 2]]:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self.foam.fields)
         }
 
-    def centroid_with_args(self, *keys: str, structured: bool = False) -> t.Dict[str, Array[1, 2]]:
+    def centroid_with_args(self, *keys: str, structured: bool = False) -> DictStr[Array[1, 2]]:
         return self.centroids(set(keys), structured=structured)
 
     def probe(
         self,
         location: Location[float], keys: t.Optional[t.Set[str]] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[str, Array[0, 1]]:
-        location = Location.cast(location, float)
+    ) -> DictStr[Array[0, 1]]:
+        location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
     def probes(
         self,
         *locations: Location[float],
         keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
-    ) -> t.Dict[Location[float], t.Dict[str, Array[0, 1]]]:
+    ) -> t.Dict[Location[float], DictStr[Array[0, 1]]]:
         '''
         Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes

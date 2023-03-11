@@ -10,6 +10,8 @@ from pygments.styles import get_style_by_name
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
+    P = te.ParamSpec('P')
+
 
 Path = t.Union[str, p.Path]
 
@@ -36,7 +38,7 @@ class Word:
         font.size = Pt(font_size)
 
     @classmethod
-    def fromConfig(cls, *args: t.Any, **kwargs: t.Any) -> 'te.Self':
+    def fromConfig(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> 'te.Self':
         return cls(*args, **kwargs)
 
     @property

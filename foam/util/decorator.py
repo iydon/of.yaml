@@ -7,10 +7,12 @@ import io
 import typing as t
 
 from ..base.lib import classproperty
-from ..base.type import Keys, TupleSequence
+from ..base.type import Any, Keys, TupleSeq
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
+
+    P = te.ParamSpec('P')
 
 
 class Match:
@@ -40,7 +42,7 @@ class Match:
     '''
 
     def __init__(self) -> None:
-        self._methods: t.Dict[TupleSequence[str], t.Callable] = {}
+        self._methods: t.Dict[TupleSeq[str], t.Callable] = {}
 
     def __getitem__(self, keys: Keys[str]) -> t.Callable:
         if not isinstance(keys, tuple):
@@ -61,7 +63,7 @@ class Match:
             self._methods[types] = func
 
             @f.wraps(func)
-            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
                 return func(*args, **kwargs)
 
             return wrapper
@@ -106,7 +108,7 @@ class suppress:
         def decoratorWithoutPrevious(cls, func: t.Callable) -> t.Callable:
 
             @f.wraps(func)
-            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
                 with cls.contextWithoutPrevious():
                     return func(*args, **kwargs)
 
@@ -116,7 +118,7 @@ class suppress:
         def decoratorWithPrevious(cls, func: t.Callable) -> t.Callable:
 
             @f.wraps(func)
-            def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+            def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
                 with cls.contextWithPrevious():
                     return func(*args, **kwargs)
 
@@ -150,7 +152,7 @@ def message(msg: str = '') -> t.Callable:
     def decorate(func: t.Callable) -> t.Callable:
 
         @f.wraps(func)
-        def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
+        def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
             print(msg)
             return func(*args, **kwargs)
 

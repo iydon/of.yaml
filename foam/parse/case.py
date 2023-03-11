@@ -3,7 +3,7 @@ __all__ = ['Case']
 
 import typing as t
 
-from ..base.type import Dict, List
+from ..base.type import Any, DictStrAny, ListAny
 from ..compat.functools import singledispatchmethod
 from ..util.implementation import Singleton
 
@@ -38,7 +38,7 @@ class Case(Singleton):
         boundaryField {movingWall {type fixedValue; value uniform (1 0 0);} fixedWalls {type noSlip;} frontAndBack {type empty;}}
     '''
 
-    def data(self, data: Dict) -> t.Iterator[str]:
+    def data(self, data: DictStrAny) -> t.Iterator[str]:
         for key, value in data.items():
             yield f'{self.key(key)} {self.value(value)}'
 
@@ -49,7 +49,7 @@ class Case(Singleton):
         return key
 
     @singledispatchmethod
-    def value(self, value: t.Any) -> str:
+    def value(self, value: Any) -> str:
         raise Exception(f'Unknown type "{type(value).__name__}"')
 
     @value.register(bool)
@@ -63,7 +63,7 @@ class Case(Singleton):
         return f'{value};'
 
     @value.register(list)
-    def _(self, value: List) -> str:
+    def _(self, value: ListAny) -> str:
         if not value or isinstance(value[0], (str, int, float)):
             return f'({" ".join(map(str, value))});'
         elif isinstance(value[0], dict):
@@ -83,6 +83,6 @@ class Case(Singleton):
             raise Exception(f'Unknown list "{value}"')
 
     @value.register(dict)
-    def _(self, value: Dict) -> str:
+    def _(self, value: DictStrAny) -> str:
         string = ' '.join(self.data(value))
         return f'{{{string}}}'

@@ -12,7 +12,7 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .type import Dict, FoamData, Path
+from .type import DictAny2, DictStr2, DictStrAny, FoamItems, ListStr, Path
 from ..compat.functools import cached_property
 from ..parse import Parser
 from ..util.function import deprecated_classmethod
@@ -27,6 +27,9 @@ if t.TYPE_CHECKING:
     from ..app.information.core import Information
     from ..app.postprocess.core import PostProcess
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class Foam:
     '''Convert multiple dictionary type data to OpenFOAM test case
@@ -40,8 +43,8 @@ class Foam:
 
     __version__ = Version.fromString('0.13.4')
 
-    def __init__(self, data: FoamData, root: Path, warn: bool = True) -> None:
-        self._list = data
+    def __init__(self, data: FoamItems, root: Path, warn: bool = True) -> None:
+        self._items = data
         self._root = p.Path(root)
         self._dest: t.Optional[p.Path] = None
 
@@ -62,18 +65,18 @@ class Foam:
 
     def __getitem__(self, key: str) -> t.Optional[Data]:
         try:
-            return Data.fromAny(self._list[self.meta['order'].index(key)])
+            return Data.fromAny(self._items[self.meta['order'].index(key)])
         except ValueError:
             return None
 
     def __repr__(self) -> str:
-        return f'Foam({self._list!r}, {self._root!r})'
+        return f'Foam({self._items!r}, {self._root!r})'
 
     def __str__(self) -> str:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
 
     @classmethod
-    def listDemos(cls) -> t.List[str]:
+    def listDemos(cls) -> ListStr:
         root = p.Path(__file__).parents[1] / 'static' / 'demo' / os.environ['WM_PROJECT_VERSION']
         return sorted(
             path.stem
@@ -148,7 +151,7 @@ class Foam:
             raise Exception(f'Mode "{path.stat().st_mode}" is not supported')
 
     @classmethod
-    def fromOpenFoam(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
+    def fromOpenFoam(cls, path: Path, **kwargs: 'Kwargs') -> 'te.Self':
         '''From OpenFOAM directory'''
         return Parser.toFoam(path, **kwargs)
 
@@ -177,12 +180,12 @@ class Foam:
 
     @property
     def data(self) -> Data:
-        return Data.fromList(self._list)
+        return Data.fromList(self._items)
 
     @property
     def meta(self) -> Data:
         '''Meta information'''
-        return Data.fromDict(self._list[0])
+        return Data.fromDict(self._items[0])
 
     @property
     def parser(self) -> Parser:
@@ -258,11 +261,11 @@ class Foam:
             return 1
 
     @cached_property
-    def pipeline(self) -> t.List[t.Union[str, Dict]]:
+    def pipeline(self) -> t.List[t.Union[str, DictStrAny]]:
         return (self['other'] or {}).get('pipeline', [])
 
     @cached_property
-    def environ(self) -> t.Dict[str, str]:
+    def environ(self) -> DictStr2:
         '''OpenFOAM environments'''
         return {
             key: value
@@ -294,7 +297,7 @@ class Foam:
         return count
 
     def copy(self) -> 'te.Self':
-        other = self.__class__(copy.deepcopy(self._list), self._root)
+        other = self.__class__(copy.deepcopy(self._items), self._root)
         other._dest = self._dest
         return other
 
@@ -344,8 +347,8 @@ class Foam:
 
     def _extract_files(
         self,
-        data: Dict, keys: t.List[str] = [],
-    ) -> t.Iterator[t.Tuple[t.List[str], Dict]]:
+        data: DictAny2, keys: ListStr = [],
+    ) -> t.Iterator[t.Tuple[ListStr, DictAny2]]:
         if 'FoamFile' in data:
             yield keys, data.copy()
         else:

@@ -7,7 +7,7 @@ import re
 import typing as t
 
 from ..base.lib import lark
-from ..base.type import Dict, FoamData, List, Path
+from ..base.type import DictStrAny, FoamItems, Path
 from ..compat.functools import cached_property
 from ..util.function import deprecated_classmethod, grammar
 from ..util.implementation import Singleton
@@ -16,6 +16,9 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     import lark as _lark
+
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
 
 
 class Lark(Singleton):
@@ -35,23 +38,23 @@ class Lark(Singleton):
         self._static = []
 
     @classmethod
-    def fromPath(cls, path: Path, **kwargs: t.Any) -> 'te.Self':
+    def fromPath(cls, path: Path, **kwargs: 'Kwargs') -> 'te.Self':
         return cls.new(path, **kwargs)
 
     @property
-    def meta(self) -> Dict:
+    def meta(self) -> DictStrAny:
         return {'openfoam': [self._openfoam()], 'version': '0.0.0', 'order': self.order}
 
     @property
-    def foam(self) -> Dict:
+    def foam(self) -> DictStrAny:
         return self._foam
 
     @property
-    def static(self) -> List:
+    def static(self) -> t.List[DictStrAny]:
         return self._static
 
     @property
-    def other(self) -> Dict:
+    def other(self) -> DictStrAny:
         return {'pipeline': []}
 
     @cached_property
@@ -80,7 +83,7 @@ class Lark(Singleton):
     def parsed(self) -> bool:
         return bool(self._foam) or bool(self._static)
 
-    def to_foam_data(self) -> FoamData:
+    def to_foam_data(self) -> FoamItems:
         self.parse_once()
         return [getattr(self, o) for o in self.order]
 
@@ -93,7 +96,7 @@ class Lark(Singleton):
                 return match.groups()[-1]
         return os.environ['WM_PROJECT_VERSION']
 
-    def _static_item(self, path: p.Path) -> Dict:
+    def _static_item(self, path: p.Path) -> DictStrAny:
         name = path.relative_to(self._root).as_posix()
         permission = oct(path.stat().st_mode)[-3:]
         if self._embed:

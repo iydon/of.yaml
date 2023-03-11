@@ -7,7 +7,7 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base.type import Path
+from ...base.type import DictAny, DictStr2, Path
 from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
@@ -45,7 +45,7 @@ class Information:
         return self._cmd
 
     @property
-    def environ(self) -> t.Dict[str, str]:
+    def environ(self) -> DictStr2:
         '''OpenFOAM environments (aliase for `Foam::environ` property)'''
         if self._foam is not None:  # True
             return self._foam.environ
@@ -93,7 +93,7 @@ class Information:
         except Exception:
             return stdout
 
-    def search_yaml(self, *targets: str, root: Path = '.') -> t.Dict[t.Hashable, t.Set[str]]:
+    def search_yaml(self, *targets: str, root: Path = '.') -> DictAny[t.Set[str]]:
         '''`foamSearch` in YAML
 
         Note:
@@ -101,7 +101,7 @@ class Information:
         '''
         return self.search_path(*targets, root=root, suffixes={'.yaml', '.yml'})
 
-    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[t.Set[str]] = None) -> t.Dict[t.Hashable, t.Set[str]]:
+    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[t.Set[str]] = None) -> DictAny[t.Set[str]]:
         '''`foamSearch` in configuration'''
         from ...base.core import Foam
 
