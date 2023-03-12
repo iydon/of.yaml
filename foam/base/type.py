@@ -4,7 +4,8 @@ __all__ = [
     'DictAny', 'DictFloat', 'DictStr', 'TupleSeq', 'Keys', 'Location',
     #
     'Any', 'DictAny2', 'DictStr2', 'DictStrAny', 'DictStrFloat', 'Document', 'FoamItem', 'FoamItems',
-    'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path',
+    'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path', 'SetPath', 'SetStr',
+    'ModuleType', 'NoneType',
     #
     'Array',
 ]
@@ -37,9 +38,14 @@ ListFloat = t.List[float]
 ListInt = t.List[int]
 ListStr = t.List[str]
 Path = t.Union[str, p.Path]
+SetPath = t.Set[p.Path]
+SetStr = t.Set[str]
 
 Document = FoamItem = t.Union[DictStrAny, ListAny]
 FoamItems = t.List[FoamItem]
+
+ModuleType = type(t)
+NoneType = type(None)
 
 
 class Array:

@@ -15,7 +15,7 @@ if t.TYPE_CHECKING:
 class Default:
     '''Default app'''
 
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         pass
 
     def __enter__(self) -> 'te.Self':
@@ -34,10 +34,10 @@ class Default:
 class AppBase(Default):
     '''Base app'''
 
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
-        self.pbar = tqdm.tqdm(total=end-start)
+        self.pbar = tqdm.tqdm(total=end-start, desc=desc)
         self._new = self._old = start
 
     def __exit__(self, type, value, traceback) -> None:
@@ -182,10 +182,10 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
 
-    def __init__(self, foam: 'Foam') -> None:
+    def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         start = 0
         end = foam.number_of_processors - 1
-        self.pbar = tqdm.tqdm(total=end-start)
+        self.pbar = tqdm.tqdm(total=end-start, desc=desc)
         self._new = self._old = start
 
     def now(self, line: bytes) -> t.Optional[float]:

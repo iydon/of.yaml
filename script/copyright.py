@@ -98,7 +98,7 @@ class Word:
 
 
 if __name__ == '__main__':
-    is_valid = lambda path: 'type: [embed, 7z]' not in path.read_text()
+    is_valid: t.Callable[[p.Path], bool] = lambda path: 'type: [embed, 7z]' not in path.read_text()
 
     word = Word.fromConfig(root='.', style='friendly', page_break=False, font_size=7)
     word.add(word.root/'pyproject.toml')

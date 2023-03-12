@@ -80,7 +80,8 @@ class CaseBase(abc.ABC):
         self._required = self.required(**kwargs) or {}
 
     def __repr__(self) -> str:
-        func = lambda d: ', '.join(f'{k}={v!r}' for k, v in d.items())
+        func: t.Callable[[DictStrAny], str] \
+            = lambda d: ', '.join(f'{k}={v!r}' for k, v in d.items())
         return f'{self.__class__.__name__}({func(self._kwargs)}) \\\n' \
             f'    .set_optional({func(self._optional)}) \\\n' \
             f'    .set_required({func(self._required)})'

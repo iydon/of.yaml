@@ -52,8 +52,10 @@ class Timer:
     @classmethod
     def best(cls) -> 'te.Self':
         names = {'monotonic', 'perf_counter', 'process_time', 'thread_time', 'time'}
-        order = lambda info: (info.resolution, not info.monotonic, info.adjustable)
-        key = lambda name: order(time.get_clock_info(name))
+        order: t.Callable[['time._ClockInfo'], t.Tuple[float, bool, bool]] \
+            = lambda info: (info.resolution, not info.monotonic, info.adjustable)
+        key: t.Callable[[str], t.Tuple[float, bool, bool]] \
+            = lambda name: order(time.get_clock_info(name))
         return getattr(cls, min(names, key=key))()
 
     @classmethod

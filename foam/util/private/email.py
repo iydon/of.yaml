@@ -67,7 +67,9 @@ class Envelope:
         return self
 
     def set_content(self, value: str, html: bool = False) -> 'te.Self':
-        self._applies[0] = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
+        apply: t.Callable[[email.message.EmailMessage], None] \
+            = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
+        self._applies[0] = apply
         return self
 
     def set_content_by_path(self, value: Path, html: bool = False) -> 'te.Self':

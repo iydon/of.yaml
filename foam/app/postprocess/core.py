@@ -5,7 +5,7 @@ import typing as t
 import warnings as w
 
 from ...base.lib import numpy, vtkmodules
-from ...base.type import Array, DictAny2, DictFloat, DictStr, Location, Path
+from ...base.type import Array, DictAny2, DictFloat, DictStr, Location, Path, SetStr
 from ...util.function import deprecated_classmethod
 
 if t.TYPE_CHECKING:
@@ -66,7 +66,7 @@ class PostProcess:
 
     def centroids(
         self,
-        keys: t.Optional[t.Set[str]] = None, structured: bool = False,
+        keys: t.Optional[SetStr] = None, structured: bool = False,
     ) -> DictStr[DictFloat[Array[1, 2]]]:
         return {
             key: self.centroid(key, structured)
@@ -75,7 +75,7 @@ class PostProcess:
 
     def probe(
         self,
-        location: Location[float], keys: t.Optional[t.Set[str]] = None,
+        location: Location[float], keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> DictStr[DictFloat[Array[0, 1]]]:
         location = tuple(map(float, location))
@@ -84,7 +84,7 @@ class PostProcess:
     def probes(
         self,
         *locations: Location[float],
-        keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[Location[float], DictStr[DictFloat[Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
@@ -226,7 +226,7 @@ class VTK:
 
     def centroids(
         self,
-        keys: t.Optional[t.Set[str]] = None, structured: bool = False,
+        keys: t.Optional[SetStr] = None, structured: bool = False,
     ) -> DictStr[Array[1, 2]]:
         return {
             key: self.centroid(key, structured)
@@ -238,7 +238,7 @@ class VTK:
 
     def probe(
         self,
-        location: Location[float], keys: t.Optional[t.Set[str]] = None,
+        location: Location[float], keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> DictStr[Array[0, 1]]:
         location = tuple(map(float, location))
@@ -247,7 +247,7 @@ class VTK:
     def probes(
         self,
         *locations: Location[float],
-        keys: t.Optional[t.Set[str]] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[t.Callable] = None,
     ) -> t.Dict[Location[float], DictStr[Array[0, 1]]]:
         '''
         Reference:

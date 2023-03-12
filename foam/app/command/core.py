@@ -1,7 +1,6 @@
 __all__ = ['Command']
 
 
-import pathlib as p
 import shlex
 import shutil
 import subprocess as s
@@ -9,7 +8,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...base.type import Any, DictStr, DictStrAny, ListFloat, ListInt, ListStr
+from ...base.type import Any, DictStr, DictStrAny, ListFloat, ListInt, ListStr, SetPath
 from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
 
@@ -47,7 +46,7 @@ class Command:
         return sorted(times)
 
     @property
-    def logs(self) -> t.Set[p.Path]:
+    def logs(self) -> SetPath:
         '''Log files'''
         logs = set()
         for path in self._foam.destination.iterdir():
@@ -115,7 +114,8 @@ class Command:
             # TODO: verbose?
             print(f'Running {raws[0]} on {path.parent.absolute()} using {self._foam.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
-            App = Apps.get(raws[0], Default)
+            App: t.Callable[['Foam'], Default] \
+                = lambda foam: Apps.get(raws[0], Default)(foam, raws[0])
             with self._popen(args, unsafe) as proc, open(path, 'wb') as file, App(self._foam) as app:
                 for line in proc.stdout:
                     file.write(line)

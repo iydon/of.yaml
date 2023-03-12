@@ -12,7 +12,7 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .type import DictAny2, DictStr2, DictStrAny, FoamItems, ListStr, Path
+from .type import DictAny2, DictStr2, DictStrAny, FoamItems, ListStr, Path, SetStr
 from ..compat.functools import cached_property
 from ..parse import Parser
 from ..util.function import deprecated_classmethod
@@ -274,7 +274,7 @@ class Foam:
         }
 
     @cached_property
-    def fields(self) -> t.Set[str]:
+    def fields(self) -> SetStr:
         return {v['FoamFile']['object'] for v in self['foam']['0'].values()}
 
     @cached_property

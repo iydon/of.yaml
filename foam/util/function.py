@@ -16,7 +16,8 @@ def deprecated_classmethod(method: classmethod, old: t.Optional[str] = None) -> 
     func = method.__func__
     new = func.__name__
     if old is None:
-        replace = lambda char: f'_{char.lower()}' if char.isupper() else char
+        replace: t.Callable[[str], str] \
+            = lambda char: f'_{char.lower()}' if char.isupper() else char
         old = ''.join(map(replace, new)).lstrip('_')
     msg = f'I am using camelCase to distinguish between class methods and instance methods, so please use `{new}` instead of `{old}`'
     return classmethod(message(msg)(func))

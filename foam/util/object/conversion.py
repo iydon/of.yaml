@@ -8,7 +8,7 @@ import typing as t
 
 from ..function import deprecated_classmethod
 from ...base.lib import tomlkit, yaml
-from ...base.type import Document, Path
+from ...base.type import Document, Path, SetStr
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -104,7 +104,7 @@ class Conversion:
         return self._alias.get(type, type)  # assert _ in self._types
 
     @classmethod
-    def suffixes(cls, dot: bool = True) -> t.Set[str]:
+    def suffixes(cls, dot: bool = True) -> SetStr:
         ans = cls._types | cls._alias.keys()
         if dot:
             ans = set(map(lambda x: f'.{x}', ans))

@@ -7,7 +7,7 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base.type import DictAny, DictStr2, Path
+from ...base.type import DictAny, DictStr2, DictStrAny, Path, SetStr
 from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
@@ -61,7 +61,7 @@ class Information:
         return p.Path(self.environ['WM_PROJECT_DIR'])
 
     @property
-    def shared_libraries(self) -> t.Set[str]:
+    def shared_libraries(self) -> SetStr:
         ans = set()
         pattern = re.compile(fr'{self.environ["FOAM_LIBBIN"]}.+?\.so')
         for command in self.commands(foam_only=True):
@@ -71,7 +71,7 @@ class Information:
                 ans.update(pattern.findall(stdout))
         return ans
 
-    def search(self, *targets: str, process: bool = True) -> t.Union[str, t.Set[str]]:
+    def search(self, *targets: str, process: bool = True) -> t.Union[str, SetStr]:
         '''`foamSearch` wrapper
 
         Reference:
@@ -93,7 +93,7 @@ class Information:
         except Exception:
             return stdout
 
-    def search_yaml(self, *targets: str, root: Path = '.') -> DictAny[t.Set[str]]:
+    def search_yaml(self, *targets: str, root: Path = '.') -> DictAny[SetStr]:
         '''`foamSearch` in YAML
 
         Note:
@@ -101,14 +101,15 @@ class Information:
         '''
         return self.search_path(*targets, root=root, suffixes={'.yaml', '.yml'})
 
-    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[t.Set[str]] = None) -> DictAny[t.Set[str]]:
+    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[SetStr] = None) -> DictAny[SetStr]:
         '''`foamSearch` in configuration'''
         from ...base.core import Foam
 
         assert targets
 
         record = c.defaultdict(set)
-        hashing = lambda string: string.lower().replace(' ', '')
+        hashing: t.Callable[[str], str] \
+            = lambda string: string.lower().replace(' ', '')
         hashed_targets = tuple(map(hashing, targets))
         length = len(targets)
         suffixes = suffixes or Conversion.suffixes(dot=True)
@@ -126,12 +127,11 @@ class Information:
                     pass
         return dict(record)
 
-    def commands(self, foam_only: bool = True) -> t.Set[str]:
-        strize = lambda command: {
-            str: lambda x: x,
-            dict: lambda x: x['command'],
-        }[type(command)](command)
-        func = lambda x: self.cmd._split(strize(x), False)[0]
+    def commands(self, foam_only: bool = True) -> SetStr:
+        strize: t.Callable[[t.Union[str, DictStrAny]], str] \
+            = lambda command: {str: lambda x: x, dict: lambda x: x['command']}[type(command)](command)
+        func: t.Callable[[t.Union[str, DictStrAny]], str] \
+            = lambda x: self.cmd._split(strize(x), False)[0]
         commands = set(map(func, self._foam.pipeline))
         if foam_only:
             commands = {

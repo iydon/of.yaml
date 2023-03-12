@@ -3,6 +3,7 @@ __all__ = ['Singleton']
 
 import typing as t
 
+from ..base.type import DictStr
 from ..compat.typing import Protocol
 
 if t.TYPE_CHECKING:
@@ -14,7 +15,7 @@ if t.TYPE_CHECKING:
 class Singleton(Protocol):
     '''Singleton'''
 
-    __instances = {}
+    __instances: DictStr['te.Self'] = {}
 
     @classmethod
     def default(cls) -> 'te.Self':
