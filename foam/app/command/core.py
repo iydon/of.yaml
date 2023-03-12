@@ -8,7 +8,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...base.type import Any, DictStr, DictStrAny, ListFloat, ListInt, ListStr, SetPath
+from ...base.type import Any, DictStr, DictStrAny, Func1, ListFloat, ListInt, ListStr, SetPath
 from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
 
@@ -114,7 +114,7 @@ class Command:
             # TODO: verbose?
             print(f'Running {raws[0]} on {path.parent.absolute()} using {self._foam.number_of_processors} processes if in parallel')
             # TODO: rewritten as parenthesized context managers when updated to 3.10
-            App: t.Callable[['Foam'], Default] \
+            App: Func1['Foam', Default] \
                 = lambda foam: Apps.get(raws[0], Default)(foam, raws[0])
             with self._popen(args, unsafe) as proc, open(path, 'wb') as file, App(self._foam) as app:
                 for line in proc.stdout:

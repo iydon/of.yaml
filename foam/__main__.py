@@ -9,7 +9,7 @@ import click
 
 from foam import Foam
 from foam.base.lib import tqdm
-from foam.base.type import Any, TupleSeq
+from foam.base.type import Func1, TupleSeq
 
 
 class DEFAULT:
@@ -71,7 +71,7 @@ def run(
     version: str = DEFAULT.OPENFOAM,
 ) -> None:
     '''For batch testing whether the converted files are operational'''
-    pbar: t.Callable[[t.Iterator[p.Path]], t.Iterable[p.Path]] \
+    pbar: Func1[t.Iterator[p.Path], t.Iterable[p.Path]] \
         = tqdm.tqdm if tqdm.is_available() else lambda x: x
     dst = p.Path(directory, version)
     for path in pbar(dst.iterdir()):

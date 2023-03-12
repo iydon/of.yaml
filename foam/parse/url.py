@@ -6,7 +6,7 @@ import typing as t
 import urllib.parse
 import urllib.request
 
-from ..base.type import DictStrAny, Keys
+from ..base.type import DictStrAny, Func1, Keys
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
 from ..util.object.conversion import Conversion
@@ -47,7 +47,7 @@ class Url:
         self._path = None
         self._url = None
 
-    def __getitem__(self, keys: Keys[str]) -> t.Callable:
+    def __getitem__(self, keys: Keys[str]) -> Func1[DictStrAny, DictStrAny]:
         if not isinstance(keys, tuple):
             return self.__getitem__((keys, ))
         method = self.match.get(*keys, default=lambda self, static: static)

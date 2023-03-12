@@ -6,7 +6,7 @@ import subprocess
 import typing as t
 
 from .decorator import message
-from ..base.type import DictAny2
+from ..base.type import DictAny2, Func1
 
 
 root = p.Path(__file__).parents[1]
@@ -16,7 +16,7 @@ def deprecated_classmethod(method: classmethod, old: t.Optional[str] = None) -> 
     func = method.__func__
     new = func.__name__
     if old is None:
-        replace: t.Callable[[str], str] \
+        replace: Func1[str, str] \
             = lambda char: f'_{char.lower()}' if char.isupper() else char
         old = ''.join(map(replace, new)).lstrip('_')
     msg = f'I am using camelCase to distinguish between class methods and instance methods, so please use `{new}` instead of `{old}`'

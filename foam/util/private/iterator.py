@@ -7,7 +7,7 @@ import operator as op
 import typing as t
 
 from ..function import deprecated_classmethod
-from ...base.type import Any, DictAny2, ListAny
+from ...base.type import Any, DictAny2, Func1, Func2, ListAny
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -44,7 +44,7 @@ class Iterator:
     def fromList(cls, iterable: ListAny) -> 'te.Self':
         return cls(iter(iterable))
 
-    def collect(self, func: t.Callable[[t.Iterator[Any]], Any]) -> Any:
+    def collect(self, func: Func1[t.Iterator[Any], Any]) -> Any:
         return func(self._iterator)
 
     def collect_as_dict(self) -> DictAny2:
@@ -56,13 +56,13 @@ class Iterator:
     def copy(self) -> 'te.Self':
         return copy.deepcopy(self)
 
-    def filter(self, func: t.Optional[t.Callable[[Any], Any]] = None) -> 'te.Self':
+    def filter(self, func: t.Optional[Func1[Any, Any]] = None) -> 'te.Self':
         return self._new(filter(func, self._iterator))
 
-    def map(self, func: t.Callable[[Any], Any]) -> 'te.Self':
+    def map(self, func: Func1[Any, Any]) -> 'te.Self':
         return self._new(map(func, self._iterator))
 
-    def reduce(self, func: t.Callable[[Any, Any], Any]) -> Any:
+    def reduce(self, func: Func2[Any, Any, Any]) -> Any:
         return f.reduce(func, self._iterator)
 
     def reduce_with_operator(self, attr: str) -> Any:

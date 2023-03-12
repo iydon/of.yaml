@@ -9,7 +9,7 @@ import smtplib
 import time
 import typing as t
 
-from ...base.type import Path
+from ...base.type import Func1, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -29,7 +29,7 @@ class Envelope:
 
     def __init__(self, *to_addresses: str) -> None:
         self._header = {'To': ', '.join(to_addresses)}
-        self._applies: t.List[t.Callable[[email.message.EmailMessage], None]] \
+        self._applies: t.List[Func1[email.message.EmailMessage, None]] \
             = [lambda msg: None]
 
     @classmethod
@@ -68,7 +68,7 @@ class Envelope:
         return self
 
     def set_content(self, value: str, html: bool = False) -> 'te.Self':
-        apply: t.Callable[[email.message.EmailMessage], None] \
+        apply: Func1[email.message.EmailMessage, None] \
             = lambda msg: msg.set_content(value, subtype='html' if html else 'plain')
         self._applies[0] = apply
         return self

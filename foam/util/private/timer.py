@@ -6,7 +6,7 @@ import time
 import typing as t
 import warnings as w
 
-from ...base.type import DictStrFloat, Keys
+from ...base.type import DictStrFloat, Func0, Func1, Keys
 from ...compat.functools import cached_property
 
 if t.TYPE_CHECKING:
@@ -28,7 +28,7 @@ class Timer:
         - https://stackoverflow.com/questions/5849800/what-is-the-python-equivalent-of-matlabs-tic-and-toc-functions
     '''
 
-    def __init__(self, func: t.Callable[[], float]) -> None:
+    def __init__(self, func: Func0[float]) -> None:
         self._func = func
         self._cache = {}
 
@@ -52,9 +52,9 @@ class Timer:
     @classmethod
     def best(cls) -> 'te.Self':
         names = {'monotonic', 'perf_counter', 'process_time', 'thread_time', 'time'}
-        order: t.Callable[['time._ClockInfo'], t.Tuple[float, bool, bool]] \
+        order: Func1['time._ClockInfo', t.Tuple[float, bool, bool]] \
             = lambda info: (info.resolution, not info.monotonic, info.adjustable)
-        key: t.Callable[[str], t.Tuple[float, bool, bool]] \
+        key: Func1[str, t.Tuple[float, bool, bool]] \
             = lambda name: order(time.get_clock_info(name))
         return getattr(cls, min(names, key=key))()
 

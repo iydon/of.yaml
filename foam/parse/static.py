@@ -7,7 +7,7 @@ import shutil
 import typing as t
 
 from ..base.lib import py7zr
-from ..base.type import DictStrAny, Keys
+from ..base.type import DictStrAny, Func1, Keys
 from ..compat.shutil import copytree
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
@@ -43,7 +43,7 @@ class Static:
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
 
-    def __getitem__(self, keys: Keys[str]) -> t.Callable[[DictStrAny], None]:
+    def __getitem__(self, keys: Keys[str]) -> Func1[DictStrAny, None]:
         try:
             return lambda *args, **kwargs: self.match[keys](self, *args, **kwargs)
         except KeyError:

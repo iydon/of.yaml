@@ -7,7 +7,7 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base.type import DictAny, DictStr2, DictStrAny, Path, SetStr
+from ...base.type import DictAny, DictStr2, DictStrAny, Func1, Path, SetStr
 from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
@@ -108,7 +108,7 @@ class Information:
         assert targets
 
         record = c.defaultdict(set)
-        hashing: t.Callable[[str], str] \
+        hashing: Func1[str, str] \
             = lambda string: string.lower().replace(' ', '')
         hashed_targets = tuple(map(hashing, targets))
         length = len(targets)
@@ -128,9 +128,9 @@ class Information:
         return dict(record)
 
     def commands(self, foam_only: bool = True) -> SetStr:
-        strize: t.Callable[[t.Union[str, DictStrAny]], str] \
+        strize: Func1[t.Union[str, DictStrAny], str] \
             = lambda command: {str: lambda x: x, dict: lambda x: x['command']}[type(command)](command)
-        func: t.Callable[[t.Union[str, DictStrAny]], str] \
+        func: Func1[t.Union[str, DictStrAny], str] \
             = lambda x: self.cmd._split(strize(x), False)[0]
         commands = set(map(func, self._foam.pipeline))
         if foam_only:

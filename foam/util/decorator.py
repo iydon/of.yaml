@@ -7,7 +7,7 @@ import io
 import typing as t
 
 from ..base.lib import classproperty
-from ..base.type import Any, Keys, TupleSeq
+from ..base.type import Any, Func1, FuncAny2, Keys, TupleSeq
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -42,9 +42,9 @@ class Match:
     '''
 
     def __init__(self) -> None:
-        self._methods: t.Dict[TupleSeq[str], t.Callable[..., Any]] = {}
+        self._methods: t.Dict[TupleSeq[str], FuncAny2] = {}
 
-    def __getitem__(self, keys: Keys[str]) -> t.Callable[..., Any]:
+    def __getitem__(self, keys: Keys[str]) -> FuncAny2:
         if isinstance(keys, tuple):
             return self._methods[keys]
         else:
@@ -54,13 +54,13 @@ class Match:
     def default(cls) -> 'te.Self':
         return cls()
 
-    def get(self, *keys: str, default: t.Optional[t.Callable[..., Any]] = None) -> t.Optional[t.Callable[..., Any]]:
+    def get(self, *keys: str, default: t.Optional[FuncAny2] = None) -> t.Optional[FuncAny2]:
         return self._methods.get(keys, default)
 
-    def register(self, *types: str) -> t.Callable[[t.Callable[..., Any]], t.Callable[..., Any]]:
+    def register(self, *types: str) -> Func1[FuncAny2, FuncAny2]:
         '''Register methods for different types'''
 
-        def decorate(func: t.Callable[..., Any]) -> t.Callable[..., Any]:
+        def decorate(func: FuncAny2) -> FuncAny2:
             self._methods[types] = func
 
             @f.wraps(func)
@@ -83,7 +83,7 @@ class suppress:
     class _base:
         '''Base'''
 
-        __redirect__: t.Callable[[io.StringIO], Any]
+        __redirect__: Func1[io.StringIO, Any]
 
         _previous = ''
 
@@ -106,7 +106,7 @@ class suppress:
                     cls._previous = target.getvalue()
 
         @classmethod
-        def decoratorWithoutPrevious(cls, func: t.Callable[..., Any]) -> t.Callable[..., Any]:
+        def decoratorWithoutPrevious(cls, func: FuncAny2) -> FuncAny2:
 
             @f.wraps(func)
             def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
@@ -116,7 +116,7 @@ class suppress:
             return wrapper
 
         @classmethod
-        def decoratorWithPrevious(cls, func: t.Callable[..., Any]) -> t.Callable[..., Any]:
+        def decoratorWithPrevious(cls, func: FuncAny2) -> FuncAny2:
 
             @f.wraps(func)
             def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
@@ -148,9 +148,9 @@ class suppress:
         __redirect__ = contextlib.redirect_stdout
 
 
-def message(msg: str = '') -> t.Callable[[t.Callable[..., Any]], t.Callable[..., Any]]:
+def message(msg: str = '') -> Func1[FuncAny2, FuncAny2]:
 
-    def decorate(func: t.Callable[..., Any]) -> t.Callable[..., Any]:
+    def decorate(func: FuncAny2) -> FuncAny2:
 
         @f.wraps(func)
         def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:

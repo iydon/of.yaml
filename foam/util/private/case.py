@@ -8,7 +8,7 @@ import typing as t
 
 from ..object.data import Data
 from ..function import deprecated_classmethod, dict_without_keys
-from ...base.type import DictStrAny, Path
+from ...base.type import DictStrAny, Func1, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -80,7 +80,7 @@ class CaseBase(abc.ABC):
         self._required = self.required(**kwargs) or {}
 
     def __repr__(self) -> str:
-        func: t.Callable[[DictStrAny], str] \
+        func: Func1[DictStrAny, str] \
             = lambda d: ', '.join(f'{k}={v!r}' for k, v in d.items())
         return f'{self.__class__.__name__}({func(self._kwargs)}) \\\n' \
             f'    .set_optional({func(self._optional)}) \\\n' \

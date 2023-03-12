@@ -6,7 +6,7 @@ import typing as t
 
 from .conversion import Conversion
 from ..function import deprecated_classmethod
-from ...base.type import Any, DictStrAny, FoamItem, Keys, ListAny, Path
+from ...base.type import Any, DictStrAny, FoamItem, Func0, Keys, ListAny, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -111,7 +111,7 @@ class Data:
     def fromDictKeys(
         cls,
         *keys: t.Hashable,
-        default: t.Optional[t.Callable[[], Any]] = None,
+        default: t.Optional[Func0[Any]] = None,
     ) -> 'te.Self':
         func = default or dict
         self = cls.fromDict()
@@ -126,9 +126,9 @@ class Data:
     @classmethod
     def fromListLength(
         cls,
-        length: int, default: t.Optional[t.Callable[[], Any]] = None,
+        length: int, default: t.Optional[Func0[Any]] = None,
     ) -> 'te.Self':
-        func: t.Callable[[], Any] \
+        func: Func0[Any] \
             = default or (lambda: None)
         return cls.fromList([func() for _ in range(length)])
 

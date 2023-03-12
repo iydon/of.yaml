@@ -3,7 +3,7 @@ __all__ = ['classproperty', 'lark', 'matplotlib', 'numpy', 'py7zr', 'tomlkit', '
 
 import typing as t
 
-from .type import Any
+from .type import Any, FuncAny2
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -32,13 +32,13 @@ class classproperty:
         - place it in util::decorator will cause circular import problem
     '''
 
-    def __init__(self, method: t.Optional[t.Callable[..., Any]] = None) -> None:
+    def __init__(self, method: t.Optional[FuncAny2] = None) -> None:
         self.fget = method
 
     def __get__(self, instance: Any, cls: t.Optional[type] = None) -> Any:
         return self.fget(cls)
 
-    def getter(self, method: t.Callable[..., Any]) -> 'te.Self':
+    def getter(self, method: FuncAny2) -> 'te.Self':
         self.fget = method
         return self
 

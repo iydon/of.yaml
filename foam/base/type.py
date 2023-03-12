@@ -1,13 +1,15 @@
 __all__ = [
     'Ta', 'Tb', 'Tc',
     #
-    'DictAny', 'DictFloat', 'DictStr', 'TupleSeq', 'Keys', 'Location',
+    'DictAny', 'DictFloat', 'DictStr', 'Func0', 'Func1', 'Func2', 'FuncAny', 'Generator', 'TupleSeq',
+    'Keys', 'Location',
     #
     'Any', 'DictAny2', 'DictStr2', 'DictStrAny', 'DictStrFloat', 'Document', 'FoamItem', 'FoamItems',
-    'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path', 'SetPath', 'SetStr',
-    'ModuleType', 'NoneType',
+    'FuncAny2', 'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path', 'SetPath', 'SetStr',
     #
-    'Array',
+    'Array0', 'Array1', 'Array2', 'Array01', 'Array12', 'Number',
+    #
+    'ModuleType', 'NoneType',
 ]
 
 
@@ -15,7 +17,7 @@ import pathlib as p
 import typing as t
 
 if t.TYPE_CHECKING:
-    import numpy as _numpy
+    import nptyping as npt
 
 
 T1, T2, T3 = t.TypeVar('T1'), t.TypeVar('T2'), t.TypeVar('T3')
@@ -24,6 +26,11 @@ Ta, Tb, Tc = t.TypeVar('Ta'), t.TypeVar('Tb'), t.TypeVar('Tc')
 DictAny = t.Dict[t.Hashable, T1]
 DictFloat = t.Dict[float, T1]
 DictStr = t.Dict[str, T1]
+Func0 = t.Callable[[], T1]
+Func1 = t.Callable[[T1], T2]
+Func2 = t.Callable[[T1, T2], T3]
+FuncAny = t.Callable[..., T1]
+Generator = t.Generator[T1, None, None]  # TODO: Use Generator instead if Iterator
 TupleSeq = t.Tuple[T1, ...]  # https://github.com/python/mypy/issues/184
 Keys = t.Union[T1, TupleSeq[T1]]  # https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
 Location = t.Tuple[T1, T1, T1]
@@ -33,6 +40,7 @@ DictAny2 = DictAny[Any]
 DictStr2 = DictStr[str]
 DictStrAny = DictStr[Any]
 DictStrFloat = DictStr[float]
+FuncAny2 = FuncAny[Any]
 ListAny = t.List[Any]
 ListFloat = t.List[float]
 ListInt = t.List[int]
@@ -44,22 +52,11 @@ SetStr = t.Set[str]
 Document = FoamItem = t.Union[DictStrAny, ListAny]
 FoamItems = t.List[FoamItem]
 
+Array0 = Number = t.Type['npt.Number']
+Array1 = t.Type['npt.NDArray[npt.Shape["*"], npt.Floating]']
+Array2 = t.Type['npt.NDArray[npt.Shape["*, *"], npt.Floating]']
+Array01 = t.Union[Array0, Array1]
+Array12 = t.Union[Array1, Array2]
+
 ModuleType = type(t)
 NoneType = type(None)
-
-
-class Array:
-    '''
-    TODO:
-        - https://github.com/ramonhagenaars/nptyping?
-    '''
-
-    def __class_getitem__(cls, dimensions: 'Keys[int]') -> t.Union['_numpy.number', '_numpy.ndarray']:
-        if not isinstance(dimensions, tuple):
-            return cls.__class_getitem__((dimensions, ))
-        assert all(isinstance(d, int) and d>=0 for d in dimensions)
-
-        if dimensions == (0, ):
-            return '_numpy.number'
-        else:
-            return '_numpy.ndarray'

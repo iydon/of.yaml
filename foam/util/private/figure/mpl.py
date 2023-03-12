@@ -3,7 +3,7 @@ __all__ = ['AddOn']
 
 import typing as t
 
-from ....base.type import Any
+from ....base.type import Any, FuncAny
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -13,7 +13,7 @@ if t.TYPE_CHECKING:
     P = te.ParamSpec('P')
 
 
-Wrapper = t.Callable[..., 'Figure']
+Wrapper = FuncAny['Figure']
 
 
 class AddOn:
