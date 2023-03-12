@@ -34,10 +34,11 @@ Documentation = "https://ifoam.readthedocs.io"
 python = ">=3.7,<4.0"
 PyYAML = "^6.0"
 click = { version = "^8.0.3", optional = true }
-lark = {version = "^1.1.2", optional = true}
-matplotlib = {version = "^3.5.3", optional = true}  # matplotlib@3.6 does not currently support python@3.7
+lark = { version = "^1.1.2", optional = true }
+matplotlib = { version = "^3.5.3", optional = true }  # matplotlib@3.6 does not currently support python@3.7
+nptyping = { version = "^2.5.0", optional = true }
 py7zr = { version = "^0.20.2", optional = true }
-tomlkit = {version = "^0.11.5", optional = true}
+tomlkit = { version = "^0.11.5", optional = true }
 tqdm = { version = "^4.63.1", optional = true }
 typing-extensions = { version = "^4.3.0", optional = true }
 vtk = { version = "^9.1.0", optional = true }
@@ -50,9 +51,9 @@ lark = ["lark"]
 mpl = ["matplotlib"]
 toml = ["tomlkit"]
 tqdm = ["tqdm"]
-type = ["typing-extensions"]
+type = ["nptyping", "typing-extensions"]
 vtk = ["vtk"]
-full = ["py7zr", "click", "lark", "matplotlib", "tomlkit", "tqdm", "typing-extensions", "vtk"]
+full = ["py7zr", "click", "lark", "matplotlib", "nptyping", "tomlkit", "tqdm", "typing-extensions", "vtk"]
 
 [tool.poetry.dev-dependencies]
 mkdocs-material = "^8.2.9"
