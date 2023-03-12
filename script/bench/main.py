@@ -3,7 +3,7 @@ import os
 import pathlib as p
 import typing as t
 
-from foam import Foam, Timer
+from foam.namespace.full import Foam, Timer
 
 
 def is_valid(foam: Foam, threshold: t.Optional[int] = None) -> bool:

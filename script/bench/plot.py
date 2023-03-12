@@ -11,8 +11,7 @@
     ]
 }
 '''
-from foam import Conversion
-from foam.util.private.figure import Figure
+from foam.namespace.full import Conversion, Figure
 
 
 data = Conversion.fromPath('bench.json').to_document()

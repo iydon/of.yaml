@@ -149,7 +149,7 @@ class suppress:
 
 
 def message(msg: str = '') -> t.Callable[[t.Callable[..., Any]], t.Callable[..., Any]]:
-    
+
     def decorate(func: t.Callable[..., Any]) -> t.Callable[..., Any]:
 
         @f.wraps(func)

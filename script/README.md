@@ -1,7 +1,6 @@
 | Script                                 | Description                                                       |
 | -------------------------------------- | ----------------------------------------------------------------- |
-| [bench.py](bench.py)                   | Perform initial benchmarking to determine performance loss        |
-| [bench_plot.py](bench_plot.py)         | Analyze and plot benchmark data                                   |
+| [bench/](bench/)                       | Perform initial benchmarking to determine performance loss        |
 | [case2yaml.py](case2yaml.py)           | Preliminary conversion of OpenFOAM cases to YAML format           |
 | [copyright.py](copyright.py)           | Generate the document required for software copyright application |
 | [format_checker.py](format_checker.py) | Check code format (refer to issue #33)                            |
