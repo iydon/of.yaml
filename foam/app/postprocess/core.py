@@ -19,6 +19,9 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
+ProbFunc = t.Callable[[Array[2]], Array[1]]
+
+
 class PostProcess:
     '''OpenFOAM post-processing'''
 
@@ -76,7 +79,7 @@ class PostProcess:
     def probe(
         self,
         location: Location[float], keys: t.Optional[SetStr] = None,
-        point: bool = True, func: t.Optional[t.Callable] = None,
+        point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> DictStr[DictFloat[Array[0, 1]]]:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
@@ -84,7 +87,7 @@ class PostProcess:
     def probes(
         self,
         *locations: Location[float],
-        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> t.Dict[Location[float], DictStr[DictFloat[Array[0, 1]]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
@@ -239,7 +242,7 @@ class VTK:
     def probe(
         self,
         location: Location[float], keys: t.Optional[SetStr] = None,
-        point: bool = True, func: t.Optional[t.Callable] = None,
+        point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> DictStr[Array[0, 1]]:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
@@ -247,7 +250,7 @@ class VTK:
     def probes(
         self,
         *locations: Location[float],
-        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[t.Callable] = None,
+        keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> t.Dict[Location[float], DictStr[Array[0, 1]]]:
         '''
         Reference:
@@ -256,7 +259,8 @@ class VTK:
         keys = keys or self.foam.fields
         coords = self.points if point else self.cells
         fields = self.point_fields if point else self.cell_fields
-        func = func or (lambda x: numpy.square(x).mean(axis=1))
+        func: ProbFunc \
+            = func or (lambda x: numpy.square(x).mean(axis=1))
         ans = {}
         for location in locations:
             index = numpy.argmin(func(coords-location))

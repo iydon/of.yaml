@@ -28,7 +28,7 @@ class Timer:
         - https://stackoverflow.com/questions/5849800/what-is-the-python-equivalent-of-matlabs-tic-and-toc-functions
     '''
 
-    def __init__(self, func: t.Callable) -> None:
+    def __init__(self, func: t.Callable[[], float]) -> None:
         self._func = func
         self._cache = {}
 

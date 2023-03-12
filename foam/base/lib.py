@@ -32,13 +32,13 @@ class classproperty:
         - place it in util::decorator will cause circular import problem
     '''
 
-    def __init__(self, method: t.Optional[t.Callable] = None) -> None:
+    def __init__(self, method: t.Optional[t.Callable[..., Any]] = None) -> None:
         self.fget = method
 
     def __get__(self, instance: Any, cls: t.Optional[type] = None) -> Any:
         return self.fget(cls)
 
-    def getter(self, method: t.Callable) -> 'te.Self':
+    def getter(self, method: t.Callable[..., Any]) -> 'te.Self':
         self.fget = method
         return self
 

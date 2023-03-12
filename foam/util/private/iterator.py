@@ -26,10 +26,10 @@ class Iterator:
         10
     '''
 
-    def __init__(self, iterator: t.Iterator) -> None:
+    def __init__(self, iterator: t.Iterator[Any]) -> None:
         self._iterator = iterator
 
-    def __iter__(self) -> t.Iterator:
+    def __iter__(self) -> t.Iterator[Any]:
         return self._iterator
 
     @classmethod
@@ -37,14 +37,14 @@ class Iterator:
         return cls(iter(iterable.items()))
 
     @classmethod
-    def fromIter(cls, iterable: t.Iterable) -> 'te.Self':
+    def fromIter(cls, iterable: t.Iterable[Any]) -> 'te.Self':
         return cls(iter(iterable))
 
     @classmethod
     def fromList(cls, iterable: ListAny) -> 'te.Self':
         return cls(iter(iterable))
 
-    def collect(self, func: t.Callable) -> Any:
+    def collect(self, func: t.Callable[[t.Iterator[Any]], Any]) -> Any:
         return func(self._iterator)
 
     def collect_as_dict(self) -> DictAny2:
@@ -56,19 +56,19 @@ class Iterator:
     def copy(self) -> 'te.Self':
         return copy.deepcopy(self)
 
-    def filter(self, func: t.Optional[t.Callable] = None) -> 'te.Self':
+    def filter(self, func: t.Optional[t.Callable[[Any], Any]] = None) -> 'te.Self':
         return self._new(filter(func, self._iterator))
 
-    def map(self, func: t.Callable) -> 'te.Self':
+    def map(self, func: t.Callable[[Any], Any]) -> 'te.Self':
         return self._new(map(func, self._iterator))
 
-    def reduce(self, func: t.Callable) -> Any:
+    def reduce(self, func: t.Callable[[Any, Any], Any]) -> Any:
         return f.reduce(func, self._iterator)
 
     def reduce_with_operator(self, attr: str) -> Any:
         return self.reduce(getattr(op, attr))
 
-    def _new(self, iterator: t.Iterator) -> 'te.Self':
+    def _new(self, iterator: t.Iterator[Any]) -> 'te.Self':
         return self.__class__(iterator)
 
     from_dict = deprecated_classmethod(fromDict)

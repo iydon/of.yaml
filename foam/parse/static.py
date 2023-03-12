@@ -43,7 +43,7 @@ class Static:
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
 
-    def __getitem__(self, keys: Keys[str]) -> t.Callable:
+    def __getitem__(self, keys: Keys[str]) -> t.Callable[[DictStrAny], None]:
         try:
             return lambda *args, **kwargs: self.match[keys](self, *args, **kwargs)
         except KeyError:

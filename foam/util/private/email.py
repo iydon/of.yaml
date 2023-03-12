@@ -29,7 +29,8 @@ class Envelope:
 
     def __init__(self, *to_addresses: str) -> None:
         self._header = {'To': ', '.join(to_addresses)}
-        self._applies = [lambda msg: None]
+        self._applies: t.List[t.Callable[[email.message.EmailMessage], None]] \
+            = [lambda msg: None]
 
     @classmethod
     def auto(cls, smtp: 'SMTP') -> type:

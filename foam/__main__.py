@@ -3,12 +3,13 @@ __all__ = ['cnv', 'run']
 
 import pathlib as p
 import subprocess
+import typing as t
 
 import click
 
 from foam import Foam
 from foam.base.lib import tqdm
-from foam.base.type import TupleSeq
+from foam.base.type import Any, TupleSeq
 
 
 class DEFAULT:
@@ -70,11 +71,12 @@ def run(
     version: str = DEFAULT.OPENFOAM,
 ) -> None:
     '''For batch testing whether the converted files are operational'''
-    pbar = tqdm.tqdm if tqdm.is_available() else lambda x: x
+    pbar: t.Callable[[t.Iterator[p.Path]], t.Iterable[p.Path]] \
+        = tqdm.tqdm if tqdm.is_available() else lambda x: x
     dst = p.Path(directory, version)
-    for directory in pbar(dst.iterdir()):
-        if directory.is_dir():
-            assert _run(directory), directory
+    for path in pbar(dst.iterdir()):
+        if path.is_dir():
+            assert _run(path), path
 
 
 if __name__ == '__main__':
