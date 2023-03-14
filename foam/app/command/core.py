@@ -8,7 +8,7 @@ import typing as t
 import warnings as w
 
 from .adapter import Default, Apps
-from ...base.type import Any, DictStr, DictStrAny, Func1, ListFloat, ListInt, ListStr, SetPath
+from ...base.type import CmdItem, CmdItems, DictStr2, DictStrAny, Func1, ListFloat, ListInt, ListStr, SetPath
 from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
 
@@ -17,9 +17,14 @@ if t.TYPE_CHECKING:
 
     from ...base.core import Foam
 
+    P = te.ParamSpec('P')
+    Kwargs = te.ParamSpecKwargs(P)
+
 
 class Command:
     '''OpenFOAM command wrapper'''
+
+    __slots__ = ('_foam', '__dict__')
 
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
@@ -55,7 +60,7 @@ class Command:
         return logs
 
     @cached_property
-    def macros(self) -> DictStr[str]:
+    def macros(self) -> DictStr2:
         '''Macros that can be used in the pipeline field'''
         macros = {
             '__app__': self._foam.application,
@@ -88,7 +93,7 @@ class Command:
 
     def run(
         self,
-        commands: t.List[t.Union[str, DictStrAny]],
+        commands: CmdItems,
         suffix: str = '', overwrite: bool = False, exception: bool = True,
         parallel: bool = True, unsafe: bool = False,
     ) -> ListInt:
@@ -144,7 +149,7 @@ class Command:
             command = self._replace(command)
         return shlex.split(command)
 
-    def _command(self, command: t.Union[str, DictStrAny], **kwargs: Any) -> DictStrAny:
+    def _command(self, command: CmdItem, **kwargs: 'Kwargs') -> DictStrAny:
         if isinstance(command, str):
             return {'command': command, **kwargs}
         elif isinstance(command, dict):

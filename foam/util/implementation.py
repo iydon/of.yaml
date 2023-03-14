@@ -15,6 +15,7 @@ if t.TYPE_CHECKING:
 class Singleton(Protocol):
     '''Singleton'''
 
+    # __slots__ = ...  # __dict__ slot disallowed: we already got one
     __instances: DictStr['te.Self'] = {}
 
     @classmethod

@@ -38,6 +38,7 @@ class Static:
         >>> static[tuple(data['type'])](data)
     '''
 
+    __slots__ = ('_foam')
     match = Match.default()
 
     def __init__(self, foam: 'Foam') -> None:

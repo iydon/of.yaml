@@ -20,6 +20,9 @@ if t.TYPE_CHECKING:
 class Conversion:
     '''Conversion between object and bytes/string
 
+    TODO:
+        - Generics
+
     Example:
         >>> data = {'a': 1, 'b': [2, 3], 'c': {'4': 5}}
         >>> print(Conversion.fromDocument(data).to_yaml())
@@ -28,9 +31,10 @@ class Conversion:
         - 2
         - 3
         c:
-        '4': 5
+            '4': 5
     '''
 
+    __slots__ = ('_document', )
     _alias = {'pkl': 'pickle', 'yml': 'yaml'}
     _types = {'json', 'pickle', 'toml', 'yaml'}
 

@@ -4,12 +4,13 @@ __all__ = ['DryRun', 'Origin']
 import subprocess
 import typing as t
 
+from ...base.type import Any
+
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
     P = te.ParamSpec('P')
-    Args = te.ParamSpecArgs(P)
-    Kwargs = te.ParamSpecKwargs(P)
+    Args, Kwargs = te.ParamSpecArgs(P), te.ParamSpecKwargs(P)
 
 
 Origin = subprocess.Popen
@@ -18,6 +19,7 @@ Origin = subprocess.Popen
 class DryRun:
     '''Dry run'''
 
+    __slots__ = ()
     args = None
     stdout = b''
     returncode = 0
@@ -28,7 +30,7 @@ class DryRun:
     def __enter__(self) -> 'te.Self':
         return self
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type: Any, value: Any, traceback: Any) -> None:
         pass
 
     def communicate(self, *args: 'P.args', **kwargs: 'P.kwargs') -> t.Tuple[bytes, bytes]:

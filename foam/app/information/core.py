@@ -7,7 +7,7 @@ import pathlib as p
 import re
 import typing as t
 
-from ...base.type import DictAny, DictStr2, DictStrAny, Func1, Path, SetStr
+from ...base.type import CmdItem, DictAny, DictStr2, Func1, Path, SetStr
 from ...util.function import deprecated_classmethod
 from ...util.object.conversion import Conversion
 
@@ -18,8 +18,14 @@ if t.TYPE_CHECKING:
     from ...base.core import Foam
 
 
+CmdFunc = Func1[CmdItem, str]
+SrchAns = DictAny[SetStr]
+
+
 class Information:
     '''OpenFOAM information wrapper'''
+
+    __slots__ = ('_foam', '_cmd')
 
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
@@ -74,6 +80,9 @@ class Information:
     def search(self, *targets: str, process: bool = True) -> t.Union[str, SetStr]:
         '''`foamSearch` wrapper
 
+        TODO:
+            - return Result[SetStr, str]
+
         Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
@@ -93,7 +102,7 @@ class Information:
         except Exception:
             return stdout
 
-    def search_yaml(self, *targets: str, root: Path = '.') -> DictAny[SetStr]:
+    def search_yaml(self, *targets: str, root: Path = '.') -> SrchAns:
         '''`foamSearch` in YAML
 
         Note:
@@ -101,7 +110,7 @@ class Information:
         '''
         return self.search_path(*targets, root=root, suffixes={'.yaml', '.yml'})
 
-    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[SetStr] = None) -> DictAny[SetStr]:
+    def search_path(self, *targets: str, root: Path = '.', suffixes: t.Optional[SetStr] = None) -> SrchAns:
         '''`foamSearch` in configuration'''
         from ...base.core import Foam
 
@@ -128,9 +137,9 @@ class Information:
         return dict(record)
 
     def commands(self, foam_only: bool = True) -> SetStr:
-        strize: Func1[t.Union[str, DictStrAny], str] \
+        strize: CmdFunc \
             = lambda command: {str: lambda x: x, dict: lambda x: x['command']}[type(command)](command)
-        func: Func1[t.Union[str, DictStrAny], str] \
+        func: CmdFunc \
             = lambda x: self.cmd._split(strize(x), False)[0]
         commands = set(map(func, self._foam.pipeline))
         if foam_only:

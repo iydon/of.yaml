@@ -28,6 +28,7 @@ class Lark(Singleton):
         - unit-test (Lark, Foam.fromOpenFoam)
     '''
 
+    __slots__ = ('_root', '_embed', '_foam', '_static')
     order = ['meta', 'foam', 'static', 'other']
 
     def __init__(self, path: Path, embed: bool = True) -> None:

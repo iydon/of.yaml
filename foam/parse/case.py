@@ -38,6 +38,8 @@ class Case(Singleton):
         boundaryField {movingWall {type fixedValue; value uniform (1 0 0);} fixedWalls {type noSlip;} frontAndBack {type empty;}}
     '''
 
+    __slots__ = ()
+
     def data(self, data: DictStrAny) -> t.Iterator[str]:
         for key, value in data.items():
             yield f'{self.key(key)} {self.value(value)}'

@@ -19,11 +19,19 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
+Centroid = DictFloat[Array12]
+Centroids = DictStr[Centroid]
+Fields01 = DictStr[Array01]
+Fields12 = DictStr[Array12]
+Probe = DictStr[DictFloat[Array01]]
+Probes = t.Dict[Location, Probe]
 ProbFunc = Func1[Array2, Array1]
 
 
 class PostProcess:
     '''OpenFOAM post-processing'''
+
+    __slots__ = ('_foam', '_vtks', '_logs')
 
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
@@ -61,7 +69,7 @@ class PostProcess:
         self._vtks = list(VTK.fromFoam(self._foam, **kwargs))
         return self._vtks
 
-    def centroid(self, key: str, structured: bool = False) -> DictFloat[Array12]:
+    def centroid(self, key: str, structured: bool = False) -> Centroid:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             ans[time] = vtk.centroid(key, structured)
@@ -70,7 +78,7 @@ class PostProcess:
     def centroids(
         self,
         keys: t.Optional[SetStr] = None, structured: bool = False,
-    ) -> DictStr[DictFloat[Array12]]:
+    ) -> Centroids:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self._foam.fields)
@@ -80,7 +88,7 @@ class PostProcess:
         self,
         location: Location, keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> DictStr[DictFloat[Array01]]:
+    ) -> Probe:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
@@ -88,7 +96,7 @@ class PostProcess:
         self,
         *locations: Location,
         keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> t.Dict[Location, DictStr[DictFloat[Array01]]]:
+    ) -> Probes:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -105,6 +113,8 @@ class PostProcess:
 
 class VTK:
     '''OpenFOAM VTK post-processing'''
+
+    __slots__ = ('_foam', '_points', '_cells', '_point_fields', '_cell_fields')
 
     def __init__(
         self,
@@ -186,13 +196,13 @@ class VTK:
         return self._cells
 
     @property
-    def point_fields(self) -> DictStr[Array12]:
+    def point_fields(self) -> Fields12:
         assert self._point_fields is not None
 
         return self._point_fields
 
     @property
-    def cell_fields(self) -> DictStr[Array12]:
+    def cell_fields(self) -> Fields12:
         assert self._cell_fields is not None
 
         return self._cell_fields
@@ -230,20 +240,20 @@ class VTK:
     def centroids(
         self,
         keys: t.Optional[SetStr] = None, structured: bool = False,
-    ) -> DictStr[Array12]:
+    ) -> Fields12:
         return {
             key: self.centroid(key, structured)
             for key in (keys or self.foam.fields)
         }
 
-    def centroid_with_args(self, *keys: str, structured: bool = False) -> DictStr[Array12]:
+    def centroid_with_args(self, *keys: str, structured: bool = False) -> Fields12:
         return self.centroids(set(keys), structured=structured)
 
     def probe(
         self,
         location: Location, keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> DictStr[Array01]:
+    ) -> Fields01:
         location = tuple(map(float, location))
         return self.probes(location, keys=keys, point=point, func=func)[location]
 
@@ -251,7 +261,7 @@ class VTK:
         self,
         *locations: Location,
         keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> t.Dict[Location, DictStr[Array01]]:
+    ) -> t.Dict[Location, Fields01]:
         '''
         Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes

@@ -7,13 +7,13 @@ import operator as op
 import typing as t
 
 from ..function import deprecated_classmethod
-from ...base.type import Any, DictAny2, Func1, Func2, ListAny
+from ...base.type import Ta, Tb, DictAny2, Func1, Func2
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
 
-class Iterator:
+class Iterator(t.Generic[Ta]):
     '''Iterator (map, filter, reduce)
 
     Example:
@@ -26,49 +26,56 @@ class Iterator:
         10
     '''
 
-    def __init__(self, iterator: t.Iterator[Any]) -> None:
+    __slots__ = ('_iterator', )
+
+    def __init__(self, iterator: t.Iterator[Ta]) -> None:
         self._iterator = iterator
 
-    def __iter__(self) -> t.Iterator[Any]:
+    def __iter__(self) -> t.Iterator[Ta]:
         return self._iterator
 
     @classmethod
-    def fromDict(cls, iterable: DictAny2) -> 'te.Self':
+    def fromDict(cls, iterable: DictAny2) -> 'te.Self[Ta]':
+        # Ta = Item = (Key, Value)
         return cls(iter(iterable.items()))
 
     @classmethod
-    def fromIter(cls, iterable: t.Iterable[Any]) -> 'te.Self':
+    def fromIter(cls, iterable: t.Iterable[Ta]) -> 'te.Self[Ta]':
         return cls(iter(iterable))
 
     @classmethod
-    def fromList(cls, iterable: ListAny) -> 'te.Self':
+    def fromList(cls, iterable: t.List[Ta]) -> 'te.Self[Ta]':
         return cls(iter(iterable))
 
-    def collect(self, func: Func1[t.Iterator[Any], Any]) -> Any:
+    def collect(self, func: Func1[t.Iterator[Ta], Tb]) -> Tb:
         return func(self._iterator)
 
     def collect_as_dict(self) -> DictAny2:
+        # Ta = Item = (Key, Value)
         return self.collect(dict)
 
-    def collect_as_list(self) -> ListAny:
+    def collect_as_list(self) -> t.List[Ta]:
         return self.collect(list)
 
-    def copy(self) -> 'te.Self':
+    def copy(self) -> 'te.Self[Ta]':
         return copy.deepcopy(self)
 
-    def filter(self, func: t.Optional[Func1[Any, Any]] = None) -> 'te.Self':
+    def filter(self, func: t.Optional[Func1[Ta, bool]] = None) -> 'te.Self[Ta]':
         return self._new(filter(func, self._iterator))
 
-    def map(self, func: Func1[Any, Any]) -> 'te.Self':
+    def map(self, func: Func1[Ta, Tb]) -> 'te.Self[Tb]':
         return self._new(map(func, self._iterator))
 
-    def reduce(self, func: Func2[Any, Any, Any]) -> Any:
-        return f.reduce(func, self._iterator)
+    def reduce(self, func: Func2[Tb, Ta, Tb], initial: t.Optional[Tb] = None) -> Tb:
+        if initial is None:
+            return f.reduce(func, self._iterator)
+        else:
+            return f.reduce(func, self._iterator, initial)
 
-    def reduce_with_operator(self, attr: str) -> Any:
+    def reduce_with_operator(self, attr: str) -> Ta:
         return self.reduce(getattr(op, attr))
 
-    def _new(self, iterator: t.Iterator[Any]) -> 'te.Self':
+    def _new(self, iterator: t.Iterator[Tb]) -> 'te.Self[Tb]':
         return self.__class__(iterator)
 
     from_dict = deprecated_classmethod(fromDict)

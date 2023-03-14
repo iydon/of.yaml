@@ -9,7 +9,7 @@ import smtplib
 import time
 import typing as t
 
-from ...base.type import Func1, Path
+from ...base.type import Any, Func1, Path
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -25,6 +25,7 @@ class Envelope:
         - https://github.com/tomekwojcik/envelopes
     '''
 
+    __slots__ = ('_header', '_applies')
     _smtp = None
 
     def __init__(self, *to_addresses: str) -> None:
@@ -126,6 +127,8 @@ class SMTP:
         ...         .send()
     '''
 
+    __slots__ = ('_domain', '_smtp', '_username')
+
     def __init__(self, domain: str, host: str, port: int, ssl: bool = True) -> None:
         self._domain = domain
         self._smtp = (smtplib.SMTP_SSL if ssl else smtplib.SMTP)(host, port)
@@ -134,7 +137,7 @@ class SMTP:
     def __enter__(self) -> 'te.Self':
         return self
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type: Any, value: Any, traceback: Any) -> None:
         self._smtp.__exit__(type, value, traceback)
 
     def __class_getitem__(cls, key: str) -> 'te.Self':

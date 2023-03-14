@@ -40,6 +40,7 @@ class Url:
          'data': ...}
     '''
 
+    __slots__ = ('_foam', '_path', '_url')
     match = Match.default()
 
     def __init__(self, foam: 'Foam') -> None:

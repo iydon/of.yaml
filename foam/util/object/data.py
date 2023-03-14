@@ -12,12 +12,14 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
     P = te.ParamSpec('P')
-    Args = te.ParamSpecArgs(P)
-    Kwargs = te.ParamSpecKwargs(P)
+    Args, Kwargs = te.ParamSpecArgs(P), te.ParamSpecKwargs(P)
 
 
 class Data:
     '''Multi-key dictionary or list (not recommended)
+
+    TODO:
+        - Generics
 
     Example:
         >>> data = Data.fromDictKeys(
@@ -35,6 +37,8 @@ class Data:
         ('right', 'x') []
         ('right', 'y') [{Ellipsis}]
     '''
+
+    __slots__ = ('_data', )
 
     def __init__(self, data: FoamItem) -> None:
         self._data = data

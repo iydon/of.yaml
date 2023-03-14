@@ -41,6 +41,8 @@ class Match:
         2
     '''
 
+    __slots__ = ('_methods', )
+
     def __init__(self) -> None:
         self._methods: t.Dict[TupleSeq[str], FuncAny2] = {}
 

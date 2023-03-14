@@ -22,6 +22,8 @@ if t.TYPE_CHECKING:
 class Parser:
     '''All parsers'''
 
+    __slots__ = ('case', 'static', 'url')
+
     def __init__(self, case: Case, static: Static, url: Url) -> None:
         self.case = case
         self.static = static

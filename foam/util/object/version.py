@@ -20,6 +20,7 @@ class Version(t.NamedTuple):
         '1.2.x'
     '''
 
+    # __slots__ = ('major', 'minor', 'other')  # Cannot overwrite NamedTuple attribute __slots__
     major: int
     minor: int
     other: t.Optional[str]

@@ -5,6 +5,7 @@ import re
 import typing as t
 
 from ...base.lib import tqdm
+from ...base.type import Any
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -15,13 +16,15 @@ if t.TYPE_CHECKING:
 class Default:
     '''Default app'''
 
+    __slots__ = ()
+
     def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         pass
 
     def __enter__(self) -> 'te.Self':
         return self
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type: Any, value: Any, traceback: Any) -> None:
         pass
 
     def step(self, line: bytes) -> None:
@@ -34,13 +37,15 @@ class Default:
 class AppBase(Default):
     '''Base app'''
 
+    __slots__ = ('pbar', '_new', '_old')
+
     def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         start = float(foam['foam']['system', 'controlDict', 'startTime'])
         end = float(foam['foam']['system', 'controlDict', 'endTime'])
         self.pbar = tqdm.tqdm(total=end-start, desc=desc)
         self._new = self._old = start
 
-    def __exit__(self, type, value, traceback) -> None:
+    def __exit__(self, type: Any, value: Any, traceback: Any) -> None:
         self.pbar.close()
 
     def step(self, line: bytes) -> None:
@@ -128,6 +133,8 @@ class AppByTimeI(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/reconstructPar/reconstructPar.C
     '''
 
+    __slots__ = ()
+
     def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Time = '):
@@ -141,6 +148,8 @@ class AppByTimeII(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK.C
     '''
 
+    __slots__ = ()
+
     def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Time: '):
@@ -153,6 +162,8 @@ class AppByIterationI(AppBase):
         - electromagnetics:
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/electromagnetics/electrostaticFoam/electrostaticFoam.C
     '''
+
+    __slots__ = ()
 
     def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
@@ -168,6 +179,8 @@ class AppByIterationII(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/solvers/stressAnalysis/solidDisplacementFoam/solidDisplacementFoam.C
     '''
 
+    __slots__ = ()
+
     def now(self, line: bytes) -> t.Optional[float]:
         line = line.strip()
         if line.startswith(b'Iteration: '):
@@ -181,6 +194,8 @@ class AppByProcessor(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/decomposePar/decomposePar.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/parallelProcessing/redistributePar/redistributePar.C
     '''
+
+    __slots__ = ()
 
     def __init__(self, foam: 'Foam', desc: t.Optional[str] = None) -> None:
         start = 0
@@ -361,6 +376,8 @@ class AppByOther(AppBase):
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/surface/surfaceFind/surfaceFind.C
             - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/surface/surfaceMeshTriangulate/surfaceMeshTriangulate.C
     '''
+
+    __slots__ = ()
 
     def now(self, line: bytes) -> t.Optional[float]:
         raise NotImplementedError

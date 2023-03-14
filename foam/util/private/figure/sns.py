@@ -23,6 +23,8 @@ class AddOn:
         - everything
     '''
 
+    __slots__ = ('_figure', '_ret')
+
     def __init__(self, figure: 'Figure') -> None:
         self._figure = figure
         self._ret = None

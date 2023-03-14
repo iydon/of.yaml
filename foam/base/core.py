@@ -12,7 +12,7 @@ import urllib.parse
 import urllib.request
 import warnings as w
 
-from .type import DictAny2, DictStr2, DictStrAny, FoamItems, ListStr, Path, SetStr
+from .type import CmdItems, DictAny2, DictStr2, FoamItems, ListStr, Path, SetStr
 from ..compat.functools import cached_property
 from ..parse import Parser
 from ..util.function import deprecated_classmethod
@@ -41,6 +41,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
+    __slots__ = ('_items', '_root', '_dest', '_parser', '_cmd', '_info', '_post', '__dict__')
     __version__ = Version.fromString('0.13.4')
 
     def __init__(self, data: FoamItems, root: Path, warn: bool = True) -> None:
@@ -261,7 +262,7 @@ class Foam:
             return 1
 
     @cached_property
-    def pipeline(self) -> t.List[t.Union[str, DictStrAny]]:
+    def pipeline(self) -> CmdItems:
         return (self['other'] or {}).get('pipeline', [])
 
     @cached_property

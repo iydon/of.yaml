@@ -67,6 +67,7 @@ class CaseBase(abc.ABC):
         [0, 0]
     '''
 
+    __slots__ = ('_foam', '_kwargs', '_optional', '_required')
     __template__ = None
 
     dict_without_keys = staticmethod(dict_without_keys)
