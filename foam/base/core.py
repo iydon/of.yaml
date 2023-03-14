@@ -42,7 +42,7 @@ class Foam:
     '''
 
     __slots__ = ('_items', '_root', '_dest', '_parser', '_cmd', '_info', '_post', '__dict__')
-    __version__ = Version.fromString('0.13.4')
+    __version__ = Version.fromString('0.13.5')
 
     def __init__(self, data: FoamItems, root: Path, warn: bool = True) -> None:
         self._items = data

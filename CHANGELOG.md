@@ -98,4 +98,5 @@
 
 ## `v0.13`
 
+- Add `__slots__` support
 - Improve type hints

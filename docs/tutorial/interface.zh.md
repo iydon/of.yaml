@@ -114,6 +114,9 @@ CLASSES
         foam.util.object.data.Data
     builtins.tuple(builtins.object)
         foam.util.object.version.Version
+    typing.Generic(builtins.object)
+        foam.util.object.option.Option
+        foam.util.object.result.Result
 
     class Command(builtins.object)
      |  Command(foam: 'Foam') -> None
@@ -146,13 +149,13 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
-     |  fromFoamWithoutAsserting(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoamWithoutAsserting(foam: 'Foam') -> 'te.Self' from builtins.type
      |
-     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  from_foam = fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
-     |  from_foam_without_asserting = fromFoamWithoutAsserting(foam: 'Foam') -> 'Self' from builtins.type
+     |  from_foam_without_asserting = fromFoamWithoutAsserting(foam: 'Foam') -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -168,14 +171,14 @@ CLASSES
      |
      |  __dict__
      |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
 
     class Conversion(builtins.object)
      |  Conversion(document: Union[Dict[str, Any], List[Any]]) -> None
      |
      |  Conversion between object and bytes/string
+     |
+     |  TODO:
+     |      - Generics
      |
      |  Example:
      |      >>> data = {'a': 1, 'b': [2, 3], 'c': {'4': 5}}
@@ -185,95 +188,89 @@ CLASSES
      |      - 2
      |      - 3
      |      c:
-     |      '4': 5
+     |          '4': 5
      |
      |  Methods defined here:
      |
      |  __init__(self, document: Union[Dict[str, Any], List[Any]]) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
      |
-     |  to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: Any) -> bytes
+     |  to_bytes(self, type_or_suffix: str = 'json', all: bool = False, **kwargs: 'Kwargs') -> bytes
      |
      |  to_document(self) -> Union[Dict[str, Any], List[Any]]
      |
-     |  to_json(self, **kwargs: Any) -> str
+     |  to_json(self, **kwargs: 'Kwargs') -> str
      |
-     |  to_path(self, path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None, **kwargs: Any) -> pathlib.Path
+     |  to_path(self, path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None, **kwargs: 'Kwargs') -> pathlib.Path
      |
-     |  to_pickle(self, **kwargs: Any) -> bytes
+     |  to_pickle(self, **kwargs: 'Kwargs') -> bytes
      |
-     |  to_string(self, type: str = 'json', all: bool = False, **kwargs: Any) -> str
+     |  to_string(self, type: str = 'json', all: bool = False, **kwargs: 'Kwargs') -> str
      |
-     |  to_toml(self, **kwargs: Any) -> str
+     |  to_toml(self, **kwargs: 'Kwargs') -> str
      |
-     |  to_yaml(self, all: bool = False, **kwargs: Any) -> str
+     |  to_yaml(self, all: bool = False, **kwargs: 'Kwargs') -> str
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  autoFromBytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
+     |  autoFromBytes(content: bytes, all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |  autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  autoFromString(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  autoFromString(text: str, all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  auto_from_bytes = autoFromBytes(content: bytes, all: bool = False) -> 'Self' from builtins.type
+     |  auto_from_bytes = autoFromBytes(content: bytes, all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  auto_from_path = autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'Self' from builtins.type
+     |  auto_from_path = autoFromPath(path: Union[str, pathlib.Path], all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  auto_from_string = autoFromString(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  auto_from_string = autoFromString(text: str, all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'te.Self' from builtins.type
      |
-     |  fromJSON(text: str) -> 'Self' from builtins.type
+     |  fromJSON(text: str) -> 'te.Self' from builtins.type
      |
-     |  fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  fromPickle(text: bytes) -> 'Self' from builtins.type
+     |  fromPickle(text: bytes) -> 'te.Self' from builtins.type
      |
-     |  fromString(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  fromString(text: str, type: str = 'json', all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  fromTOML(text: str) -> 'Self' from builtins.type
+     |  fromTOML(text: str) -> 'te.Self' from builtins.type
      |
-     |  fromYAML(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  fromYAML(text: str, all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  from_bytes = fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  from_bytes = fromBytes(content: bytes, type_or_suffix: str = 'json', all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  from_document = fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  from_document = fromDocument(document: Union[Dict[str, Any], List[Any]]) -> 'te.Self' from builtins.type
      |
-     |  from_json = fromJSON(text: str) -> 'Self' from builtins.type
+     |  from_json = fromJSON(text: str) -> 'te.Self' from builtins.type
      |
-     |  from_path = fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  from_path = fromPath(path: Union[str, pathlib.Path], all: bool = False, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_pickle = fromPickle(text: bytes) -> 'Self' from builtins.type
+     |  from_pickle = fromPickle(text: bytes) -> 'te.Self' from builtins.type
      |
-     |  from_string = fromString(text: str, type: str = 'json', all: bool = False) -> 'Self' from builtins.type
+     |  from_string = fromString(text: str, type: str = 'json', all: bool = False) -> 'te.Self' from builtins.type
      |
-     |  from_toml = fromTOML(text: str) -> 'Self' from builtins.type
+     |  from_toml = fromTOML(text: str) -> 'te.Self' from builtins.type
      |
-     |  from_yaml = fromYAML(text: str, all: bool = False) -> 'Self' from builtins.type
+     |  from_yaml = fromYAML(text: str, all: bool = False) -> 'te.Self' from builtins.type
      |
      |  suffixes(dot: bool = True) -> Set[str] from builtins.type
      |
      |  typeFromSuffix(type_or_suffix: str) -> str from builtins.type
      |
      |  type_from_suffix = typeFromSuffix(type_or_suffix: str) -> str from builtins.type
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
 
     class Data(builtins.object)
      |  Data(data: Union[Dict[str, Any], List[Any]]) -> None
      |
      |  Multi-key dictionary or list (not recommended)
+     |
+     |  TODO:
+     |      - Generics
      |
      |  Example:
      |      >>> data = Data.fromDictKeys(
@@ -314,17 +311,17 @@ CLASSES
      |  __str__(self) -> str
      |      Return str(self).
      |
-     |  contains(self, *keys: Any) -> bool
+     |  contains(self, *keys: 'Args') -> bool
      |
-     |  dump(self, *paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> 'Self'
+     |  dump(self, *paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> 'te.Self'
      |
-     |  dump_to_path(self, *parts: str, type: Union[str, NoneType] = None) -> 'Self'
+     |  dump_to_path(self, *parts: str, type: Union[str, NoneType] = None) -> 'te.Self'
      |
-     |  dumps(self, type_or_suffix: str = 'yaml', **kwargs: Any) -> bytes
+     |  dumps(self, type_or_suffix: str = 'yaml', **kwargs: 'Kwargs') -> bytes
      |
      |  get(self, key: Any, default: Union[Any, NoneType] = None) -> Any
      |
-     |  gets(self, *keys: Any, default: Union[Any, NoneType] = None) -> Any
+     |  gets(self, *keys: 'Args', default: Union[Any, NoneType] = None) -> Any
      |
      |  is_dict(self) -> bool
      |
@@ -334,9 +331,9 @@ CLASSES
      |
      |  items(self, with_list: bool = False) -> Iterator[Tuple[Union[Any, Tuple[Any, ...]], Any]]
      |
-     |  set_default(self, *keys: Any, default: Union[Any, NoneType] = None) -> 'Self'
+     |  set_default(self, *keys: 'Args', default: Union[Any, NoneType] = None) -> 'te.Self'
      |
-     |  set_via_dict(self, data: Dict[str, Any]) -> 'Self'
+     |  set_via_dict(self, data: Dict[str, Any]) -> 'te.Self'
      |
      |  setdefault(self, key: Any, default: Union[Any, NoneType] = None) -> Any
      |
@@ -349,47 +346,38 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'te.Self' from builtins.type
      |
-     |  fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
+     |  fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  fromDictKeys(*keys: Hashable, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
+     |  fromDictKeys(*keys: Hashable, default: Union[Callable[[], Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
+     |  fromList(data: Union[List[Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  fromListLength(length: int, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
+     |  fromListLength(length: int, default: Union[Callable[[], Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'Self' from builtins.type
+     |  from_any = fromAny(data: Union[Dict[str, Any], List[Any]]) -> 'te.Self' from builtins.type
      |
-     |  from_dict = fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'Self' from builtins.type
+     |  from_dict = fromDict(data: Union[Dict[str, Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_dict_keys = fromDictKeys(*keys: Hashable, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
+     |  from_dict_keys = fromDictKeys(*keys: Hashable, default: Union[Callable[[], Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'Self' from builtins.type
+     |  from_list = fromList(data: Union[List[Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_list_length = fromListLength(length: int, default: Union[Callable, NoneType] = None) -> 'Self' from builtins.type
+     |  from_list_length = fromListLength(length: int, default: Union[Callable[[], Any], NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('Self')] from builtins.type
+     |  load(*paths: Union[str, pathlib.Path], type: Union[str, NoneType] = None) -> Iterator[ForwardRef('te.Self')] from builtins.type
      |
-     |  loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  load_from_path = loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  load_from_path = loadFromPath(*parts: str, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  loads(content: bytes, type_or_suffix: str = 'yaml') -> 'Self' from builtins.type
+     |  loads(content: bytes, type_or_suffix: str = 'yaml') -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
      |
      |  data
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
 
     class Foam(builtins.object)
      |  Foam(data: List[Union[Dict[str, Any], List[Any]]], root: Union[str, pathlib.Path], warn: bool = True) -> None
@@ -416,64 +404,64 @@ CLASSES
      |      Return str(self).
      |
      |  application = <functools.cached_property object>
-     |  copy(self) -> 'Self'
+     |  copy(self) -> 'te.Self'
      |
      |  environ = <functools.cached_property object>
      |  fields = <functools.cached_property object>
      |  ndim = <functools.cached_property object>
      |  number_of_processors = <functools.cached_property object>
      |  pipeline = <functools.cached_property object>
-     |  reset(self) -> 'Self'
+     |  reset(self) -> 'te.Self'
      |
-     |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> 'Self'
+     |  save(self, dest: Union[str, pathlib.Path], paraview: bool = True) -> 'te.Self'
      |      Persist case to hard disk
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  default() -> 'Self' from builtins.type
+     |  default() -> 'te.Self' from builtins.type
      |
-     |  fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'te.Self' from builtins.type
      |
-     |  fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('te.Self')] from builtins.type
      |
-     |  fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: 'Kwargs') -> 'te.Self' from builtins.type
      |      From OpenFOAM directory
      |
-     |  fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |      Supported path mode: file, directory
      |
-     |  fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'te.Self' from builtins.type
      |
-     |  fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('te.Self')] from builtins.type
      |
-     |  fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |  fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'te.Self' from builtins.type
      |      Supported formats: please refer to `Conversion`
      |
-     |  fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |  fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'te.Self' from builtins.type
      |
-     |  from_demo = fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  from_demo = fromDemo(name: str = 'cavity', warn: bool = False, verbose: bool = True) -> 'te.Self' from builtins.type
      |
-     |  from_demos = fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  from_demos = fromDemos(warn: bool = False, verbose: bool = True) -> List[ForwardRef('te.Self')] from builtins.type
      |
-     |  from_openfoam = fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  from_openfoam = fromOpenFoam(path: Union[str, pathlib.Path], **kwargs: 'Kwargs') -> 'te.Self' from builtins.type
      |      From OpenFOAM directory
      |
-     |  from_path = fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  from_path = fromPath(path: Union[str, pathlib.Path], warn: bool = True, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |      Supported path mode: file, directory
      |
-     |  from_remote_demo = fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'Self' from builtins.type
+     |  from_remote_demo = fromRemoteDemo(name: str = 'cavity', timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> 'te.Self' from builtins.type
      |
-     |  from_remote_demos = fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('Self')] from builtins.type
+     |  from_remote_demos = fromRemoteDemos(timeout: Union[float, NoneType] = None, warn: bool = False, verbose: bool = True) -> List[ForwardRef('te.Self')] from builtins.type
      |
-     |  from_remote_path = fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'Self' from builtins.type
+     |  from_remote_path = fromRemotePath(url: str, timeout: Union[float, NoneType] = None, warn: bool = True, type: Union[str, NoneType] = None) -> 'te.Self' from builtins.type
      |
-     |  from_text = fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'Self' from builtins.type
+     |  from_text = fromText(text: Union[bytes, str], root: Union[str, pathlib.Path], type_or_suffix: Union[str, NoneType] = None, warn: bool = True) -> 'te.Self' from builtins.type
      |      Supported formats: please refer to `Conversion`
      |
-     |  from_yaml = fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'Self' from builtins.type
+     |  from_yaml = fromYAML(text: str, root: Union[str, pathlib.Path], warn: bool = True) -> 'te.Self' from builtins.type
      |
      |  listDemos() -> List[str] from builtins.type
      |
@@ -505,9 +493,6 @@ CLASSES
      |  __dict__
      |      dictionary for instance variables (if defined)
      |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
-     |
      |  destination
 
     class Information(builtins.object)
@@ -525,14 +510,17 @@ CLASSES
      |  search(self, *targets: str, process: bool = True) -> Union[str, Set[str]]
      |      `foamSearch` wrapper
      |
+     |      TODO:
+     |          - return Result[SetStr, str]
+     |
      |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamSearch
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/applications/utilities/miscellaneous/foamDictionary/foamDictionary.C
      |
-     |  search_path(self, *targets: str, root: Union[str, pathlib.Path] = '.', suffixes: Union[Set[str], NoneType] = None) -> Dict[Hashable, Set[str]]
+     |  search_path(self, *targets: str, root: Union[str, pathlib.Path] = '.', suffixes: Union[Set[str], NoneType] = None) -> Dict[Hashable[], Set[str]]
      |      `foamSearch` in configuration
      |
-     |  search_yaml(self, *targets: str, root: Union[str, pathlib.Path] = '.') -> Dict[Hashable, Set[str]]
+     |  search_yaml(self, *targets: str, root: Union[str, pathlib.Path] = '.') -> Dict[Hashable[], Set[str]]
      |      `foamSearch` in YAML
      |
      |      Note:
@@ -541,11 +529,11 @@ CLASSES
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  default() -> 'Self' from builtins.type
+     |  default() -> 'te.Self' from builtins.type
      |
-     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
-     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  from_foam = fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -559,15 +547,126 @@ CLASSES
      |  root
      |
      |  shared_libraries
+
+    class Option(typing.Generic)
+     |  Option(*args, **kwds)
+     |
+     |  Example:
+     |      >>> x = Option.some([1, 2, 3, 4, 5, 6, 7])
+     |      >>> y = x.map(len)
+     |      >>> z = x.take()
+     |      >>> print(x, y, z, sep=', ')
+     |      None, Some(7), Some([1, 2, 3, 4, 5, 6, 7])
+     |
+     |  Reference:
+     |      - https://doc.rust-lang.org/std/option/
+     |      - https://doc.rust-lang.org/src/core/option.rs.html
+     |
+     |  Method resolution order:
+     |      Option
+     |      typing.Generic
+     |      builtins.object
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, value: Union[~Ta, NoneType] = None) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  and_(self, optb: 'te.Self[Tb]') -> 'te.Self[Tb]'
+     |
+     |  and_then(self, f: Callable[[~Ta], ForwardRef('te.Self[Tb]')]) -> 'te.Self[Tb]'
+     |
+     |  contains(self, x: ~Ta) -> bool
+     |
+     |  expect(self, msg: str) -> ~Ta
+     |
+     |  filter(self, predicate: Callable[[~Ta], bool]) -> 'te.Self[Ta]'
+     |
+     |  get_or_insert(self, value: ~Ta) -> 'te.Self[Ta]'
+     |
+     |  get_or_insert_default(self) -> 'te.Self[Ta]'
+     |
+     |  get_or_insert_with(self, f: Callable[[], ~Ta]) -> 'te.Self[Ta]'
+     |
+     |  insert(self, value: ~Ta) -> 'te.Self[Ta]'
+     |
+     |  inspect(self, f: Callable[[~Ta], NoneType]) -> 'te.Self[Ta]'
+     |
+     |  is_none(self) -> bool
+     |
+     |  is_some(self) -> bool
+     |
+     |  is_some_and(self, f: Callable[[~Ta], bool]) -> bool
+     |
+     |  map(self, f: Callable[[~Ta], ~Tb]) -> 'te.Self[Tb]'
+     |
+     |  map_or(self, default: ~Tb, f: Callable[[~Ta], ~Tb]) -> ~Tb
+     |
+     |  map_or_else(self, default: Callable[[], ~Tb], f: Callable[[~Ta], ~Tb]) -> ~Tb
+     |
+     |  ok_or(self, err: ~Tb) -> 'Result[Ta, Tb]'
+     |
+     |  ok_or_else(self, err: Callable[[], ~Tb]) -> 'Result[Ta, Tb]'
+     |
+     |  or_(self, optb: 'te.Self[Ta]') -> 'te.Self[Ta]'
+     |
+     |  or_else(self, f: Callable[[], ForwardRef('te.Self[Ta]')]) -> 'te.Self[Ta]'
+     |
+     |  replace(self, value: ~Ta) -> 'te.Self[Ta]'
+     |
+     |  take(self) -> 'te.Self[Ta]'
+     |
+     |  unwrap(self) -> ~Ta
+     |
+     |  unwrap_or(self, default: ~Ta) -> ~Ta
+     |
+     |  unwrap_or_default(self) -> ~Ta
+     |
+     |  unwrap_or_else(self, f: Callable[[], ~Ta]) -> ~Ta
+     |
+     |  xor(self, opt: 'te.Self[Ta]') -> 'te.Self[Ta]'
+     |
+     |  zip(self, other: 'te.Self[Tb]') -> 'te.Self[t.Tuple[Ta, Tb]]'
+     |
+     |  zip_with(self, other: 'te.Self[Tb]', f: Callable[[~Ta, ~Tb], ~Tc]) -> 'te.Self[Tc]'
      |
      |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
+     |  Class methods defined here:
      |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
+     |  new(value: Union[~Ta, NoneType] = None) -> 'te.Self[Ta]' from builtins.type
      |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
+     |  none() -> 'te.Self[Ta]' from builtins.type
+     |
+     |  some(value: ~Ta) -> 'te.Self[Ta]' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  __annotations__ = {'_none': typing.Union[ForwardRef('te.Self[Ta]'), No...
+     |
+     |  __orig_bases__ = (typing.Generic[~Ta],)
+     |
+     |  __parameters__ = (~Ta,)
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods inherited from typing.Generic:
+     |
+     |  __class_getitem__(params) from builtins.type
+     |
+     |  __init_subclass__(*args, **kwargs) from builtins.type
+     |      This method is called when a class is subclassed.
+     |
+     |      The default implementation does nothing. It may be
+     |      overridden to extend subclasses.
+     |
+     |  ----------------------------------------------------------------------
+     |  Static methods inherited from typing.Generic:
+     |
+     |  __new__(cls, *args, **kwds)
+     |      Create and return a new object.  See help(type) for accurate signature.
 
     class PostProcess(builtins.object)
      |  PostProcess(foam: 'Foam') -> None
@@ -579,22 +678,22 @@ CLASSES
      |  __init__(self, foam: 'Foam') -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
      |
-     |  centroid(self, key: str, structured: bool = False) -> Dict[float, ForwardRef('_numpy.ndarray')]
+     |  centroid(self, key: str, structured: bool = False) -> Dict[float, Union[Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')], Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]]]
      |
-     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]
+     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, Dict[float, Union[Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')], Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]]]]
      |
-     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]
+     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable[[Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]], NoneType] = None) -> Dict[str, Dict[float, Union[Type[ForwardRef('npt.Number')], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]]]]
      |
-     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, Dict[float, ForwardRef('_numpy.ndarray')]]]
+     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable[[Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]], NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, Dict[float, Union[Type[ForwardRef('npt.Number')], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]]]]]
      |
-     |  vtks_set(self, **kwargs: Any) -> List[ForwardRef('VTK')]
+     |  vtks_set(self, **kwargs: 'Kwargs') -> List[ForwardRef('VTK')]
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
-     |  from_foam = fromFoam(foam: 'Foam') -> 'Self' from builtins.type
+     |  from_foam = fromFoam(foam: 'Foam') -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -606,15 +705,120 @@ CLASSES
      |          - https://github.com/OpenFOAM/OpenFOAM-7/blob/master/bin/foamLog
      |
      |  vtks
+
+    class Result(typing.Generic)
+     |  Result(*args, **kwds)
+     |
+     |  Example:
+     |      >>> try:
+     |      ...     1 / 0
+     |      ... except Exception as e:
+     |      ...     x = Result.err(e)
+     |      >>> y, z = x.get_ok(), x.get_err()
+     |      >>> print(x, y, z, sep=', ')
+     |      Err(ZeroDivisionError('division by zero')), None, Some(ZeroDivisionError('division by zero'))
+     |
+     |  Reference:
+     |      - https://doc.rust-lang.org/std/result/
+     |      - https://doc.rust-lang.org/src/core/result.rs.html
+     |
+     |  Method resolution order:
+     |      Result
+     |      typing.Generic
+     |      builtins.object
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, ok: Union[~Ta, NoneType] = None, err: Union[~Tb, NoneType] = None) -> None
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  __repr__(self) -> str
+     |      Return repr(self).
+     |
+     |  and_(self, res: 'te.Self[Tc, Tb]') -> 'te.Self[Tc, Tb]'
+     |
+     |  and_then(self, op: Callable[[~Ta], ForwardRef('te.Self[Tc, Tb]')]) -> 'te.Self[Tc, Tb]'
+     |
+     |  contains(self, x: ~Ta) -> bool
+     |
+     |  contains_err(self, f: ~Tb) -> bool
+     |
+     |  expect(self, msg: str) -> ~Ta
+     |
+     |  expect_err(self, msg: str) -> ~Tb
+     |
+     |  get_err(self) -> 'Option[Tb]'
+     |
+     |  get_ok(self) -> 'Option[Ta]'
+     |
+     |  inspect(self, f: Callable[[~Ta], NoneType]) -> 'te.Self[Ta, Tb]'
+     |
+     |  inspect_err(self, f: Callable[[~Tb], NoneType]) -> 'te.Self[Ta, Tb]'
+     |
+     |  into_ok(self) -> ~Tb
+     |
+     |  is_err(self) -> bool
+     |
+     |  is_err_and(self, f: Callable[[~Tb], bool]) -> bool
+     |
+     |  is_ok(self) -> bool
+     |
+     |  is_ok_and(self, f: Callable[[~Ta], bool]) -> bool
+     |
+     |  map(self, f: Callable[[~Ta], ~Tc]) -> 'te.Self[Tc, Tb]'
+     |
+     |  map_err(self, f: Callable[[~Tb], ~Tc]) -> 'te.Self[Ta, Tc]'
+     |
+     |  map_or(self, default: ~Tc, f: Callable[[~Ta], ~Tc]) -> ~Tc
+     |
+     |  map_or_else(self, default: Callable[[~Tb], ~Tc], f: Callable[[~Ta], ~Tc]) -> ~Tc
+     |
+     |  or_(self, res: 'te.Self[Ta, Tc]') -> 'te.Self[Ta, Tc]'
+     |
+     |  or_else(self, op: Callable[[~Tb], ForwardRef('te.Self[Ta, Tc]')]) -> 'te.Self[Ta, Tc]'
+     |
+     |  unwrap(self) -> ~Ta
+     |
+     |  unwrap_err(self) -> ~Tb
+     |
+     |  unwrap_or(self, default: ~Ta) -> ~Ta
+     |
+     |  unwrap_or_default(self) -> ~Ta
+     |
+     |  unwrap_or_else(self, op: Callable[[~Tb], ~Ta]) -> ~Ta
      |
      |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
+     |  Class methods defined here:
      |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
+     |  err(err: ~Tb) -> 'te.Self[Ta, Tb]' from builtins.type
      |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
+     |  new(ok: Union[~Ta, NoneType] = None, err: Union[~Tb, NoneType] = None) -> 'te.Self[Ta, Tb]' from builtins.type
+     |
+     |  ok(ok: ~Ta) -> 'te.Self[Ta, Tb]' from builtins.type
+     |
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |
+     |  __orig_bases__ = (typing.Generic[~Ta, ~Tb],)
+     |
+     |  __parameters__ = (~Ta, ~Tb)
+     |
+     |  ----------------------------------------------------------------------
+     |  Class methods inherited from typing.Generic:
+     |
+     |  __class_getitem__(params) from builtins.type
+     |
+     |  __init_subclass__(*args, **kwargs) from builtins.type
+     |      This method is called when a class is subclassed.
+     |
+     |      The default implementation does nothing. It may be
+     |      overridden to extend subclasses.
+     |
+     |  ----------------------------------------------------------------------
+     |  Static methods inherited from typing.Generic:
+     |
+     |  __new__(cls, *args, **kwds)
+     |      Create and return a new object.  See help(type) for accurate signature.
 
     class VTK(builtins.object)
      |  VTK(reader: '_vtkmodules.vtkIOLegacy.vtkDataReader', foam: Union[ForwardRef('Foam'), NoneType] = None, point: bool = True, cell: bool = True) -> None
@@ -630,30 +834,30 @@ CLASSES
      |  __init__(self, reader: '_vtkmodules.vtkIOLegacy.vtkDataReader', foam: Union[ForwardRef('Foam'), NoneType] = None, point: bool = True, cell: bool = True) -> None
      |      Initialize self.  See help(type(self)) for accurate signature.
      |
-     |  centroid(self, key: str, structured: bool = False) -> '_numpy.ndarray'
+     |  centroid(self, key: str, structured: bool = False) -> Union[Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')], Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]]
      |
-     |  centroid_with_args(self, *keys: str, structured: bool = False) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |  centroid_with_args(self, *keys: str, structured: bool = False) -> Dict[str, Union[Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')], Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]]]
      |
-     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |  centroids(self, keys: Union[Set[str], NoneType] = None, structured: bool = False) -> Dict[str, Union[Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')], Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]]]
      |
      |  keys(self) -> None
      |
-     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[str, ForwardRef('_numpy.ndarray')]
+     |  probe(self, location: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable[[Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]], NoneType] = None) -> Dict[str, Union[Type[ForwardRef('npt.Number')], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]]]
      |
-     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable, NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, ForwardRef('_numpy.ndarray')]]
+     |  probes(self, *locations: Tuple[float, float, float], keys: Union[Set[str], NoneType] = None, point: bool = True, func: Union[Callable[[Type[ForwardRef('npt.NDArray[npt.Shape["*, *"], npt.Floating]')]], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]], NoneType] = None) -> Dict[Tuple[float, float, float], Dict[str, Union[Type[ForwardRef('npt.Number')], Type[ForwardRef('npt.NDArray[npt.Shape["*"], npt.Floating]')]]]]
      |      Reference:
      |          - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes
      |
      |  ----------------------------------------------------------------------
      |  Class methods defined here:
      |
-     |  fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |  fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: 'Kwargs') -> Iterator[ForwardRef('te.Self')] from builtins.type
      |
-     |  fromPath(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  fromPath(path: Union[str, pathlib.Path], **kwargs: 'Kwargs') -> 'te.Self' from builtins.type
      |
-     |  from_foam = fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: Any) -> Iterator[ForwardRef('Self')] from builtins.type
+     |  from_foam = fromFoam(foam: 'Foam', options: str = '', overwrite: bool = False, **kwargs: 'Kwargs') -> Iterator[ForwardRef('te.Self')] from builtins.type
      |
-     |  from_path = fromPath(path: Union[str, pathlib.Path], **kwargs: Any) -> 'Self' from builtins.type
+     |  from_path = fromPath(path: Union[str, pathlib.Path], **kwargs: 'Kwargs') -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Readonly properties defined here:
@@ -673,15 +877,6 @@ CLASSES
      |  y
      |
      |  z
-     |
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |
-     |  __weakref__
-     |      list of weak references to the object (if defined)
 
     class Version(builtins.tuple)
      |  Version(major: int, minor: int, other: Union[str, NoneType])
@@ -705,10 +900,10 @@ CLASSES
      |  __getnewargs__(self)
      |      Return self as a plain tuple.  Used by copy and pickle.
      |
-     |  __gt__(self, other: 'Self') -> bool
+     |  __gt__(self, other: 'te.Self') -> bool
      |      Return self>value.
      |
-     |  __lt__(self, other: 'Self') -> bool
+     |  __lt__(self, other: 'te.Self') -> bool
      |      Return self<value.
      |
      |  __repr__(self) -> str
@@ -731,9 +926,9 @@ CLASSES
      |  _make(iterable) from builtins.type
      |      Make a new Version object from a sequence or iterable
      |
-     |  fromString(version: str) -> 'Self' from builtins.type
+     |  fromString(version: str) -> 'te.Self' from builtins.type
      |
-     |  from_string = fromString(version: str) -> 'Self' from builtins.type
+     |  from_string = fromString(version: str) -> 'te.Self' from builtins.type
      |
      |  ----------------------------------------------------------------------
      |  Static methods defined here:
@@ -827,9 +1022,11 @@ FUNCTIONS
     __import__ lambda name
 
 DATA
-    __all__ = ['Command', 'Conversion', 'Data', 'Foam', 'Information', 'Po...
+    NONE = Option::None
+    __all__ = ['Command', 'Conversion', 'Data', 'Foam', 'Information', 'NO...
+    __annotations__ = {'__import__': typing.Callable[[str], module]}
     __license__ = 'GPL-3.0-only'
 
 VERSION
-    0.13.4
+    0.13.5
 ```
