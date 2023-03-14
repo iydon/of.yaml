@@ -10,17 +10,19 @@ from ...base.type import Ta, Tb, Tc, Func0, Func1, Func2
 if t.TYPE_CHECKING:
     import typing_extensions as te
 
+    from .result import Result
+
 
 class Option(t.Generic[Ta]):
     '''
-    - Example:
+    Example:
         >>> x = Option.some([1, 2, 3, 4, 5, 6, 7])
         >>> y = x.map(len)
         >>> z = x.take()
         >>> print(x, y, z, sep=', ')
         None, Some(7), Some([1, 2, 3, 4, 5, 6, 7])
 
-    - Reference:
+    Reference:
         - https://doc.rust-lang.org/std/option/
         - https://doc.rust-lang.org/src/core/option.rs.html
     '''
@@ -32,7 +34,7 @@ class Option(t.Generic[Ta]):
         self._value = value
 
     def __repr__(self) -> str:
-        return self._match(lambda v: f'Some({v!r})', lambda: 'None')
+        return self._match(lambda v: f'Option::Some({v!r})', lambda: 'Option::None')
 
     @classmethod
     def new(cls, value: t.Optional[Ta] = None) -> 'te.Self[Ta]':
@@ -42,11 +44,11 @@ class Option(t.Generic[Ta]):
             return cls.some(value)
 
     @classmethod
-    def some(cls, value: Ta) -> 'te.Self':
+    def some(cls, value: Ta) -> 'te.Self[Ta]':
         return cls(value)
 
     @classmethod
-    def none(cls) -> 'te.Self':
+    def none(cls) -> 'te.Self[Ta]':
         if cls._none is None:
             cls._none = cls()
         return cls._none
@@ -93,13 +95,15 @@ class Option(t.Generic[Ta]):
     def map_or_else(self, default: Func0[Tb], f: Func1[Ta, Tb]) -> Tb:
         return self._match(lambda v: f(v), default)
 
-    def ok_or(self) -> None:
-        # https://doc.rust-lang.org/src/core/option.rs.html#1092
-        raise NotImplementedError
+    def ok_or(self, err: Tb) -> 'Result[Ta, Tb]':
+        from .result import Result
 
-    def ok_or_else(self) -> None:
-        # https://doc.rust-lang.org/src/core/option.rs.html#1121
-        raise NotImplementedError
+        return self._match(lambda v: Result.ok(v), lambda: Result.err(err))
+
+    def ok_or_else(self, err: Func0[Tb]) -> 'Result[Ta, Tb]':
+        from .result import Result
+
+        return self._match(lambda v: Result.ok(v), lambda: Result.err(err()))
 
     def and_(self, optb: 'te.Self[Tb]') -> 'te.Self[Tb]':
         return self._match(lambda v: optb, lambda: self)
@@ -160,8 +164,8 @@ class Option(t.Generic[Ta]):
             ans, self._value = self.some(self._value), value
             return ans
 
-    def contains(self, value: Ta) -> bool:
-        return self._match(lambda v: value==v, lambda: False)
+    def contains(self, x: Ta) -> bool:
+        return self._match(lambda v: x==v, lambda: False)
 
     def zip(self, other: 'te.Self[Tb]') -> 'te.Self[t.Tuple[Ta, Tb]]':
         if self.is_some() and other.is_some():
