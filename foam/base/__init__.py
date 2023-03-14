@@ -1,4 +1,4 @@
-__all__ = ['core', 'lib', 'type']
+__all__ = ['config', 'core', 'lib', 'type']
 
 
-from . import core, lib, type
+from . import config, core, lib, type

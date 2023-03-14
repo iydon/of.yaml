@@ -78,7 +78,7 @@ class PostProcess:
 
     def probe(
         self,
-        location: Location[float], keys: t.Optional[SetStr] = None,
+        location: Location, keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> DictStr[DictFloat[Array01]]:
         location = tuple(map(float, location))
@@ -86,9 +86,9 @@ class PostProcess:
 
     def probes(
         self,
-        *locations: Location[float],
+        *locations: Location,
         keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> t.Dict[Location[float], DictStr[DictFloat[Array01]]]:
+    ) -> t.Dict[Location, DictStr[DictFloat[Array01]]]:
         ans = {}
         for time, vtk in zip(self._foam.cmd.times, self.vtks):
             probes = vtk.probes(*locations, keys=keys, point=point, func=func)
@@ -241,7 +241,7 @@ class VTK:
 
     def probe(
         self,
-        location: Location[float], keys: t.Optional[SetStr] = None,
+        location: Location, keys: t.Optional[SetStr] = None,
         point: bool = True, func: t.Optional[ProbFunc] = None,
     ) -> DictStr[Array01]:
         location = tuple(map(float, location))
@@ -249,9 +249,9 @@ class VTK:
 
     def probes(
         self,
-        *locations: Location[float],
+        *locations: Location,
         keys: t.Optional[SetStr] = None, point: bool = True, func: t.Optional[ProbFunc] = None,
-    ) -> t.Dict[Location[float], DictStr[Array01]]:
+    ) -> t.Dict[Location, DictStr[Array01]]:
         '''
         Reference:
             - https://github.com/OpenFOAM/OpenFOAM-7/tree/master/src/sampling/probes

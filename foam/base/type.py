@@ -2,10 +2,10 @@ __all__ = [
     'Ta', 'Tb', 'Tc',
     #
     'DictAny', 'DictFloat', 'DictStr', 'Func0', 'Func1', 'Func2', 'FuncAny', 'Generator', 'TupleSeq',
-    'Keys', 'Location',
+    'Keys', 'Triple',
     #
     'Any', 'DictAny2', 'DictStr2', 'DictStrAny', 'DictStrFloat', 'Document', 'FoamItem', 'FoamItems',
-    'FuncAny2', 'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Path', 'SetPath', 'SetStr',
+    'FuncAny2', 'ListAny', 'ListFloat', 'ListInt', 'ListStr', 'Location', 'Path', 'SetPath', 'SetStr',
     #
     'Array0', 'Array1', 'Array2', 'Array01', 'Array12', 'Number',
     #
@@ -33,7 +33,7 @@ FuncAny = t.Callable[..., T1]
 Generator = t.Generator[T1, None, None]  # TODO: Use Generator instead if Iterator
 TupleSeq = t.Tuple[T1, ...]  # https://github.com/python/mypy/issues/184
 Keys = t.Union[T1, TupleSeq[T1]]  # https://stackoverflow.com/questions/47190218/proper-type-hint-for-getitem
-Location = t.Tuple[T1, T1, T1]
+Triple = t.Tuple[T1, T1, T1]
 
 Any = t.Any
 DictAny2 = DictAny[Any]
@@ -45,6 +45,7 @@ ListAny = t.List[Any]
 ListFloat = t.List[float]
 ListInt = t.List[int]
 ListStr = t.List[str]
+Location = Triple[float]
 Path = t.Union[str, p.Path]
 SetPath = t.Set[p.Path]
 SetStr = t.Set[str]

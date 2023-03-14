@@ -98,4 +98,4 @@
 
 ## `v0.13`
 
-- TODO
+- Improve type hints

@@ -1,15 +1,12 @@
 __all__ = ['deprecated_classmethod', 'dict_without_keys', 'dry_run', 'grammar', 'license']
 
 
-import pathlib as p
 import subprocess
 import typing as t
 
 from .decorator import message
+from ..base.config import root
 from ..base.type import DictAny2, Func1
-
-
-root = p.Path(__file__).parents[1]
 
 
 def deprecated_classmethod(method: classmethod, old: t.Optional[str] = None) -> classmethod:

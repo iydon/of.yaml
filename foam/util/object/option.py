@@ -1,8 +1,9 @@
-__all__ = ['Option']
+__all__ = ['NONE', 'Option']
 
 
 import copy
 import typing as t
+import warnings as w
 
 from ...base.type import Ta, Tb, Tc, Func0, Func1, Func2
 
@@ -25,6 +26,7 @@ class Option(t.Generic[Ta]):
     '''
 
     __slots__ = ('_value', )
+    _none: t.Optional['te.Self[Ta]'] = None
 
     def __init__(self, value: t.Optional[Ta] = None) -> None:
         self._value = value
@@ -33,12 +35,21 @@ class Option(t.Generic[Ta]):
         return self._match(lambda v: f'Some({v!r})', lambda: 'None')
 
     @classmethod
+    def new(cls, value: t.Optional[Ta] = None) -> 'te.Self[Ta]':
+        if value is None:
+            return cls.none()
+        else:
+            return cls.some(value)
+
+    @classmethod
     def some(cls, value: Ta) -> 'te.Self':
         return cls(value)
 
     @classmethod
     def none(cls) -> 'te.Self':
-        return cls()
+        if cls._none is None:
+            cls._none = cls()
+        return cls._none
 
     def is_some(self) -> bool:
         return not self.is_none()
@@ -68,6 +79,7 @@ class Option(t.Generic[Ta]):
         raise NotImplementedError
 
     def map(self, f: Func1[Ta, Tb]) -> 'te.Self[Tb]':
+        # TODO: self.some or self.new?
         return self._match(lambda v: self.some(f(v)), lambda: self)
 
     def inspect(self, f: Func1[Ta, None]) -> 'te.Self[Ta]':
@@ -114,37 +126,39 @@ class Option(t.Generic[Ta]):
         )
 
     def insert(self, value: Ta) -> 'te.Self[Ta]':
-        self._value = value
-        return self
+        if self.is_none():
+            w.warn('`Some` and `None` are not convertible')
+            return self.some(value)
+        else:
+            self._value = value
+            return self
 
     def get_or_insert(self, value: Ta) -> 'te.Self[Ta]':
         if self.is_none():
-            self._value = value
-        return self
+            w.warn('`Some` and `None` are not convertible')
+            return self.some(value)
+        else:
+            return self
 
     def get_or_insert_default(self) -> 'te.Self[Ta]':
         # https://doc.rust-lang.org/src/core/option.rs.html#1552
         raise NotImplementedError
 
     def get_or_insert_with(self, f: Func0[Ta]) -> 'te.Self[Ta]':
-        if self.is_none():
-            self._value = f()
-        return self
+        return self._match(lambda v: self, lambda: self.some(f()))
 
     def take(self) -> 'te.Self[Ta]':
         if self.is_none():
-            return self.none()
+            return self
         else:
-            ans, self._value = self.some(self._value), None
-            return ans
+            raise Exception('`Some` and `None` are not convertible')
 
     def replace(self, value: Ta) -> 'te.Self[Ta]':
         if self.is_none():
-            ans = self.none()
+            raise Exception('`Some` and `None` are not convertible')
         else:
-            ans = self.some(self._value)
-        self._value = value
-        return ans
+            ans, self._value = self.some(self._value), value
+            return ans
 
     def contains(self, value: Ta) -> bool:
         return self._match(lambda v: value==v, lambda: False)
@@ -169,3 +183,6 @@ class Option(t.Generic[Ta]):
 
     def _copy(self) -> 'te.Self[Ta]':
         return self._match(lambda v: self.some(copy.deepcopy(v)), self.none)
+
+
+NONE = Option.none()
