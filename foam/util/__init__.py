@@ -1,4 +1,4 @@
-__all__ = ['decorator', 'function', 'object']
+__all__ = ['decorator', 'function', 'implementation', 'object']
 
 
-from . import decorator, function, object
+from . import decorator, function, implementation, object

@@ -9,6 +9,7 @@ import smtplib
 import time
 import typing as t
 
+from ..implementation import Base
 from ...base.type import Any, Func1, Path
 
 if t.TYPE_CHECKING:
@@ -18,7 +19,7 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Envelope:
+class Envelope(Base):
     '''Envelope
 
     Reference:
@@ -114,7 +115,7 @@ class Envelope:
         self.send_by(self._smtp)
 
 
-class SMTP:
+class SMTP(Base):
     '''SMTP wrapper
 
     Example:

@@ -16,6 +16,7 @@ from .type import CmdItems, DictAny2, DictStr2, FoamItems, ListStr, Path, SetStr
 from ..compat.functools import cached_property
 from ..parse import Parser
 from ..util.function import deprecated_classmethod
+from ..util.implementation import Base
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 from ..util.object.version import Version
@@ -31,7 +32,7 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Foam:
+class Foam(Base):
     '''Convert multiple dictionary type data to OpenFOAM test case
 
     Example:
@@ -41,7 +42,7 @@ class Foam:
         >>> foam.cmd.all_run()
     '''
 
-    __slots__ = ('_items', '_root', '_dest', '_parser', '_cmd', '_info', '_post', '__dict__')
+    __slots__ = ('_items', '_root', '_dest', '_parser', '_cmd', '_info', '_post')
     __version__ = Version.fromString('0.13.5')
 
     def __init__(self, data: FoamItems, root: Path, warn: bool = True) -> None:
@@ -75,6 +76,10 @@ class Foam:
 
     def __str__(self) -> str:
         return f'<Foam @ "{self._root.absolute().as_posix()}">'
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        return cls([{}], '', warn=False)
 
     @classmethod
     def listDemos(cls) -> ListStr:
@@ -174,10 +179,6 @@ class Foam:
     def fromYAML(cls, text: str, root: Path, warn: bool = True) -> 'te.Self':
         data = Conversion.fromString(text, 'yaml', all=True).to_document()
         return cls(data, root, warn=warn)
-
-    @classmethod
-    def default(cls) -> 'te.Self':
-        return cls([{}], '', warn=False)
 
     @property
     def data(self) -> Data:

@@ -7,6 +7,7 @@ import pickle
 import typing as t
 
 from ..function import deprecated_classmethod
+from ..implementation import Base
 from ...base.lib import tomlkit, yaml
 from ...base.type import Document, Path, SetStr
 
@@ -17,7 +18,7 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Conversion:
+class Conversion(Base):
     '''Conversion between object and bytes/string
 
     TODO:

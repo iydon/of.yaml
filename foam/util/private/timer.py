@@ -6,6 +6,7 @@ import time
 import typing as t
 import warnings as w
 
+from ..implementation import Base
 from ...base.type import Any, DictStrFloat, Func0, Func1, Keys
 from ...compat.functools import cached_property
 
@@ -13,7 +14,7 @@ if t.TYPE_CHECKING:
     import typing_extensions as te
 
 
-class Timer:
+class Timer(Base):
     '''Timer
 
     Example:
@@ -28,7 +29,7 @@ class Timer:
         - https://stackoverflow.com/questions/5849800/what-is-the-python-equivalent-of-matlabs-tic-and-toc-functions
     '''
 
-    __slots__ = ('_func', '_cache', '__dict__')
+    __slots__ = ('_func', '_cache', )
 
     def __init__(self, func: Func0[float]) -> None:
         self._func = func
@@ -133,7 +134,7 @@ class Timer:
     thread_time = threadTime
 
 
-class TimerResult:
+class TimerResult(Base):
     '''Result for timer'''
 
     __slots__ = ('_timer', '_labels')

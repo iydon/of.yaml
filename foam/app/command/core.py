@@ -11,6 +11,7 @@ from .adapter import Default, Apps
 from ...base.type import CmdItem, CmdItems, DictStr2, DictStrAny, Func1, ListFloat, ListInt, ListStr, SetPath
 from ...compat.functools import cached_property
 from ...util.function import deprecated_classmethod
+from ...util.implementation import Base
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -21,13 +22,19 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Command:
+class Command(Base):
     '''OpenFOAM command wrapper'''
 
-    __slots__ = ('_foam', '__dict__')
+    __slots__ = ('_foam', )
 
     def __init__(self, foam: 'Foam') -> None:
         self._foam = foam
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ...base.core import Foam
+
+        return cls(Foam.default())
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':

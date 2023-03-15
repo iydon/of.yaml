@@ -6,6 +6,7 @@ import typing as t
 
 from .conversion import Conversion
 from ..function import deprecated_classmethod
+from ..implementation import Base
 from ...base.type import Any, DictStrAny, FoamItem, Func0, Keys, ListAny, Path
 
 if t.TYPE_CHECKING:
@@ -15,7 +16,7 @@ if t.TYPE_CHECKING:
     Args, Kwargs = te.ParamSpecArgs(P), te.ParamSpecKwargs(P)
 
 
-class Data:
+class Data(Base):
     '''Multi-key dictionary or list (not recommended)
 
     TODO:

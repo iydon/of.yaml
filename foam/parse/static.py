@@ -11,6 +11,7 @@ from ..base.type import DictStrAny, Func1, Keys
 from ..compat.shutil import copytree
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
+from ..util.implementation import Base
 from ..util.object.conversion import Conversion
 from ..util.object.data import Data
 
@@ -20,7 +21,7 @@ if t.TYPE_CHECKING:
     from ..base.core import Foam
 
 
-class Static:
+class Static(Base):
     '''OpenFOAM static parser
 
     Example:
@@ -49,6 +50,12 @@ class Static:
             return lambda *args, **kwargs: self.match[keys](self, *args, **kwargs)
         except KeyError:
             raise Exception(f'Unknown types "{keys}"')
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ..base.core import Foam
+
+        return cls(Foam.default())
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':

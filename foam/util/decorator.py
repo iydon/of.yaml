@@ -1,4 +1,4 @@
-__all__ = ['Match', 'classproperty', 'message', 'suppress']
+__all__ = ['Cached', 'Match', 'cached', 'classproperty', 'message', 'suppress']
 
 
 import contextlib
@@ -6,8 +6,9 @@ import functools as f
 import io
 import typing as t
 
+from .implementation import Base
 from ..base.lib import classproperty
-from ..base.type import Any, Func1, FuncAny2, Keys, TupleSeq
+from ..base.type import Any, DictStr, Func1, FuncAny2, Keys, TupleSeq
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -15,7 +16,57 @@ if t.TYPE_CHECKING:
     P = te.ParamSpec('P')
 
 
-class Match:
+class Cached(Base):
+    '''Cached decorator
+
+    Example:
+        >>> cached = Cached.new()
+    '''
+
+    __slots__ = ('_cache', )
+
+    def __init__(self) -> None:
+        self._cache: DictStr[FuncAny2] = {}
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        return cls()
+
+    def function(self, func: FuncAny2) -> FuncAny2:
+
+        @f.wraps(func)
+        def wrapper(*args: 'P.args', **kwargs: 'P.kwargs') -> Any:
+            key = (hash(func), hash(args), hash(args), hash(frozenset(kwargs.items())))
+            if key not in self._cache:
+                self._cache[key] = func(*args, **kwargs)
+            return self._cache[key]
+
+        return wrapper
+
+    def method(self, func: FuncAny2) -> FuncAny2:
+
+        @f.wraps(func)
+        def wrapper(this: Any, *args: 'P.args', **kwargs: 'P.kwargs') -> Any:
+            key = (hash(this), hash(func), hash(args), hash(args), hash(frozenset(kwargs.items())))
+            if key not in self._cache:
+                self._cache[key] = func(this, *args, **kwargs)
+            return self._cache[key]
+
+        return wrapper
+
+    def property(self, func: FuncAny2) -> property:
+
+        @f.wraps(func)
+        def wrapper(this: Any) -> Any:
+            key = (hash(this), hash(func))
+            if key not in self._cache:
+                self._cache[key] = func(this)
+            return self._cache[key]
+
+        return property(wrapper)
+
+
+class Match(Base):
     '''Use decorator to simulate match syntax
 
     Example:
@@ -162,3 +213,6 @@ def message(msg: str = '') -> Func1[FuncAny2, FuncAny2]:
         return wrapper
 
     return decorate
+
+
+cached = Cached.default()

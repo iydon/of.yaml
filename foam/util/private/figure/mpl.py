@@ -3,6 +3,7 @@ __all__ = ['AddOn']
 
 import typing as t
 
+from ...implementation import Base
 from ....base.type import Any, FuncAny
 
 if t.TYPE_CHECKING:
@@ -16,7 +17,7 @@ if t.TYPE_CHECKING:
 Wrapper = FuncAny['Figure']
 
 
-class AddOn:
+class AddOn(Base):
     '''matplotlib
 
     CodeGen:
@@ -45,10 +46,6 @@ class AddOn:
     def __init__(self, figure: 'Figure') -> None:
         self._figure = figure
         self._ret = None
-
-    @classmethod
-    def new(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> 'te.Self':
-        return cls(*args, **kwargs)
 
     @property
     def ret(self) -> Any:

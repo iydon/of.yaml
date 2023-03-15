@@ -9,6 +9,7 @@ import urllib.request
 from ..base.type import DictStrAny, Func1, Keys
 from ..util.decorator import Match
 from ..util.function import deprecated_classmethod
+from ..util.implementation import Base
 from ..util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
@@ -17,7 +18,7 @@ if t.TYPE_CHECKING:
     from ..base.core import Foam
 
 
-class Url:
+class Url(Base):
     '''Merge remote multiple files into a single file
 
     Example:
@@ -53,6 +54,12 @@ class Url:
             return self.__getitem__((keys, ))
         method = self.match.get(*keys, default=lambda self, static: static)
         return lambda *args, **kwargs: method(self, *args, **kwargs)
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ..base.core import Foam
+
+        return cls(Foam.default())
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':

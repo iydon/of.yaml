@@ -9,6 +9,7 @@ from .static import Static
 from .url import Url
 from ..base.type import Path
 from ..util.function import deprecated_classmethod
+from ..util.implementation import Base
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -19,7 +20,7 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Parser:
+class Parser(Base):
     '''All parsers'''
 
     __slots__ = ('case', 'static', 'url')
@@ -28,6 +29,12 @@ class Parser:
         self.case = case
         self.static = static
         self.url = url
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ..base.core import Foam
+
+        return cls.fromFoam(Foam.default())
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':

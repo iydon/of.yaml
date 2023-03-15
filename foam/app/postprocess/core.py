@@ -7,6 +7,7 @@ import warnings as w
 from ...base.lib import numpy, vtkmodules
 from ...base.type import Array1, Array2, Array01, Array12, DictAny2, DictFloat, DictStr, Location, Func1, Path, SetStr
 from ...util.function import deprecated_classmethod
+from ...util.implementation import Base
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -28,7 +29,7 @@ Probes = t.Dict[Location, Probe]
 ProbFunc = Func1[Array2, Array1]
 
 
-class PostProcess:
+class PostProcess(Base):
     '''OpenFOAM post-processing'''
 
     __slots__ = ('_foam', '_vtks', '_logs')
@@ -37,6 +38,12 @@ class PostProcess:
         self._foam = foam
         self._vtks: t.Optional[t.List['VTK']] = None
         self._logs: t.Optional[DictAny2] = None
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ...base.core import Foam
+
+        return cls(Foam.default())
 
     @classmethod
     def fromFoam(cls, foam: 'Foam') -> 'te.Self':
@@ -111,7 +118,7 @@ class PostProcess:
     from_foam = deprecated_classmethod(fromFoam)
 
 
-class VTK:
+class VTK(Base):
     '''OpenFOAM VTK post-processing'''
 
     __slots__ = ('_foam', '_points', '_cells', '_point_fields', '_cell_fields')

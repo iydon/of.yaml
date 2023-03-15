@@ -37,6 +37,10 @@ class Result(t.Generic[Ta, Tb]):
         return self._match(lambda o: f'Result::Ok({o!r})', lambda e: f'Result::Err({e!r})')
 
     @classmethod
+    def default(cls) -> 'te.Self[Ta, Tb]':
+        raise NotImplementedError
+
+    @classmethod
     def new(cls, ok: t.Optional[Ta] = None, err: t.Optional[Tb] = None) -> 'te.Self[Ta, Tb]':
         assert (ok is None and err is not None) or (ok is not None and err is None)
 

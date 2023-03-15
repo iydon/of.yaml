@@ -1,9 +1,8 @@
-__all__ = ['Singleton']
+__all__ = ['Base', 'Singleton']
 
 
 import typing as t
 
-from ..base.type import DictStr
 from ..compat.typing import Protocol
 
 if t.TYPE_CHECKING:
@@ -12,23 +11,33 @@ if t.TYPE_CHECKING:
     P = te.ParamSpec('P')
 
 
-class Singleton(Protocol):
-    '''Singleton'''
+class Base(Protocol):
+    '''Base classmethod protocol'''
 
     # __slots__ = ...  # __dict__ slot disallowed: we already got one
-    __instances: DictStr['te.Self'] = {}
 
     @classmethod
     def default(cls) -> 'te.Self':
-        return cls.new()
+        raise NotImplementedError
 
     @classmethod
     def new(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> 'te.Self':
-        key = cls.__hash(*args, **kwargs)
-        if key not in cls.__instances:
-            cls.__instances[key] = cls(*args, **kwargs)
-        return cls.__instances[key]
+        return cls(*args, **kwargs)
+
+
+class Singleton(Protocol):
+    '''Singleton protocol'''
+
+    # __slots__ = ...  # __dict__ slot disallowed: we already got one
+    __instance: t.Dict[t.Tuple[int, int], 'te.Self'] = {}
 
     @classmethod
-    def __hash(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> str:
-        return repr(args) + repr(kwargs)
+    def default(cls) -> 'te.Self':
+        raise NotImplementedError
+
+    @classmethod
+    def new(cls, *args: 'P.args', **kwargs: 'P.kwargs') -> 'te.Self':
+        key = (hash(args), hash(frozenset(kwargs.items())))
+        if key not in cls.__instance:
+            cls.__instance[key] = cls(*args, **kwargs)
+        return cls.__instance[key]

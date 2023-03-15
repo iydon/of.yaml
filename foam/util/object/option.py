@@ -37,6 +37,10 @@ class Option(t.Generic[Ta]):
         return self._match(lambda v: f'Option::Some({v!r})', lambda: 'Option::None')
 
     @classmethod
+    def default(cls) -> 'te.Self[Ta]':
+        raise NotImplementedError
+
+    @classmethod
     def new(cls, value: t.Optional[Ta] = None) -> 'te.Self[Ta]':
         if value is None:
             return cls.none()

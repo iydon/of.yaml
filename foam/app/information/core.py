@@ -9,6 +9,7 @@ import typing as t
 
 from ...base.type import CmdItem, DictAny, DictStr2, Func1, Path, SetStr
 from ...util.function import deprecated_classmethod
+from ...util.implementation import Base
 from ...util.object.conversion import Conversion
 
 if t.TYPE_CHECKING:
@@ -22,7 +23,7 @@ CmdFunc = Func1[CmdItem, str]
 SrchAns = DictAny[SetStr]
 
 
-class Information:
+class Information(Base):
     '''OpenFOAM information wrapper'''
 
     __slots__ = ('_foam', '_cmd')
@@ -32,14 +33,14 @@ class Information:
         self._cmd: t.Optional['Command'] = None
 
     @classmethod
-    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
-        return cls(foam)
-
-    @classmethod
     def default(cls) -> 'te.Self':
         from ...base.core import Foam
 
         return cls(Foam.default())
+
+    @classmethod
+    def fromFoam(cls, foam: 'Foam') -> 'te.Self':
+        return cls(foam)
 
     @property
     def cmd(self) -> 'Command':

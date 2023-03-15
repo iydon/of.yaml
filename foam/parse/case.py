@@ -7,6 +7,9 @@ from ..base.type import Any, DictStrAny, ListAny
 from ..compat.functools import singledispatchmethod
 from ..util.implementation import Singleton
 
+if t.TYPE_CHECKING:
+    import typing_extensions as te
+
 
 class Case(Singleton):
     '''OpenFOAM case parser
@@ -39,6 +42,10 @@ class Case(Singleton):
     '''
 
     __slots__ = ()
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        return cls()
 
     def data(self, data: DictStrAny) -> t.Iterator[str]:
         for key, value in data.items():

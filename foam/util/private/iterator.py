@@ -35,6 +35,14 @@ class Iterator(t.Generic[Ta]):
         return self._iterator
 
     @classmethod
+    def default(cls) -> 'te.Self[Ta]':
+        raise NotImplementedError
+
+    @classmethod
+    def new(cls, iterator: t.Iterator[Ta]) -> 'te.Self[Ta]':
+        return cls(iterator)
+
+    @classmethod
     def fromDict(cls, iterable: DictAny2) -> 'te.Self[Ta]':
         # Ta = Item = (Key, Value)
         return cls(iter(iterable.items()))

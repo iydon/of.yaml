@@ -5,6 +5,7 @@ import pathlib as p
 import typing as t
 
 from ...function import deprecated_classmethod
+from ...implementation import Base
 from ....base.lib import matplotlib
 from ....base.type import Any, Path
 
@@ -20,7 +21,7 @@ if t.TYPE_CHECKING:
     Kwargs = te.ParamSpecKwargs(P)
 
 
-class Figure:
+class Figure(Base):
     '''Matplotlib simple wrapper
 
     Example:
@@ -46,8 +47,8 @@ class Figure:
         self._mpl = self._sns = None
 
     @classmethod
-    def new(cls, **kwargs: 'Kwargs') -> 'te.Self':
-        return cls(**kwargs)
+    def default(cls) -> 'te.Self':
+        return cls()
 
     @classmethod
     def setRcParams(cls, *items: t.Tuple[str, Any]) -> 'te.Self':

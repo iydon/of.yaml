@@ -6,6 +6,7 @@ import typing as t
 
 from ...base.lib import tqdm
 from ...base.type import Any
+from ...util.implementation import Base
 
 if t.TYPE_CHECKING:
     import typing_extensions as te
@@ -13,7 +14,7 @@ if t.TYPE_CHECKING:
     from ...base.core import Foam
 
 
-class Default:
+class Default(Base):
     '''Default app'''
 
     __slots__ = ()
@@ -26,6 +27,12 @@ class Default:
 
     def __exit__(self, type: Any, value: Any, traceback: Any) -> None:
         pass
+
+    @classmethod
+    def default(cls) -> 'te.Self':
+        from ...base.core import Foam
+
+        return cls(Foam.default())
 
     def step(self, line: bytes) -> None:
         pass

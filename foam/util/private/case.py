@@ -88,6 +88,10 @@ class CaseBase(abc.ABC):
             f'    .set_required({func(self._required)})'
 
     @classmethod
+    def default(cls) -> 'te.Self':
+        raise NotImplementedError
+
+    @classmethod
     def new(cls, **kwargs: 'Kwargs') -> 'te.Self':
         return cls(**kwargs)
 
